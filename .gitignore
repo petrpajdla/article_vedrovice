@@ -37,3 +37,9 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Temporary data files
+/data/temp/
+
+# Plots created by the scripts
+/plots/
