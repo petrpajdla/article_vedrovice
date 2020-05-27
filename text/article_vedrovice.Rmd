@@ -48,7 +48,7 @@ csl             : "european-journal-of-archaeology.csl"
 The material analyzed here comes from Vedrovice – Široká u lesa cemetery.
 Originally, the burial ground consisted of at least 108 burials.
 Some of the burials were disturbed by later settlement and burial pits in the
-area of the cemetery, amateur excavations during 19th century or later
+area of the cemetery, amateur excavations during the 19th century or later
 agricultural activities.
 Thus some of the burials are excluded from the analysis due to missing and/or
 incomplete data and only a sample of 78 well-preserved burials is analyzed here.
@@ -62,7 +62,7 @@ selected for further analysis.
 Some of  the original variables are omitted due to their rare occurrence,
 for instance spondylus arm ring is present in a single burial only,
 thus being useless in establishing relationships between pairs of burials.
-Other variables are removed because they are highly dependent one on each other.
+Other variables are removed because they are highly dependent on each other.
 
 The variables fall into several categories.
 Firstly there are biological and anthropological characteristics derived from
@@ -70,42 +70,44 @@ retrieved human skeletal remains including sex, age simplified into age groups,
 isotope ratios or body height.
 
 Second large category of variables consists of data on artifacts present in the
-burials, the grave goods.
-These include variables noting quantities of various types of pottery,
-positions of the pottery vessels within the graves, lithics and most common
-raw materials of lithics, polished stone axes or adzes, grinding slabs,
-pebbles, bone tools and different kinds of personal ornaments including beads
-made of spondylus shell, pendants or oval shaped spondylus buckles and presence
-of ochre pigment.
+burials.
+These include variables noting quantities of various types of pottery and
+positions of the pottery vessels within the graves,
+counts of various raw materials of chipped stone tools,
+presence of polished stone axes or adzes, grinding slabs, pebbles,
+bone tools and different kinds of personal ornaments.
+The personal ornaments include beads made of spondylus shell or marble,
+sponylus pendants or oval shaped buckles.
+Presence of ochre pigment is also noted.
 All the variables in this category are simplified by binarization (presence vs
 absence of a trait) in order to minimize effects of only several numerous
 cases on the overall pattern, for instance 20 beads in a grave <!-- 70 -->
-would have much larger effect then 1 pottery vessels in the same grave.
+would have much larger effect on the analysis then 1 pottery vessel in the same grave.
 
 Last category describes physical characteristics of the grave pit and the
 position of the body.
 I. e. size of the pit, its orientation, position of the body on one of
 the sides and direction of the head.
 
-Data is analyzed in R environment for statistical computing and graphics
+Data is analyzed in an R environment for statistical computing and graphics
 [@rcore]  using functions of readr [@wickham2017a], dplyr [@wickham2016] and
 reshape2 [@wickham2007] packages to manipulate the data.
 Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
 count distances between observations used in further analyses.
+<!-- ADD METHODS AND PACKAGES USED IN R -->
 
-The input variables are of mixed data types, thus Gower's similarity
-coefficient [@gower1971] is used in order to obtain a square distance matrix.
-Gower's coefficient treats differently symmetric and asymmetric dichotomous
-data, nominal and ordinal data and interval and ratio scaled data.
-Advantage of this approach is that different kinds of variables can be analyzed
-together and it is not necessary to transform the variables into same data
-types, as it would be if other distance measure was used.
-In our case, most of the variables concerning artifacts deposited within the
-burials are asymmetric binary data, i. e. the presence of a trait means
-similarity but absence does not imply similarity.
-Continuous quantitative variables are treated as interval scaled.
-Age categories are treated as ordinal variable and the rest of categorical
-variables is treated as nominal data.
+## Randomness of Artefact Combinations
+
+To determine the non-randomness of various artefact combinations we conduct a
+permutation test on the presence/absence data matrix.
+The method based on a theory of generalized Monte Carlo tests was first
+introduced to archaeology by @manly1996.
+Original (observed) co-occurence matrix is permutated $n$ times with constant
+row and column totals, i. e. both the count of artifacts in individual graves
+and sum of the given type of artifacts are fixed.
+
+To examine which associations of variables are infrequent or even not present
+and which tend to appear together we conduct a randomization test
 
 ## Exceptionality index
 
@@ -125,6 +127,20 @@ $$ EI_{attr_g}=\frac{EI_{attr_g}}{max~EI_{attr_g}} $$
 
 
 ## Distance between burials
+
+The input variables are of mixed data types, thus Gower's similarity
+coefficient [@gower1971] is used in order to obtain a square distance matrix.
+Gower's coefficient treats differently symmetric and asymmetric dichotomous
+data, nominal and ordinal data and interval and ratio scaled data.
+Advantage of this approach is that different kinds of variables can be analyzed
+together and it is not necessary to transform the variables into same data
+types, as it would be if other distance measure was used.
+In our case, most of the variables concerning artifacts deposited within the
+burials are asymmetric binary data, i. e. the presence of a trait means
+similarity but absence does not imply similarity.
+Continuous quantitative variables are treated as interval scaled.
+Age categories are treated as ordinal variable and the rest of categorical
+variables is treated as nominal data.
 
 <!-- ======================================================================= -->
 

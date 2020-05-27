@@ -41,5 +41,13 @@ vignettes/*.pdf
 # Temporary data files
 /data/temp/
 
+# Temporary output files (.Rout) of GNU Make
+*.Rout
+
 # Plots created by the scripts
 /plots/
+
+# Output text files
+/text/*.pdf
+
+
