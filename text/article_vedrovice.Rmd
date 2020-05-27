@@ -1,0 +1,139 @@
+---
+title           : "Supplement: Vedrovice burial analysis"
+author          : "Petr Pajdla"
+    # name          : "Petr Pajdla"
+    # affiliation   : "Department of Archaeology and Museology,
+    #                  Masaryk University, Brno, Czech Republic"
+    # email         : "petr.pajdla@gmail.com"
+date            : "`r format(Sys.time(), '%d %B, %Y')`"
+abstract        : "Fuck me."
+output :
+    pdf_document:
+        latex: pdflatex
+        fig_caption: true
+        number_sections: false
+        keep_tex: false
+bibliography    : "bib_vedrovice.bib"
+csl             : "european-journal-of-archaeology.csl"
+---
+
+<!-- note: length - approx. 10 - 12 pages (no bibliography, tables, figures) -->
+<!-- i.e. 18 000 - 22 000 characters -->
+
+<!-- ======================================================================= -->
+
+# Introduction
+
+### Questions
+
+* Is there evidence that certain artefacts covary,
+    either positively or negatively?
+    Do certain artefacts tend to occur together, or are certain combinations
+    absent or rare?
+* How can the presence and absence data best display which burials
+    contain similar artefacts,
+    and which artefacts have similar distributions over burials?
+* *How can the data be analysed so as to show most clearly the relationships*
+    *between the different* **burials** in terms of their **contents**?
+* *How can the data be analysed so as to show most clearly the relationship*
+    *between the different* **artefacts** in terms of their
+    **distributions in graves**?
+* How are grave good assemblages related to age and sex?
+(... variations in burial rite coinciding with age or sex of the deceased ...)
+
+<!-- ======================================================================= -->
+
+# Material and methods
+
+The material analyzed here comes from Vedrovice – Široká u lesa cemetery.
+Originally, the burial ground consisted of at least 108 burials.
+Some of the burials were disturbed by later settlement and burial pits in the
+area of the cemetery, amateur excavations during 19th century or later
+agricultural activities.
+Thus some of the burials are excluded from the analysis due to missing and/or
+incomplete data and only a sample of 78 well-preserved burials is analyzed here.
+Most of the data was obtained from the original publication [@podborsky2002],
+anthropological determination of sex and age were corrected based on
+more recent analysis by @dockalova2008. Carbon, nitrogen and strontium isotope
+ratios were collected in @whittle2013 and @richards2008.
+
+Each burial was originally characterized by 55 variables but only 35 are
+selected for further analysis.
+Some of  the original variables are omitted due to their rare occurrence,
+for instance spondylus arm ring is present in a single burial only,
+thus being useless in establishing relationships between pairs of burials.
+Other variables are removed because they are highly dependent one on each other.
+
+The variables fall into several categories.
+Firstly there are biological and anthropological characteristics derived from
+retrieved human skeletal remains including sex, age simplified into age groups,
+isotope ratios or body height.
+
+Second large category of variables consists of data on artifacts present in the
+burials, the grave goods.
+These include variables noting quantities of various types of pottery,
+positions of the pottery vessels within the graves, lithics and most common
+raw materials of lithics, polished stone axes or adzes, grinding slabs,
+pebbles, bone tools and different kinds of personal ornaments including beads
+made of spondylus shell, pendants or oval shaped spondylus buckles and presence
+of ochre pigment.
+All the variables in this category are simplified by binarization (presence vs
+absence of a trait) in order to minimize effects of only several numerous
+cases on the overall pattern, for instance 20 beads in a grave <!-- 70 -->
+would have much larger effect then 1 pottery vessels in the same grave.
+
+Last category describes physical characteristics of the grave pit and the
+position of the body.
+I. e. size of the pit, its orientation, position of the body on one of
+the sides and direction of the head.
+
+Data is analyzed in R environment for statistical computing and graphics
+[@rcore]  using functions of readr [@wickham2017a], dplyr [@wickham2016] and
+reshape2 [@wickham2007] packages to manipulate the data.
+Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
+count distances between observations used in further analyses.
+
+The input variables are of mixed data types, thus Gower's similarity
+coefficient [@gower1971] is used in order to obtain a square distance matrix.
+Gower's coefficient treats differently symmetric and asymmetric dichotomous
+data, nominal and ordinal data and interval and ratio scaled data.
+Advantage of this approach is that different kinds of variables can be analyzed
+together and it is not necessary to transform the variables into same data
+types, as it would be if other distance measure was used.
+In our case, most of the variables concerning artifacts deposited within the
+burials are asymmetric binary data, i. e. the presence of a trait means
+similarity but absence does not imply similarity.
+Continuous quantitative variables are treated as interval scaled.
+Age categories are treated as ordinal variable and the rest of categorical
+variables is treated as nominal data.
+
+## Exceptionality index
+
+Exceptionality index ($EI$) is used in order to induce relative exceptionality
+of individual burials based on their attributes.
+This approach is independent on a prior selection of attributes of importance
+or *prestige*.
+The concept was introduced by @demjan2015.
+
+It is defined by @demjan2015[367] as a Root Mean Square (*quadratic mean*) of
+PCA factor scores:
+$$ EI_{attr_g}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}s_i^2} $$
+where $s_i$ are factor scores of individual graves. The mean value is
+normalized to range $[0-1]$:
+
+$$ EI_{attr_g}=\frac{EI_{attr_g}}{max~EI_{attr_g}} $$
+
+
+## Distance between burials
+
+<!-- ======================================================================= -->
+
+# Results
+
+<!-- ======================================================================= -->
+
+# Discussion
+
+<!-- ======================================================================= -->
+
+# References
