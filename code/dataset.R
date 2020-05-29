@@ -28,7 +28,8 @@ ved <- list(bin_vars = list(count_mat = NA,
             metadata = NA,
             layout = NA,
             var_names = list(full = NA,
-                             short = NA),
+                             short = NA,
+                             long = NA),
             id_burials = input$id_burial,
             orig_dataset = input)
 
@@ -87,22 +88,38 @@ ved$layout <- input %>% select(layout_x, layout_y) %>%
 rownames(ved$layout) <- input$id_burial
 
 ved$var_names$full <- tibble(vnames = names(input),
-                        abbrv = c("id", "row", "id.unified", "id.full", "undist",
-                                  "x", "y", "sex", "sex.d", "sex.p",
-                                  "age.cat", "age.int", "pit.l", "pit.w", "pit.d",
-                                  "pit.o", "pit.o.cat", "head.o", "head.o.cat",
-                                  "body.side",
-                                  "pigm", "pol.sum", "adz", "axe", "grd", "peb",
-                                  "l.sum", "l.kl", "l.skj", "l.oth", "l.rad", "l.sgs",
-                                  "p.sum", "p.bow", "p.glo", "p.bot", "p.spec", "p.frag",
-                                  "p.top", "p.mid", "p.leg","p.fill",
-                                  "bon.t", "bon.awl", "pen", "pen.L", "pen.U", "pen.I", 
-                                  "buck", "brac", "neck", "b.sp", "b.mar", "b.div",
-                                  "b.cyl", "b.circ", "b.olive", "d.tooth", "ant", "shell",
-                                  "dat", "d13C", "d15N", "Sr", "Sr.ppm", "body.h"))
+                             abbrv = c("id", "row", "id.unified", "id.full", "undist",
+                                       "x", "y", "sex", "sex.d", "sex.p",
+                                       "age.cat", "age.int", "pit.l", "pit.w", "pit.d",
+                                       "pit.o", "pit.o.cat", "head.o", "head.o.cat",
+                                       "body.side",
+                                       "pigm", "pol.sum", "adz", "axe", "grd", "peb",
+                                       "l.sum", "l.kl", "l.skj", "l.oth", "l.rad", "l.sgs",
+                                       "p.sum", "p.bow", "p.glo", "p.bot", "p.spec", "p.frag",
+                                       "p.top", "p.mid", "p.leg","p.fill",
+                                       "bon.t", "bon.awl", "pen", "pen.L", "pen.U", "pen.I", 
+                                       "buck", "brac", "neck", "b.sp", "b.mar", "b.div",
+                                       "b.cyl", "b.circ", "b.olive", "d.tooth", "ant", "shell",
+                                       "dat", "d13C", "d15N", "Sr", "Sr.ppm", "body.h"),
+                             long = c("Burial ID", "row", "id.unified", "id.full", "undist",
+                                       "x", "y", "sex", "sex.d", "sex.p",
+                                       "Age", "age.int", "Pit length", "Pit width", "Pit depth",
+                                       "Pit orientation", "Pit orientation", "Head orientation", "Head orientation",
+                                       "Side",
+                                       "Pigment", "PST(sum)", "Adze", "Axe", "Grinding tool", "Pebble",
+                                       "Lith. (sum)", "Lith. (KF)", "Lith (Krak)", "Lith. (other)", "Lith. (Rad.)", "Lith. (SGS)",
+                                       "Pottery (sum)", "Bowl", "Globular pot", "Bottle", "Other pottery", "Pottery fragment",
+                                       "Pot around head", "Pot in the middle ", "Pot around legs","Pot in fill",
+                                       "Bone tool", "Bone awl", "Pendant", "L-shaped pendant", "U-shaped pendant", "I-shaped pendant", 
+                                       "O-shaped Buckle", "Bracelet", "Necklace", "Spondylus bead", "Marble bead", "Dividing bead",
+                                       "Cylinder bead", "Circular bead", "Olive-shaped bead", "Deer tooth", "Antler", "Shell",
+                                       "Relative chrono.", "d13C", "d15N", "Sr", "Sr.ppm", "Body height"))
 
 ved$var_names$short <- ved$var_names$full$abbrv
 names(ved$var_names$short) <- ved$var_names$full$vnames
+
+ved$var_names$long <- ved$var_names$full$long
+names(ved$var_names$long) <- ved$var_names$full$vnames
 
 # saving processed dataset =====================================================
 saveRDS(ved, here("data/temp", "vedrovice_dataset.RDS"))
