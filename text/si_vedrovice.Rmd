@@ -1,0 +1,40 @@
+---
+title           : "Supplementary Information: Vedrovice burial analysis"
+author          : "Petr Pajdla"
+    # name          : "Petr Pajdla"
+    # affiliation   : "Department of Archaeology and Museology,
+    #                  Masaryk University, Brno, Czech Republic"
+    # email         : "petr.pajdla@gmail.com"
+date            : "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+    bookdown::pdf_document2:
+        latex: pdflatex
+        fig_caption: true
+        number_sections: false
+        keep_tex: false
+bibliography    : "bib_vedrovice.bib"
+csl             : "european-journal-of-archaeology.csl"
+---
+
+
+# Randomness of Artefact Combinations
+
+For pair of artefacts $i$ and $j$, the observed and expected number of co-occurences are
+denoted $o_{ij}$ and $e_{ij}$ respectively.
+$R$ is the number of variables.
+The $S$ statistic, the overall deviation from expected number of co-occurences for
+all artefacts is defined as the mean square of deviations:
+
+\begin{equation}
+S = \sum_{i=1}^{R}\sum_{j=1}^{R}\frac{(o_{ij} - e_{ij})^2}{R^2} (\#eq:sstat)
+\end{equation}
+
+also:\@ref(eq:sstat)
+
+$$ S = \sum_{i=1}^{R} \frac{v_{i}}{R}$$
+
+where
+
+$$ v_i = \sum_{j=1}^{R} \frac{(o_{ij} - e_{ij})^2}{R}$$
+
+## Implementation

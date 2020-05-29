@@ -1,5 +1,5 @@
 ---
-title           : "Supplement: Vedrovice burial analysis"
+title           : "Vedrovice burial analysis"
 author          : "Petr Pajdla"
     # name          : "Petr Pajdla"
     # affiliation   : "Department of Archaeology and Museology,
@@ -7,8 +7,9 @@ author          : "Petr Pajdla"
     # email         : "petr.pajdla@gmail.com"
 date            : "`r format(Sys.time(), '%d %B, %Y')`"
 abstract        : "Fuck me."
-output :
-    pdf_document:
+output:
+    bookdown::pdf_document2:
+    # bookdown::word_document2:
         latex: pdflatex
         fig_caption: true
         number_sections: false
@@ -19,6 +20,11 @@ csl             : "european-journal-of-archaeology.csl"
 
 <!-- note: length - approx. 10 - 12 pages (no bibliography, tables, figures) -->
 <!-- i.e. 18 000 - 22 000 characters -->
+
+```{r init, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(tidyverse)
+```
 
 <!-- ======================================================================= -->
 
@@ -96,18 +102,24 @@ Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
 count distances between observations used in further analyses.
 <!-- ADD METHODS AND PACKAGES USED IN R -->
 
-## Randomness of Artefact Combinations
+## Randomness of artefact combinations
 
-To determine the non-randomness of various artefact combinations we conduct a
+To determine non-randomness of various artefact combinations we conduct a
 permutation test on the presence/absence data matrix.
-The method based on a theory of generalized Monte Carlo tests was first
+The method based on generalized Monte Carlo tests was first
 introduced to archaeology by @manly1996.
 Original (observed) co-occurence matrix is permutated $n$ times with constant
 row and column totals, i. e. both the count of artifacts in individual graves
-and sum of the given type of artifacts are fixed.
+and sum of the given type of artifacts across the burials are fixed.
 
 To examine which associations of variables are infrequent or even not present
-and which tend to appear together we conduct a randomization test
+and which tend to appear together co-occurences of observed and simulated data
+are summarized using two statistics suggested by @manly1996.
+The $S$ statistic is a measure of overall deviation between expected and observed
+number of artefact occurences while
+the $v$ statistic is a measure of difference between co-occurences of
+individual artefact with other artifacts
+[@manly1996, 475, for details see SI].
 
 ## Exceptionality index
 
@@ -115,9 +127,7 @@ Exceptionality index ($EI$) is used in order to induce relative exceptionality
 of individual burials based on their attributes.
 This approach is independent on a prior selection of attributes of importance
 or *prestige*.
-The concept was introduced by @demjan2015.
-
-It is defined by @demjan2015[367] as a Root Mean Square (*quadratic mean*) of
+It was defined by @demjan2015[367] based on a Root Mean Square (*quadratic mean*) of
 PCA factor scores:
 $$ EI_{attr_g}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}s_i^2} $$
 where $s_i$ are factor scores of individual graves. The mean value is
@@ -145,6 +155,20 @@ variables is treated as nominal data.
 <!-- ======================================================================= -->
 
 # Results
+
+## Randomness of artefact combinations
+
+```{r vtable}
+vstat <- read_csv(here::here("data/temp", "v_statistics.csv")) %>% 
+    select(full, v, p) %>% 
+    mutate(v = round(v, 2), p = round(p, 2)) %>% 
+    rename("variable" = full, "v statistic" = v, "p value" = p)
+
+knitr::kable(
+  vstat,
+  caption = 'Fuuuuu'
+)
+```
 
 <!-- ======================================================================= -->
 
