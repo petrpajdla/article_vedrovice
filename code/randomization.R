@@ -131,7 +131,8 @@ v_statistic <- tibble(variable = names(v_observed),
                       v = t(unname(v_observed))[, 1],
                       p = unname(v_p_values),
                       signif = unname(v_p_values < (5 / length(v_p_values)))) %>% 
-  mutate(abbrv = unname(ved$var_names$short[variable]))
+  mutate(abbrv = unname(ved$var_names$short[variable]),
+         full = unname(ved$var_names$long[variable]))
 
 readr::write_csv(v_statistic, here("data/temp", "v_statistics.csv"))
 
