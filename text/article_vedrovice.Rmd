@@ -24,6 +24,7 @@ csl             : "european-journal-of-archaeology.csl"
 ```{r init, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
+library(here)
 ```
 
 <!-- ======================================================================= -->
@@ -100,7 +101,11 @@ Data is analyzed in an R environment for statistical computing and graphics
 reshape2 [@wickham2007] packages to manipulate the data.
 Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
 count distances between observations used in further analyses.
-<!-- ADD METHODS AND PACKAGES USED IN R -->
+<!-- ADD METHODS AND PACKAGES USED IN R, or into SI?-->
+
+## Spatial randomness
+
+
 
 ## Randomness of artefact combinations
 
@@ -120,6 +125,9 @@ number of artefact occurences while
 the $v$ statistic is a measure of difference between co-occurences of
 individual artefact with other artifacts
 [@manly1996, 475, for details see SI].
+
+With $n = 999$ permutations of the original data matrix the results obtained
+are robust
 
 ## Exceptionality index
 
@@ -158,10 +166,21 @@ variables is treated as nominal data.
 
 ## Randomness of artefact combinations
 
-```{r vtable}
-vstat <- read_csv(here::here("data/temp", "v_statistics.csv")) %>% 
-    select(full, v, p) %>% 
-    mutate(v = round(v, 2), p = round(p, 2)) %>% 
+By counting co-occurences of analyzed variables on simulated data matrices and comparing
+the distributions of the two studied statistics with the values calculated for
+the original dataset we can establish whether the overall pattern of artefacts
+distribution in the graves is non-random and further identify artefacts that deviate
+from the random pattern.
+The value of $S$ statistic is deemed significantly large at the 0.05 alpha level with
+$S \approx 14 $ and $ p \approx $ (Fig. \@ref(fig:f-sstat)).
+This suggests that there is enough evidence that the overall distribution of
+artefacts in the graves is not random.
+
+
+```{r t-vstat}
+vstat <- read_csv(here("data/temp", "v_statistics.csv")) %>%
+    select(full, v, p) %>%
+    mutate(v = round(v, 2), p = round(p, 2)) %>%
     rename("variable" = full, "v statistic" = v, "p value" = p)
 
 knitr::kable(
@@ -169,6 +188,19 @@ knitr::kable(
   caption = 'Fuuuuu'
 )
 ```
+
+```{r f-sstat, fig.cap = "Distribution of simulated and observed S statistic"}
+knitr::include_graphics(here("plots", "s_statistic.pdf"))
+```
+
+```{r f-vstat, fig.cap = "Simulated and observed v statistics for different variables"}
+knitr::include_graphics(here("plots", "v_values.pdf"))
+```
+
+```{r f-cooc, fig.cap = "Networks of variables frequently present together and exluding each other"}
+knitr::include_graphics(here("plots", "cooc_networks.pdf"))
+```
+
 
 <!-- ======================================================================= -->
 

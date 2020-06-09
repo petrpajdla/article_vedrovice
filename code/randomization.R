@@ -62,8 +62,8 @@ cooc_obs <- cooc_obs %>% filter(var1 != var2)
 # cooc_obs %>% tidyr::spread(var2, nr.cooc)
 
 # randomization of co-occurrence matrix - list of many matrices ----------------
+n_permutations <-  999
 # # ======
-# n_permutations <-  999
 # rand_mat <- vegan::permatfull(ved$bin_vars$bin_mat,
 #                               fixedmar = "both",
 #                               mtype = "prab",
@@ -110,31 +110,40 @@ v_experimental <- bind_rows(parallel::parLapply(cl, v_experimental,
                                                 tidyr::spread, "var1", "v"))
 parallel::stopCluster(cl)
 
-# visualizing of v values by small multiples -----------------------------------
-v_exp_g <- v_experimental %>% tidyr::gather(variable, value) %>% 
-  mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])))
-v_obs_g <- v_observed %>% tidyr::gather(variable, value) %>% 
-  mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])))
-
-ggplot() +
-  geom_density(data = v_exp_g, mapping = aes(x = value), fill = "white") +
-  geom_vline(data = v_obs_g, mapping = aes(xintercept = value)) +
-  facet_wrap(~abbrv, scales = "free", nrow = 4) +
-  xlab("v statistic")
-
-ggsave(here("plots", "v_values.pdf"), width = 12, height = 8)
-
 # P-val: percentage of experimental v values that are larger than observed v ---
-v_p_values <- purrr::map2(v_experimental, v_observed, get_p, 1000) %>% unlist()
+v_p_values <- purrr::map2(v_experimental, v_observed, get_p, n_permutations) %>% unlist()
 
 v_statistic <- tibble(variable = names(v_observed),
                       v = t(unname(v_observed))[, 1],
                       p = unname(v_p_values),
                       signif = unname(v_p_values < (5 / length(v_p_values)))) %>% 
   mutate(abbrv = unname(ved$var_names$short[variable]),
-         full = unname(ved$var_names$long[variable]))
+         long = unname(ved$var_names$long[variable]))
 
 readr::write_csv(v_statistic, here("data/temp", "v_statistics.csv"))
+
+# visualizing of v values by small multiples -----------------------------------
+v_exp_g <- v_experimental %>% tidyr::gather(variable, value) %>% 
+  mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])),
+         long = forcats::as_factor(unname(ved$var_names$long[variable])))
+v_obs_g <- v_observed %>% tidyr::gather(variable, value) %>% 
+  mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])),
+         long = forcats::as_factor(unname(ved$var_names$long[variable])))
+
+v_annot <- v_statistic %>% select(long, p, signif) %>% 
+  mutate(signif = if_else(signif, "*", "")) %>% 
+  mutate(p = paste0(round(p, 2)*100, "% ", signif))
+
+ggplot(v_exp_g, mapping = aes(x = value)) +
+  geom_density(fill = "white") +
+  geom_rug(alpha = 0.4, length = unit(1, "mm")) +
+  geom_vline(data = v_obs_g, mapping = aes(xintercept = value)) +
+  facet_wrap(~long, scales = "free", nrow = 4) +
+  xlab("v statistic") +
+  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = p), size = 3.4,
+            hjust = +1.1, vjust = +1.2)
+
+ggsave(here("plots", "v_values.pdf"), width = 12, height = 8)
 
 # S statistic ==================================================================
 s_observed <- sum(v_observed / length(names(ved$bin_vars)))
@@ -142,14 +151,15 @@ s_observed <- sum(v_observed / length(names(ved$bin_vars)))
 s_experimental <- rowSums(apply(v_experimental, 2, 
                                 "/", length(names(ved$bin_vars))))
 
-ggplot() +
-  geom_density(data = as_tibble(s_experimental), aes(value), fill = "white") +
+ggplot(as_tibble(s_experimental), aes(value)) +
+  geom_density(fill = "white") +
   geom_vline(xintercept = s_observed) +
-  xlab("S statistic")
+  xlab("S statistic") +
+  geom_rug(length = unit(1, "mm"), alpha = 0.4)
 
 ggsave(here("plots", "s_statistic.pdf"))
 
-s_p_value <- get_p(s_experimental, s_observed, length(s_experimental))
+s_p_value <- get_p(s_experimental, s_observed, n_permutations + 1)
 s_p_value < 0.05
 
 # The S statistic is significantly larger than experimental S and
@@ -216,8 +226,8 @@ plot(g_cooc_positive,
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_positive)$weight^1.2,
      mark.groups = cluster_fast_greedy(g_cooc_positive),
-     mark.col = "gray90", 
-     mark.border = NA,
+     mark.col = "gray90",
+     mark.border = "gray80",
      main = "copresence")
 plot(g_cooc_negative, 
      vertex.shape = "circle", 
@@ -229,7 +239,7 @@ plot(g_cooc_negative,
      edge.width = edge_attr(g_cooc_negative)$weight^1.2,
      mark.groups = cluster_fast_greedy(g_cooc_negative),
      mark.col = "gray90", 
-     mark.border = NA,
+     mark.border = "gray80",
      main = "coabsence")
 dev.off()
 

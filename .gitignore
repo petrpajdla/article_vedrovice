@@ -40,6 +40,8 @@ vignettes/*.pdf
 
 # Temporary data files
 /data/temp/
+/data/raw/
+/data/backup/
 
 # Temporary output files (.Rout) of GNU Make
 *.Rout

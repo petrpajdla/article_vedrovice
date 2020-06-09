@@ -64,7 +64,7 @@ ved$cat_vars$cat_vars <- input %>%
 rownames(ved$cat_vars$cat_vars) <- ved$id_burials
 
 # metadata
-lookup_sex <- c("C" = "gold", "F" = "tomato", "M" = "steelblue")
+lookup_sex <- c("n. a." = "gold", "F" = "tomato", "M" = "steelblue")
 
 ved$metadata <- input %>% select(id_burial, sex, age_cat, dat) %>% 
   mutate(sex = factor(sex),
@@ -93,9 +93,9 @@ ved$var_names$full <- tibble(vnames = names(input),
                                        "age.cat", "age.int", "pit.l", "pit.w", "pit.d",
                                        "pit.o", "pit.o.cat", "head.o", "head.o.cat",
                                        "body.side",
-                                       "pigm", "pol.sum", "adz", "axe", "grd", "peb",
+                                       "pigm", "pol.sum", "adz", "axe", "grnd", "peb",
                                        "l.sum", "l.kl", "l.skj", "l.oth", "l.rad", "l.sgs",
-                                       "p.sum", "p.bow", "p.glo", "p.bot", "p.spec", "p.frag",
+                                       "p.sum", "p.bow", "p.glo", "p.bot", "p.oth", "p.frag",
                                        "p.top", "p.mid", "p.leg","p.fill",
                                        "bon.t", "bon.awl", "pen", "pen.L", "pen.U", "pen.I", 
                                        "buck", "brac", "neck", "b.sp", "b.mar", "b.div",
@@ -107,7 +107,7 @@ ved$var_names$full <- tibble(vnames = names(input),
                                        "Pit orientation", "Pit orientation", "Head orientation", "Head orientation",
                                        "Side",
                                        "Pigment", "PST(sum)", "Adze", "Axe", "Grinding tool", "Pebble",
-                                       "Lith. (sum)", "Lith. (KF)", "Lith (Krak)", "Lith. (other)", "Lith. (Rad.)", "Lith. (SGS)",
+                                       "Lithics (sum)", "Lithics (KF)", "Lithics (SKJ)", "Lithics (other)", "Lithics (Rad.)", "Lithics (SGS)",
                                        "Pottery (sum)", "Bowl", "Globular pot", "Bottle", "Other pottery", "Pottery fragment",
                                        "Pot around head", "Pot in the middle ", "Pot around legs","Pot in fill",
                                        "Bone tool", "Bone awl", "Pendant", "L-shaped pendant", "U-shaped pendant", "I-shaped pendant", 
