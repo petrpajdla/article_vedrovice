@@ -87,7 +87,7 @@ estimate_L <- function(x) {
 # @fun = function name
 plot_estimate <- function(x, fun) {
   stopifnot(verifyclass(x, "tbl_df"))
-  stopifnot(all(names(ved_l) %in% c("r", "obs", "theo", "lo", "hi")))
+  stopifnot(all(names(x) %in% c("r", "obs", "theo", "lo", "hi")))
   ylabel = paste0(fun, "(r)")
   p1 <- x %>% 
     ggplot() +
@@ -98,7 +98,7 @@ plot_estimate <- function(x, fun) {
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
     theme_minimal()
-  ggsave(here("plots", paste0("pointprocess_", fun, ".pdf")))
+  # ggsave(here("plots", paste0("pointprocess_", fun, ".pdf")))
   p1
 }
 
@@ -130,6 +130,15 @@ plot_estimate(ved_k, "K")
 ved_l <- estimate_L(ved_pp)
 
 plot_estimate(ved_l, "L")
+
+# export combined figure
+
+grid_gl <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"), 
+                                   plot_estimate(ved_l, "L"),
+                                   nrow = 1)
+
+ggsave(plot = grid_gl, here("plots", "pointprocess_gl.pdf"), device = "pdf",
+       width = 8, height = 4)
 
 # for different marks ==========================================================
 ved_pp_split <- split(ved_pp)
