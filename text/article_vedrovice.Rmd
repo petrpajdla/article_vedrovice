@@ -103,8 +103,30 @@ Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
 count distances between observations used in further analyses.
 <!-- ADD METHODS AND PACKAGES USED IN R, or into SI?-->
 
-## Spatial randomness
+## Spatial organization
 
+Spatial arrangement of prehistoric burial grounds is often examined to find
+any internal structures, arrangements in lines, possible grouping and so forth.
+We approach the task as a point pattern analysis problem given that
+a burial (event) is simplified as a point location in geographic space.
+The excavated polygon is used as a study area (a window).
+Using a window closely approximating locations of the burials was also considered,
+e. g. buffer zone or convex/concave hull but simplified excavation polygon is
+deemed the most useful because it preserves the *natural* borders and empty areas
+in the burial ground.
+
+Overall structure of the burial ground is examined using both density based approach,
+and distance based methods [@osullivan2010, 121-154].
+The density of burials is examined using quadrat test and the $G$ function while
+the distance between neighbours usnig Ripley's $K$ function and its derivative, the
+$L$ function [@ripley1976].
+Given statistics for independent random process are estimated using Monte Carlo simulation
+with 99 iterations and the most extreme results for each of the statistics
+are used to construct envelopes encompassing the expected ranges
+
+```{r spat-gl, fig.cap = "G and L functions"}
+knitr::include_graphics(here("plots", "pointprocess_gl.pdf"))
+```
 
 
 ## Randomness of artefact combinations
@@ -172,22 +194,22 @@ the original dataset we can establish whether the overall pattern of artefacts
 distribution in the graves is non-random and further identify artefacts that deviate
 from the random pattern.
 The value of $S$ statistic is deemed significantly large at the 0.05 alpha level with
-$S \approx 14 $ and $ p \approx $ (Fig. \@ref(fig:f-sstat)).
+$S \approx 14$ and $p \approx xy$ (Fig. \@ref(fig:f-sstat)).
 This suggests that there is enough evidence that the overall distribution of
 artefacts in the graves is not random.
 
 
-```{r t-vstat}
-vstat <- read_csv(here("data/temp", "v_statistics.csv")) %>%
-    select(full, v, p) %>%
-    mutate(v = round(v, 2), p = round(p, 2)) %>%
-    rename("variable" = full, "v statistic" = v, "p value" = p)
+<!-- ```{r t-vstat} -->
+<!-- vstat <- read_csv(here("data/temp", "v_statistics.csv")) %>% -->
+<!--     select(full, v, p) %>% -->
+<!--     mutate(v = round(v, 2), p = round(p, 2)) %>% -->
+<!--     rename("variable" = full, "v statistic" = v, "p value" = p) -->
 
-knitr::kable(
-  vstat,
-  caption = 'Fuuuuu'
-)
-```
+<!-- knitr::kable( -->
+<!--   vstat, -->
+<!--   caption = 'Fuuuuu' -->
+<!-- ) -->
+<!-- ``` -->
 
 ```{r f-sstat, fig.cap = "Distribution of simulated and observed S statistic"}
 knitr::include_graphics(here("plots", "s_statistic.pdf"))
