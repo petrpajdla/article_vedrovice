@@ -40,7 +40,7 @@ window_exc <- as.owin(ved_exc)
 
 ggplot(data = ved_sf) +
   geom_sf(data = ved_exc, fill = "gray90", color = NA) +
-  geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
+  # geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
   geom_sf(aes(shape = sex)) + 
   scale_shape_manual(values = c(22, 21, 24, 4)) +
   # ggsflabel::geom_sf_text_repel(aes(label = id_burial)) +
@@ -132,12 +132,11 @@ ved_l <- estimate_L(ved_pp)
 plot_estimate(ved_l, "L")
 
 # export combined figure
-
 grid_gl <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"), 
-                                   plot_estimate(ved_l, "L"),
+                                   plot_estimate(ved_k, "K"),
                                    nrow = 1)
 
-ggsave(plot = grid_gl, here("plots", "pointprocess_gl.pdf"), device = "pdf",
+ggsave(plot = grid_gl, here("plots", "pointprocess_fun.pdf"), device = "pdf",
        width = 8, height = 4)
 
 # for different marks ==========================================================

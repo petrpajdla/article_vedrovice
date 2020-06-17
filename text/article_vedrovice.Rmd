@@ -115,18 +115,27 @@ e. g. buffer zone or convex/concave hull but simplified excavation polygon is
 deemed the most useful because it preserves the *natural* borders and empty areas
 in the burial ground.
 
-Overall structure of the burial ground is examined using both density based approach,
+Overall structure of the burial ground is examined using both density based approach
 and distance based methods [@osullivan2010, 121-154].
-The density of burials is examined using quadrat test and the $G$ function while
-the distance between neighbours usnig Ripley's $K$ function and its derivative, the
-$L$ function [@ripley1976].
+The density of burials is examined using quadrat test while
+the distance between neighbours using the $G$, Ripley's $K$ [@ripley1976] and $L$ functions.
+
+The quadrat test divides the area of interest into several cells of fixed sizes
+(quadrats) and compares the count of events per quadrat with the count
+expected under the null hypothesis that the underlying point process
+is completely spatially random (approximated by a Poisson distribution).
+The $G$ function is a metric of how close events are and summarises
+cummulative frequency distribution of the nearest neighbour distances.
+Because of its dependence on the intensity of events in the study area, it is
+subject to changes in the size of the study area.
+Ripley's $K$ function (and variance stabilized $L$ function) is more resilient
+to these changes and is widely used in archaeology [cf. @negre2018].
+
 Given statistics for independent random process are estimated using Monte Carlo simulation
 with 99 iterations and the most extreme results for each of the statistics
 are used to construct envelopes encompassing the expected ranges
 
-```{r spat-gl, fig.cap = "G and L functions"}
-knitr::include_graphics(here("plots", "pointprocess_gl.pdf"))
-```
+
 
 
 ## Randomness of artefact combinations
@@ -185,6 +194,14 @@ variables is treated as nominal data.
 <!-- ======================================================================= -->
 
 # Results
+
+## Spatial organization
+
+
+
+```{r spat-gl, fig.cap = "G and L functions"}
+knitr::include_graphics(here("plots", "pointprocess_fun.pdf"))
+```
 
 ## Randomness of artefact combinations
 
