@@ -51,5 +51,6 @@ vignettes/*.pdf
 
 # Output text files
 /text/*.pdf
+/text/*.docx
 
 
