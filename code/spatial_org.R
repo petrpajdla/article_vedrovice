@@ -107,11 +107,17 @@ plot_estimate <- function(x, fun) {
     ggplot() +
     geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
     geom_line(aes(r, theo), linetype = 2) +
-    geom_line(aes(r, obs), size = 0.8) +
-    labs(y = ylabel) + 
+    geom_line(aes(r, obs), size = 0.8) + 
+    annotate("text", -Inf, +Inf, label = ylabel, 
+             hjust = -0.2, vjust = 1.4, 
+             size = 6, fontface = "italic") +
+    # labs(y = ylabel) + 
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-    theme_minimal()
+    theme(panel.border = element_rect(colour = "black", fill = NA, size = 1.6),
+          panel.background = element_blank(),
+          line = element_blank(),
+          text = element_blank())
   # ggsave(here("plots", paste0("pointprocess_", fun, ".pdf")))
   p1
 }
@@ -131,10 +137,10 @@ ved_g <- envelope(ved_pp, Gest, nrank = 2, nsim = 99) %>%
 plot_estimate(ved_g, "G")
 
 # # F function
-# ved_f <- envelope(ved_pp, Fest, nrank = 2, nsim = 99) %>%
-#   fix_data_frame()
-# 
-# plot_estimate(ved_f, "F")
+ved_f <- envelope(ved_pp, Fest, nrank = 2, nsim = 99) %>%
+  fix_data_frame()
+
+plot_estimate(ved_f, "F")
 
 # distance based ---------------------------------------------------------------
 # estimating Ripley's K function
@@ -150,12 +156,13 @@ ved_l <- estimate_L(ved_pp)
 plot_estimate(ved_l, "L")
 
 # export combined figure
-grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"), 
-                                   plot_estimate(ved_k, "K"),
-                                   nrow = 1)
+grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
+                                    plot_estimate(ved_f, "F"),
+                                    plot_estimate(ved_k, "K"),
+                                    nrow = 1)
 
 ggsave(plot = grid_fns, here("plots", "pointprocess_fun.pdf"), device = "pdf",
-       width = 8, height = 4)
+       width = 9, height = 3)
 
 # for different marks ==========================================================
 ved_pp_split <- split(ved_pp)
@@ -166,10 +173,6 @@ estimate_L(ved_pp_split[["M"]]) %>% plot_estimate("fuu")
 estimate_L(ved_pp_split[["F"]]) %>%  plot_estimate("fuu")
 
 estimate_L(ved_pp_split[["n. a."]]) %>%  plot_estimate("fuu")
-
-# distance based ---------------------------------------------------------------
-
-
 
 # density
 plot(ved_pp_split)
