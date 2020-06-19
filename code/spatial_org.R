@@ -72,8 +72,8 @@ plot(ved_pp, use.marks = FALSE)
 # @x = ppp object
 estimate_L <- function(x) {
   stopifnot(verifyclass(x, "ppp"))
-  l <- envelope(x, Kest) %>% 
-    fix_data_frame() %>% 
+  l <- envelope(x, Kest, nrank = 2, nsim = 99) %>%
+    fix_data_frame() %>%
     mutate(r = r,
            obs = sqrt(obs/pi) - r,
            theo = sqrt(theo/pi) - r,
@@ -81,6 +81,20 @@ estimate_L <- function(x) {
            hi = sqrt(hi/pi) - r)
   return(l)
 }
+
+# note to self: in most of the sources, the distance r is not subtracted, 
+# see Nakoinz & Knitter 2016, p. 138
+# estimate_L <- function(x) {
+#   stopifnot(verifyclass(x, "ppp"))
+#   l <- envelope(x, Kest, nrank = 2, nsim = 99) %>%
+#     fix_data_frame() %>%
+#     mutate(r = r,
+#            obs = sqrt(obs/pi),
+#            theo = sqrt(theo/pi),
+#            lo = sqrt(lo/pi),
+#            hi = sqrt(hi/pi))
+#   return(l)
+# }
 
 # plot function estimate
 # @x = tidy tibble of estimated values
@@ -111,32 +125,36 @@ quadrat.test(ved_pp, alternative = "regular")
 # quadrat test suggests clustering
 
 # estimating function G
-ved_g <- envelope(ved_pp, Gest) %>% 
+ved_g <- envelope(ved_pp, Gest, nrank = 2, nsim = 99) %>% 
   fix_data_frame()
-# ved_f <- envelope(ved_pp, Fest) %>% 
-#   fix_data_frame()
 
 plot_estimate(ved_g, "G")
+
+# # F function
+# ved_f <- envelope(ved_pp, Fest, nrank = 2, nsim = 99) %>%
+#   fix_data_frame()
+# 
+# plot_estimate(ved_f, "F")
 
 # distance based ---------------------------------------------------------------
 # estimating Ripley's K function
 # ved_k <- Kest(ved_pp)
-ved_k <- envelope(ved_pp, Kest) %>% 
+ved_k <- envelope(ved_pp, Kest, nrank = 2, nsim = 99) %>% 
   fix_data_frame()
 
 plot_estimate(ved_k, "K")
 
-# estimating L function
+# # estimating L function
 ved_l <- estimate_L(ved_pp)
 
 plot_estimate(ved_l, "L")
 
 # export combined figure
-grid_gl <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"), 
+grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"), 
                                    plot_estimate(ved_k, "K"),
                                    nrow = 1)
 
-ggsave(plot = grid_gl, here("plots", "pointprocess_fun.pdf"), device = "pdf",
+ggsave(plot = grid_fns, here("plots", "pointprocess_fun.pdf"), device = "pdf",
        width = 8, height = 4)
 
 # for different marks ==========================================================
