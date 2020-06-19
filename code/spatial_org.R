@@ -112,8 +112,8 @@ plot_estimate <- function(x, fun) {
              hjust = -0.2, vjust = 1.4, 
              size = 6, fontface = "italic") +
     # labs(y = ylabel) + 
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
+    # scale_x_continuous(expand = c(0, 0)) +
+    # scale_y_continuous(expand = c(0, 0)) +
     theme(panel.border = element_rect(colour = "black", fill = NA, size = 1.6),
           panel.background = element_blank(),
           line = element_blank(),
@@ -150,19 +150,29 @@ ved_k <- envelope(ved_pp, Kest, nrank = 2, nsim = 99) %>%
 
 plot_estimate(ved_k, "K")
 
-# # estimating L function
+# estimating L function
 ved_l <- estimate_L(ved_pp)
 
 plot_estimate(ved_l, "L")
+
+# estimate T fun/stat
+ved_t <- envelope(ved_pp, Tstat, nrank = 2, nsim = 99) %>% 
+  fix_data_frame()
+
+plot_estimate(ved_t, "T")
 
 # export combined figure
 grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
                                     plot_estimate(ved_f, "F"),
                                     plot_estimate(ved_k, "K"),
+                                    plot_estimate(ved_t, "T"),
                                     nrow = 1)
 
 ggsave(plot = grid_fns, here("plots", "pointprocess_fun.pdf"), device = "pdf",
-       width = 9, height = 3)
+       width = 12, height = 3)
+
+
+
 
 # for different marks ==========================================================
 ved_pp_split <- split(ved_pp)
