@@ -103,7 +103,7 @@ Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
 count distances between observations used in further analyses.
 <!-- ADD METHODS AND PACKAGES USED IN R, or into SI?-->
 
-## Spatial organization
+## Spatial pattern
 
 Spatial arrangement of prehistoric burial grounds is often examined to find
 any internal structure, arrangement or possible grouping.
@@ -122,41 +122,49 @@ characterize the point pattern in terms of its *first-order properties* [@osulli
 The assumption underlying the *first-order effects* is that any point location is
 independent on other point locations and different parameters influence the location
 [@nakoinz2016, 130-135; @osullivan2010, 107].
-On the other hand the methods based on distances between nearest neighbours
-characterize the point pattern in regards to *second-order effects*.
+On the other hand the methods based on distances between nearest neighbours and triples
+characterize the point pattern based on *second- and third-order effects*.
 In this case it is presumed that the point location depends on other
 point locations.
-Functions $G$, Ripley's $K$ [@ripley1976] and $L$ are explored as the most widely
-used distance-based point pattern measures [@nakoinz2016, 135-144; @osullivan2010, 130-139]
+<!-- [@nakoinz2016, 135-144; @osullivan2010, 130-139] -->
 
 We assume that in case of a burial ground *first-order properties* are
 of little to no importance at all.
-In case of spatial analysis of settlement structure, individual locations of
+In spatial analysis of settlement patterns individual locations of
 settlements (points) can depend on a number of parameters, for instance
 elevation, soil type etc.
 <!-- It is possible that the position of burials was dependent on parameters that were not
 captured by the excavation, for example location of trees but that is impossible to test.-->
-In case of a grave placement we presume that the choice of a location is influenced
-solely by other (previous) grave locations.
+In case of a grave placement in a burial ground we presume that the choice of
+a location is influenced predominantly by other (previous) grave locations.
 The *second-order properties*, and possibly *third-order properties* [@nakoinz2016, 130, 144]
-which take into account triplets of points, thus effectively the overall structure of the pattern,
-are considered major factors in locating the graves.
+are thus considered major factors in locating of the graves.
 
-The quadrat test divides the area of interest into several cells of fixed sizes
+To characterize the pattern based on density, the quadrat test is employed.
+It divides the area of interest into several cells of fixed sizes
 (quadrats) and compares the count of events per quadrat with the count
 expected under the null hypothesis that the underlying point process
 is completely spatially random (approximated by a Poisson distribution).
+Functions $G$, $F$, Ripley's $K$ [@ripley1976] and $T$ [@schladitz2000] are
+based on the nearest neighbour distances [@nakoinz2016, 135-144].
 The $G$ function is a metric of how close events are and summarises
 cummulative frequency distribution of the nearest neighbour distances.
 Because of its dependence on the intensity of events in the study area, it is
 subject to changes in the size of the study area.
-Ripley's $K$ function (and variance stabilized $L$ function) is more resilient
-to these changes and is widely used in archaeology [cf. @negre2018].
+The $F$ function, also empty-space function, is based on simulating a point pattern
+and calculating of distances between random locations and the observed locations.
+It is a measure of how far are observed events from any arbitrary location [@osullivan2010, 132-135].
+Ripley's $K$ function is in comparison with the $G$ function resilient to
+changes in the window size and works with all the proximal events up to a
+certain threshold, not only the nearest neighbours [@nakoinz2016, 138].
+It is widely used in archaeology [@negre2018].
+Last but not least, the $T$ function is a third-order parallel to the $K$ function [@schladitz2000].
 
-Given statistics for independent random process are estimated using Monte Carlo simulation
-with 99 iterations and the most extreme results for each of the statistics
-are used to construct envelopes encompassing the expected ranges
-
+Given statistics for independent random process are estimated using Monte Carlo
+simulation with 99 iterations.
+The most extreme results of simulations are discarded as outliers and the
+second most extreme results are used to construct envelopes encompassing the
+expected range for a given function [@baddeley2016 384-403]
 
 ## Randomness of artefact combinations
 
@@ -215,7 +223,7 @@ variables is treated as nominal data.
 
 # Results
 
-## Spatial organization
+## Spatial pattern
 
 
 
