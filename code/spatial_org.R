@@ -41,7 +41,7 @@ window_exc <- as.owin(ved_exc)
 ggplot(data = ved_sf) +
   geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   # geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
-  geom_sf(aes(shape = sex)) + 
+  geom_sf(aes(shape = sex), fill = "white") + 
   scale_shape_manual(values = c(22, 21, 24, 4)) +
   # ggsflabel::geom_sf_text_repel(aes(label = id_burial)) +
   theme_void()
@@ -62,7 +62,7 @@ ved_pp <- ppp(x = ved_layout$layout_x, y = ved_layout$layout_y,
               window = window_exc,
               marks = ved_marks)
 
-plot(ved_pp, use.marks = FALSE)
+# plot(ved_pp, use.marks = FALSE)
 
 # point pattern analysis
 # functions ====================================================================
@@ -112,9 +112,9 @@ plot_estimate <- function(x, fun) {
              hjust = -0.2, vjust = 1.4, 
              size = 6, fontface = "italic") +
     # labs(y = ylabel) + 
-    # scale_x_continuous(expand = c(0, 0)) +
-    # scale_y_continuous(expand = c(0, 0)) +
-    theme(panel.border = element_rect(colour = "black", fill = NA, size = 1.6),
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
           panel.background = element_blank(),
           line = element_blank(),
           text = element_blank())
@@ -170,9 +170,6 @@ grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
 
 ggsave(plot = grid_fns, here("plots", "pointprocess_fun.pdf"), device = "pdf",
        width = 12, height = 3)
-
-
-
 
 # for different marks ==========================================================
 ved_pp_split <- split(ved_pp)
