@@ -103,12 +103,12 @@ Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
 count distances between observations used in further analyses.
 <!-- ADD METHODS AND PACKAGES USED IN R, or into SI?-->
 
-## Spatial pattern
+## Spatial patterning
 
-Spatial arrangement of prehistoric burial grounds is often examined to find
+Spatial patterning in prehistoric burial grounds is often examined to find
 any internal structure, arrangement or possible grouping.
 We approach the task as a point pattern analysis problem given that
-a burial (event) is simplified as a point location in geographic space.
+a burial (event) is simplified as a point location in a two dimensional space.
 A polygon of the excavation extent is used as a study area (a window).
 Using a window closely approximating locations of the burials was also considered,
 e. g. buffer zone or convex/concave hull but simplified excavation polygon is
@@ -120,16 +120,16 @@ and distance based methods [@osullivan2010, 121-154].
 It is argued that density based approaches, for instance quadrat tests,
 characterize the point pattern in terms of its *first-order properties* [@osullivan2010, 126].
 The assumption underlying the *first-order effects* is that any point location is
-independent on other point locations and different parameters influence the location
+independent on other point locations and different parameters influence the location.
+On the other hand the methods based on distances between neighbours and triples of neighbors
+characterize the point pattern based on *second- and third-order effects*
 [@nakoinz2016, 130-135; @osullivan2010, 107].
-On the other hand the methods based on distances between nearest neighbours and triples
-characterize the point pattern based on *second- and third-order effects*.
-In this case it is presumed that the point location depends on other
-point locations.
 <!-- [@nakoinz2016, 135-144; @osullivan2010, 130-139] -->
 
-We assume that in case of a burial ground *first-order properties* are
-of little to no importance at all.
+We presume that certain burial location is determined by other burial locations
+and is not quite dependent on on other parameters.
+In other words *first-order properties* are of little to no importance at all in
+our point of view.
 In spatial analysis of settlement patterns individual locations of
 settlements (points) can depend on a number of parameters, for instance
 elevation, soil type etc.
@@ -164,7 +164,21 @@ Given statistics for independent random process are estimated using Monte Carlo
 simulation with 99 iterations.
 The most extreme results of simulations are discarded as outliers and the
 second most extreme results are used to construct envelopes encompassing the
-expected range for a given function [@baddeley2016 384-403]
+expected range for a given function [@baddeley2016 384-403].
+
+To explore whether neighboring individuals are more often of the same sex we
+construct a Gabriel graph [@gabriel1969] with burial locations as nodes (Fig. \@ref(fig:gabriel)).
+For each node, mean sex of the neighbors is determined and recorded.
+To check how common the observed value is, we perform a permutation test
+where sex of burials is randomly assigned while preserving the overall
+proportion of given categories and the neighborhood struture determined by the
+Gabriel graph.
+The observed values of neighbors sex categories are compared against distributions
+derived from the simulated data.
+
+```{r gabriel, fig.cap = "Gabriel graph"}
+knitr::include_graphics(here("plots", "plan_vedrovice_gabriel.pdf"))
+```
 
 ## Randomness of artefact combinations
 
@@ -202,7 +216,6 @@ normalized to range $[0-1]$:
 
 $$ EI_{attr_g}=\frac{EI_{attr_g}}{max~EI_{attr_g}} $$
 
-
 ## Distance between burials
 
 The input variables are of mixed data types, thus Gower's similarity
@@ -223,13 +236,32 @@ variables is treated as nominal data.
 
 # Results
 
-## Spatial pattern
+## Spatial patterning
+
+The quadrat test suggests both random and clustered processes with p values
+under the 0.05 alpha value but the $\chi^2$ approximation is inaccurate due to small
+expected counts (for the details see supplementary information).
+Fig. \@ref(fig:spat-funs) shows that the curves of $G$ and $F$ functions do not
+deviate too much from the curves expected under independent random process nor
+do they traverse the boundaries of the envelopes.
+This tells us that both the cummulative nearest-neighbor distance (*G*) and
+distance to any random location in the space of the window (*F*) are well
+approximated by random processes and do not show evidence for spatial clustering.
+On the other hand, both *K* and *T* curves have a steep rise and exceed the
+envelope boundaries.
+These functions thus show evidence for clustering process in the observed point
+pattern.
 
 
 
-```{r spat-gl, fig.cap = "G and L functions"}
+```{r spat-funs, fig.cap = "Functions *G*, *F*, *K* and *T*. *Dashed line* -- theoretical curve under CSR, *solid line* -- empirical curve, *gray area* -- envelope."}
 knitr::include_graphics(here("plots", "pointprocess_fun.pdf"))
 ```
+
+```{r neigh-sex, fig.cap = "Mean neighbors in a given sex category. *Gray area* -- density estimation for the simulated data, *vertical line* -- observed value."}
+knitr::include_graphics(here("plots", "prob_neighbour_sex.pdf"))
+```
+
 
 ## Randomness of artefact combinations
 
