@@ -117,7 +117,9 @@ plot_estimate <- function(x, fun) {
     theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
           panel.background = element_blank(),
           line = element_blank(),
-          text = element_blank())
+          axis.text.y = element_blank(),
+          axis.title.y = element_blank(),
+          axis.title.x = element_blank())
   # ggsave(here("plots", paste0("pointprocess_", fun, ".pdf")))
   p1
 }
