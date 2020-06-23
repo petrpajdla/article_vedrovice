@@ -13,6 +13,15 @@ library(igraph)
 
 set.seed(42)
 
+# theme for ggplot graphics
+theme_universe <- theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
+                        panel.background = element_blank(),
+                        line = element_blank(),
+                        strip.background = element_blank(), 
+                        axis.text.y = element_blank(), 
+                        axis.title.y = element_blank(), 
+                        panel.spacing = unit(1, "lines"))
+
 # read data
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 
@@ -124,12 +133,7 @@ ved_rand_sex %>%
   facet_grid(to_sex ~ from_sex, scales = "free_y") +
   scale_y_continuous(expand = c(0, 0)) +
   scale_x_continuous(expand = c(0, 0)) +
-  theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
-        panel.background = element_blank(),
-        line = element_blank(),
-        strip.background = element_blank(), 
-        axis.text.y = element_blank(), axis.title.y = element_blank(), 
-        panel.spacing = unit(1, "lines")) +
-  xlab("mean neighbours")
+  xlab("mean neighbours") +
+  theme_universe
 
 ggsave(here("plots", "prob_neighbour_sex.pdf"), width = 12, height = 6)

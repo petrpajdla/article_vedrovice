@@ -10,6 +10,16 @@ library(broom)
 library(spatstat)
 library(sf)
 
+# theme for ggplot graphics
+theme_universe <- theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
+                        panel.background = element_blank(),
+                        line = element_blank(),
+                        strip.background = element_blank(), 
+                        strip.text = element_text(face = "italic"),
+                        axis.text.y = element_blank(), 
+                        axis.title.y = element_blank(), 
+                        panel.spacing = unit(1, "lines"))
+
 # read data
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 
@@ -114,13 +124,24 @@ plot_estimate <- function(x, fun) {
     # labs(y = ylabel) + 
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-    theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
-          panel.background = element_blank(),
-          line = element_blank(),
-          axis.text.y = element_blank(),
-          axis.title.y = element_blank(),
-          axis.title.x = element_blank())
+    theme_universe +
+    theme(axis.title.x = element_blank())
   # ggsave(here("plots", paste0("pointprocess_", fun, ".pdf")))
+  p1
+}
+
+plot_estimate_facet <- function(x) {
+  stopifnot(verifyclass(x, "tbl_df"))
+  stopifnot(all(names(x) %in% c("fun", "r", "obs", "theo", "lo", "hi")))
+  p1 <- x %>% 
+    ggplot() +
+    geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+    geom_line(aes(r, theo), linetype = 2) +
+    geom_line(aes(r, obs), size = 0.8) + 
+    facet_wrap(vars(fun), nrow = 1, scales = "free") +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    theme_universe
   p1
 }
 
@@ -164,11 +185,21 @@ ved_t <- envelope(ved_pp, Tstat, nrank = 2, nsim = 99) %>%
 plot_estimate(ved_t, "T")
 
 # export combined figure
-grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
-                                    plot_estimate(ved_f, "F"),
-                                    plot_estimate(ved_k, "K"),
-                                    plot_estimate(ved_t, "T"),
-                                    nrow = 1)
+
+# using grid and individual plots
+# grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
+#                                     plot_estimate(ved_f, "F"),
+#                                     plot_estimate(ved_k, "K"),
+#                                     plot_estimate(ved_t, "T"),
+#                                     nrow = 1)
+
+# using facets
+grid_fns <- bind_rows("G(r)" = ved_g, 
+                      "F(r)" = ved_f, 
+                      "K(r)" = ved_k, 
+                      "T(r)" = ved_t, .id = "fun") %>% 
+  mutate(fun = as_factor(fun)) %>% 
+  plot_estimate_facet()
 
 ggsave(plot = grid_fns, here("plots", "pointprocess_fun.pdf"), device = "pdf",
        width = 12, height = 3)
