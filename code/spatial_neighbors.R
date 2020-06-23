@@ -48,27 +48,27 @@ ggplot() +
   geom_sf(data = ved_sf, shape = 21, fill = "white") +
   theme_void()
 
-ggsave(here("plots", "plan_vedrovice_gabriel.pdf"), scale = 2)
+# ggsave(here("plots", "plan_vedrovice_gabriel.pdf"), scale = 2)
 
 # get sex of neighbors
-g <- graph_from_edgelist(cbind(from = ved_gabriel$from, to = ved_gabriel$to), 
-                         directed = FALSE)
-V(g)$name <- ved$metadata$id_burial
+ved_g <- graph_from_edgelist(cbind(from = ved_gabriel$from, to = ved_gabriel$to), 
+                             directed = FALSE)
+V(ved_g)$name <- ved$metadata$id_burial
 
 ved_sex <- as.character(ved$metadata$sex)
 names(ved_sex) <- ved$metadata$id_burial
 
-get_sex_neighbors <- function() {
+neigh_sex <- function(g, sex_vector) {
   res <- vector(mode = "list", length = length(V(g)))
   names(res) <- V(g)$name
   for (i in seq_along(V(g))) {
     x <- attr(neighbors(g, v = i), "names")
-    res[[i]] <- unname(ved_sex[x])
+    res[[i]] <- unname(sex_vector[x])
   }
   return(res)
 }
 
-nb_sex <- get_sex_neighbors() %>% 
+nb_sex <- neigh_sex(ved_g, ved_sex) %>% 
   map(tibble) %>% 
   map(set_names, "to_sex") %>% 
   bind_rows(.id = "id") %>% 
@@ -79,45 +79,44 @@ nb_sex <- get_sex_neighbors() %>%
   mutate(from_sex = unname(ved_sex[id])) %>% 
   ungroup() %>% 
   group_by(from_sex, to_sex) %>% 
-  summarise(mean = mean(n), .groups = "drop")
+  summarise(mean = mean(n), sum = sum(n), .groups = "drop")
 
 # randomization of sex for neighbors
-randomize_sex <- function(n_sim) {
-  n_bur <- nrow(ved$metadata)
-  prob <- ved$metadata %>% 
-    select(id_burial, sex) %>% 
-    group_by(sex) %>% 
-    count() %>% 
+randomize_neigh_sex <- function(g, n_sim, metadata) {
+  n_sim <- n_sim
+  n_bur <- nrow(metadata)
+  prob <- metadata %>%
+    select(id_burial, sex) %>%
+    group_by(sex) %>%
+    count() %>%
     mutate(prob = n / n_bur)
-  res <- vector(mode = "list", length = n_sim)
-  neighbors <- bind_cols(from = names(ved_gabriel$x)[ved_gabriel$from], 
-                         to = names(ved_gabriel$x)[ved_gabriel$to]) %>% 
-    mutate(across(everything(), as.double))
+  res <- vector("list", n_sim)
   for (i in 1:n_sim) {
-    sex_rand <- randomizr::simple_ra(n_bur, prob_each = prob$prob, 
-                                     conditions = prob$sex) %>% 
-      as_tibble() %>% 
-      bind_cols(id_burial = ved$metadata$id_burial) %>% 
-      rename("sex" = "value")
-    sex_rand_v <- sex_rand$sex
-    names(sex_rand_v) <- sex_rand$id_burial
-    neighbors <- neighbors %>% mutate(from_sex = unname(sex_rand_v[from]),
-                         to_sex = unname(sex_rand_v[to]))
-    res[[i]] <- neighbors %>% 
+    rand_sex_vec <- randomizr::simple_ra(n_bur, prob_each = prob$prob, 
+                                         conditions = prob$sex) %>% 
+      as.character()
+    names(rand_sex_vec) <- unlist(metadata[, "id_burial"])
+    res[[i]] <- neigh_sex(g, rand_sex_vec) %>% 
+      map(tibble) %>% 
+      map(set_names, "to_sex") %>% 
+      bind_rows(.id = "id") %>% 
+      mutate(from_sex = unname(rand_sex_vec[id])) %>% 
       filter(from_sex != "ind.", to_sex != "ind.") %>% 
-      group_by(from) %>% 
+      group_by(id) %>%
       count(to_sex) %>% 
-      mutate(from_sex = unname(sex_rand_v[from])) %>% 
+      mutate(from_sex = unname(rand_sex_vec[id])) %>% 
       ungroup() %>% 
       group_by(from_sex, to_sex) %>% 
-      summarise(mean = mean(n), .groups = "drop")
+      summarise(mean = mean(n), sum = sum(n), .groups = "drop")
+    print(i)
   }
-  return(bind_rows(res))
+  return(res)
 }
 
-ved_random_sex <- randomize_sex(200)
+ved_rand_sex <- randomize_neigh_sex(ved_g, n_sim = 99, metadata = ved$metadata)
 
-ved_random_sex %>% 
+ved_rand_sex %>% 
+  bind_rows() %>% 
   ggplot(aes(mean)) +
   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
   geom_vline(data = nb_sex, aes(xintercept = mean), linetype = 1, size = 0.8) +
