@@ -253,12 +253,20 @@ These functions thus show evidence for clustering process in the observed point
 pattern.
 
 
-
-```{r spat-funs, fig.cap = "Functions *G*, *F*, *K* and *T*. *Dashed line* -- theoretical curve under CSR, *solid line* -- empirical curve, *gray area* -- envelope."}
+```{r label-spat-funs}
+label_spat_funs <- paste("Functions *G*, *F*, *K* and *T*.",
+"*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope.")
+```
+```{r spat-funs, fig.cap = label_spat_funs}
 knitr::include_graphics(here("plots", "pointprocess_fun.pdf"))
 ```
 
-```{r neigh-sex, fig.cap = "Mean neighbors in a given sex category. *Gray area* -- density estimation for the simulated data, *vertical line* -- observed value."}
+```{r label-neigh_sex}
+label_neigh_sex <- paste("Mean neighbors in a given sex category",
+"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value.",
+"*F* -- female, *M* -- male, *n. a.* -- non adult.")
+```
+```{r neigh-sex, fig.cap = label_neigh_sex}
 knitr::include_graphics(here("plots", "prob_neighbour_sex.pdf"))
 ```
 
