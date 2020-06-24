@@ -128,7 +128,7 @@ ved_rand_sex %>%
   bind_rows() %>% 
   ggplot(aes(mean)) +
   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
-  geom_vline(data = nb_sex, aes(xintercept = mean), linetype = 1, size = 0.8) +
+  geom_vline(data = nb_sex, aes(xintercept = mean), size = 0.8) +
   geom_rug() +
   facet_grid(to_sex ~ from_sex, scales = "free_y") +
   scale_y_continuous(expand = c(0, 0)) +

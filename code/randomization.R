@@ -14,6 +14,18 @@ library(dplyr)
 library(igraph)
 library(ggplot2)
 
+# theme for ggplot graphics ====================================================
+theme_universe <- theme(panel.border = element_rect(colour = "black", 
+                                                    fill = NA, 
+                                                    size = 0.8),
+                        panel.background = element_blank(),
+                        line = element_blank(),
+                        strip.background = element_blank(), 
+                        # strip.text = element_text(face = "italic"),
+                        axis.text.y = element_blank(), 
+                        axis.title.y = element_blank(), 
+                        panel.spacing = unit(1, "lines"))
+
 # functions ====================================================================
 # count coocurences in an occurence (binary) matrix
 # @var matrix = binary matrix of co-occurrences
@@ -135,13 +147,16 @@ v_annot <- v_statistic %>% select(long, p, signif) %>%
   mutate(p = paste0(round(p, 2)*100, "% ", signif))
 
 ggplot(v_exp_g, mapping = aes(x = value)) +
-  geom_density(fill = "white") +
-  geom_rug(alpha = 0.4, length = unit(1, "mm")) +
-  geom_vline(data = v_obs_g, mapping = aes(xintercept = value)) +
-  facet_wrap(~long, scales = "free", nrow = 4) +
+  geom_density(fill = "gray80", color = NA, alpha = 0.6) +
+  geom_rug() +
+  geom_vline(data = v_obs_g, mapping = aes(xintercept = value), size = 0.8) +
+  facet_wrap(vars(long), scales = "free", nrow = 4) +
   xlab("v statistic") +
-  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = p), size = 3.4,
-            hjust = +1.1, vjust = +1.2)
+  # geom_text(data = v_annot, aes(x = Inf, y = Inf, label = p), size = 3.4,
+  #           hjust = +1.1, vjust = +1.2) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme_universe
 
 ggsave(here("plots", "v_values.pdf"), width = 12, height = 8)
 
@@ -152,12 +167,15 @@ s_experimental <- rowSums(apply(v_experimental, 2,
                                 "/", length(names(ved$bin_vars))))
 
 ggplot(as_tibble(s_experimental), aes(value)) +
-  geom_density(fill = "white") +
-  geom_vline(xintercept = s_observed) +
+  geom_density(fill = "gray80", color = NA, alpha = 0.6) +
+  geom_rug() +
+  geom_vline(xintercept = s_observed, size = 0.8) +
   xlab("S statistic") +
-  geom_rug(length = unit(1, "mm"), alpha = 0.4)
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme_universe
 
-ggsave(here("plots", "s_statistic.pdf"))
+ggsave(here("plots", "s_statistic.pdf"), width = 4, height = 2)
 
 s_p_value <- get_p(s_experimental, s_observed, n_permutations + 1)
 s_p_value < 0.05
@@ -170,8 +188,17 @@ s_p_value < 0.05
 # observed co-occurence - expected co-occurrence (mean) = dif
 # if (dif > 0) [blue] {
 #       overrepresentation in observed data
-#   } else if (dif < 0) [red] {
-#       underrepresentaion in observed data
+#   } else i <- theme(panel.border = element_rect(colour = "black",
+# fill = NA, 
+# size = 0.8),
+# panel.background = element_blank(),
+# line = element_blank(),
+# strip.background = element_blank(), 
+# # strip.text = element_text(face = "italic"),
+# axis.text.y = element_blank(), 
+# axis.title.y = element_blank(), 
+# f (dif < 0) [red] {
+# #       underrepresentaion in observed data
 #   }
 
 cooccurrence <- left_join(cooc_obs, cooc_exp, by = c("var1", "var2")) %>% 
@@ -221,26 +248,26 @@ plot(g_cooc_positive,
      vertex.shape = "circle", 
      vertex.color = "white",
      # vertex.size = eigen_centrality(g_cooc_positive)$vector*20,
-     vertex.label.family = "mono", 
+     vertex.label.family = "sans", 
      vertex.label.cex = .6,
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_positive)$weight^1.2,
      mark.groups = cluster_fast_greedy(g_cooc_positive),
      mark.col = "gray90",
-     mark.border = "gray80",
-     main = "copresence")
+     mark.border = NA)
+title(main = "copresence", cex.main = 1, family = "sans", font.main = 1)
 plot(g_cooc_negative, 
      vertex.shape = "circle", 
      vertex.color = "white",
      # vertex.size = eigen_centrality(g_cooc_negative)$vector*20,
-     vertex.label.family = "mono", 
+     vertex.label.family = "sans", 
      vertex.label.cex = .6,
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_negative)$weight^1.2,
      mark.groups = cluster_fast_greedy(g_cooc_negative),
      mark.col = "gray90", 
-     mark.border = "gray80",
-     main = "coabsence")
+     mark.border = NA)
+title(main = "coabsence", cex.main = 1, family = "sans", font.main = 1)
 dev.off()
 
 # output =======================================================================
