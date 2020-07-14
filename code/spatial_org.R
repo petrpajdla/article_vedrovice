@@ -11,7 +11,9 @@ library(spatstat)
 library(sf)
 
 # theme for ggplot graphics
-theme_universe <- theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
+theme_universe <- theme(panel.border = element_rect(colour = "black", 
+                                                    fill = NA, 
+                                                    size = 0.8),
                         panel.background = element_blank(),
                         line = element_blank(),
                         strip.background = element_blank(), 
@@ -24,8 +26,12 @@ theme_universe <- theme(panel.border = element_rect(colour = "black", fill = NA,
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 
 # data prep ====================================================================
-# solving problems with negative coordinaes of polygon window
-ved_layout <- as_tibble(ved$layout + 10)
+scale_m <- 4.762 # scale by a factor so 1 unit is 1 meter
+angle <- 40 / 360 * 100 * 1/2 # rotate by an angle of 40° so north faces upwards
+
+ved_layout <- DescTools::Rotate(ved$layout * scale_m, 
+                                theta = angle, mx = 0, my = 0)
+ved_layout <- tibble(layout_x = ved_layout$x, layout_y = ved_layout$y)
 
 # create window ----------------------------------------------------------------
 # not a rectangle, but a polygon closely bounding the burials using convex hull
@@ -42,21 +48,39 @@ ved_exc <- matrix(c(c(0.5, 0.5, 0, 0, -1, -1, 1.6, 1.6, 7.6, 7.6, 9.1, 9.1,
                     c(-1, 2.5, 2.5, 10.3, 10.3, 14.3, 14.3, 13.6, 13.6, 
                       12.8, 12.8, 13.4, 13.4, 12.4, 12.4, 4.5, 4.5, 1.5, 1.5, -1)), 
                   ncol = 2, byrow = FALSE)
-ved_exc <- st_cast(st_as_sf(st_geometry(st_multipoint(ved_exc + 10))), "POLYGON")
+ved_exc <- DescTools::Rotate(ved_exc * scale_m, theta = angle, mx = 0, my = 0)
+ved_exc <- st_cast(
+  st_as_sf(
+    st_geometry(
+      st_multipoint(
+        matrix(c(ved_exc$x, ved_exc$y), ncol = 2)))), "POLYGON")
 
 # window_rect <- owin(xrange = c(10, 22), yrange = c(10, 22.7))
 window_poly <- as.owin(st_cast(ved_sf_hull, "POLYGON"))
 window_exc <- as.owin(ved_exc)
 
+# plot
 ggplot(data = ved_sf) +
   geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   # geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
   geom_sf(aes(shape = sex), fill = "white") + 
   scale_shape_manual(values = c(22, 21, 24, 4)) +
-  # ggsflabel::geom_sf_text_repel(aes(label = id_burial)) +
-  theme_void()
+  # ggsflabel::geom_sf_text_repel(aes(label = id_burial)) + 
+  theme_void() +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                                    location = "br", 
+                                    pad_y = unit(2, "cm")) +
+  ggspatial::annotation_scale(plot_unit = "m", 
+                              location = "br",
+                              pad_y = unit(1, "cm")) +
+  theme(legend.position = c(0.9, 0.8))
 
 ggsave(here("plots", "plan_vedrovice.pdf"), scale = 2)
+
+# write layouts -----------------------------------------------------------
+
+write_sf(ved_sf, here("data/temp/", "layout.shp"))
+write_sf(ved_exc, here("data/temp/", "window.shp"))
 
 # marks ------------------------------------------------------------------------
 ved_marks <- ved$metadata %>% 
@@ -72,7 +96,7 @@ ved_pp <- ppp(x = ved_layout$layout_x, y = ved_layout$layout_y,
               window = window_exc,
               marks = ved_marks)
 
-# plot(ved_pp, use.marks = FALSE)
+plot(ved_pp, use.marks = FALSE)
 
 # point pattern analysis
 # functions ====================================================================
@@ -141,6 +165,7 @@ plot_estimate_facet <- function(x) {
     facet_wrap(vars(fun), nrow = 1, scales = "free") +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
+    labs(x = "r (m)") +
     theme_universe
   p1
 }
@@ -184,8 +209,7 @@ ved_t <- envelope(ved_pp, Tstat, nrank = 2, nsim = 99) %>%
 
 plot_estimate(ved_t, "T")
 
-# export combined figure
-
+# export combined figure -------------------------------------------------------
 # using grid and individual plots
 # grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
 #                                     plot_estimate(ved_f, "F"),

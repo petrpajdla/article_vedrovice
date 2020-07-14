@@ -14,10 +14,14 @@ library(igraph)
 set.seed(42)
 
 # theme for ggplot graphics
-theme_universe <- theme(panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
+# theme for ggplot graphics
+theme_universe <- theme(panel.border = element_rect(colour = "black", 
+                                                    fill = NA, 
+                                                    size = 0.8),
                         panel.background = element_blank(),
                         line = element_blank(),
                         strip.background = element_blank(), 
+                        strip.text = element_text(face = "italic"),
                         axis.text.y = element_blank(), 
                         axis.title.y = element_blank(), 
                         panel.spacing = unit(1, "lines"))
@@ -26,28 +30,15 @@ theme_universe <- theme(panel.border = element_rect(colour = "black", fill = NA,
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 
 # data prep ====================================================================
-# solving problems with negative coordinaes of polygon window
-ved_layout <- ved$layout + 10
-
-# create window ----------------------------------------------------------------
-# not a rectangle, but a polygon closely bounding the burials using convex hull
-ved_sf <- st_as_sf(bind_cols(as_tibble(ved_layout), ved$metadata), 
-                   coords = c("layout_x", "layout_y")) %>% 
-  mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
-
-# excavation polygon
-ved_exc <- matrix(c(c(0.5, 0.5, 0, 0, -1, -1, 1.6, 1.6, 7.6, 7.6, 9.1, 9.1, 
-                      12.3, 12.3, 13.5, 13.5, 12.3, 12.3, 8.6, 8.6),
-                    c(-1, 2.5, 2.5, 10.3, 10.3, 14.3, 14.3, 13.6, 13.6, 
-                      12.8, 12.8, 13.4, 13.4, 12.4, 12.4, 4.5, 4.5, 1.5, 1.5, -1)), 
-                  ncol = 2, byrow = FALSE)
-ved_exc <- st_cast(st_as_sf(st_geometry(st_multipoint(ved_exc + 10))), "POLYGON")
+ved_sf <- read_sf(here("data/temp", "layout.shp"))
+ved_layout <- st_coordinates(ved_sf)
+ved_exc <- read_sf(here("data/temp", "window.shp"))
 
 # check neighbours =============================================================
 ved_gabriel <- gabrielneigh(ved_layout)
 
 ved_gabriel_lines <- ved_gabriel %>% 
-  graph2nb(row.names = rownames(ved_layout)) %>% 
+  graph2nb(row.names = rownames(ved_sf)) %>% 
   nb2lines(coords = ved_layout) %>% 
   st_as_sf()
 
@@ -55,9 +46,15 @@ ggplot() +
   geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   geom_sf(data = ved_gabriel_lines, linetype = 3) +
   geom_sf(data = ved_sf, shape = 21, fill = "white") +
-  theme_void()
+  theme_void() +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                                    location = "br", 
+                                    pad_y = unit(2, "cm")) +
+  ggspatial::annotation_scale(plot_unit = "m", 
+                              location = "br",
+                              pad_y = unit(1, "cm"))
 
-# ggsave(here("plots", "plan_vedrovice_gabriel.pdf"), scale = 2)
+ggsave(here("plots", "plan_vedrovice_gabriel.pdf"), scale = 2)
 
 # get sex of neighbors
 ved_g <- graph_from_edgelist(cbind(from = ved_gabriel$from, to = ved_gabriel$to), 
@@ -90,7 +87,9 @@ nb_sex <- neigh_sex(ved_g, ved_sex) %>%
   group_by(from_sex, to_sex) %>% 
   summarise(mean = mean(n), sum = sum(n), .groups = "drop")
 
-# randomization of sex for neighbors
+
+# randomization of sex for neighbors --------------------------------------
+
 randomize_neigh_sex <- function(g, n_sim, metadata) {
   n_sim <- n_sim
   n_bur <- nrow(metadata)
@@ -131,7 +130,7 @@ ved_rand_sex %>%
   geom_vline(data = nb_sex, aes(xintercept = mean), size = 0.8) +
   geom_rug() +
   facet_grid(to_sex ~ from_sex, scales = "free_y") +
-  scale_y_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
   scale_x_continuous(expand = c(0, 0)) +
   xlab("mean neighbours") +
   theme_universe
