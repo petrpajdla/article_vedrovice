@@ -1,12 +1,20 @@
 ---
-title           : "Vedrovice burial analysis"
+title           : "A resampling approach to spatial arrangement and contents of burials in the Vedrovice cemetery"
 author          : "Petr Pajdla"
     # name          : "Petr Pajdla"
     # affiliation   : "Department of Archaeology and Museology,
     #                  Masaryk University, Brno, Czech Republic"
     # email         : "petr.pajdla@gmail.com"
 date            : "`r format(Sys.time(), '%d %B, %Y')`"
-abstract        : "Fuck me."
+abstract        :
+  "Spatial patterns in cemeteries and grave goods associations are often explored using various informal methods.
+  We adopt computationaly intensive methods utilizing resampling approaches both to spatial analysis and
+  distributions of objects from the Early Neolithic cemetery in Vedrovice.
+
+
+  As a result of the investigation we conclude that...
+  "
+
 output:
     bookdown::pdf_document2:
     # bookdown::word_document2:
@@ -108,15 +116,15 @@ count distances between observations used in further analyses.
 Spatial patterning in prehistoric burial grounds is often examined to find
 any internal structure, arrangement or possible grouping.
 We approach the task as a point pattern analysis problem given that
-a burial (event) is simplified as a point location in a two dimensional space.
+a burial (event) is simplified as its centroid location in a two dimensional space.
 A polygon of the excavation extent is used as a study area (a window).
-Using a window closely approximating locations of the burials was also considered,
+Using a window closely approximating locations of the burials was considered,
 e. g. buffer zone or convex/concave hull but simplified excavation polygon is
 deemed the most useful because it preserves the *natural* borders and empty areas
-in the burial ground.
+of the original cemetery.
 
 Overall structure of the burial ground is examined using both density based approach
-and distance based methods [@osullivan2010, 121-154].
+and distance based methods <!--[@osullivan2010, 121-154]-->.
 It is argued that density based approaches, for instance quadrat tests,
 characterize the point pattern in terms of its *first-order properties* [@osullivan2010, 126].
 The assumption underlying the *first-order effects* is that any point location is
@@ -126,26 +134,25 @@ characterize the point pattern based on *second- and third-order effects*
 [@nakoinz2016, 130-135; @osullivan2010, 107].
 <!-- [@nakoinz2016, 135-144; @osullivan2010, 130-139] -->
 
-We presume that certain burial location is determined by other burial locations
-and is not quite dependent on on other parameters.
-In other words *first-order properties* are of little to no importance at all in
-our point of view.
 In spatial analysis of settlement patterns individual locations of
 settlements (points) can depend on a number of parameters, for instance
 elevation, soil type etc.
-<!-- It is possible that the position of burials was dependent on parameters that were not
-captured by the excavation, for example location of trees but that is impossible to test.-->
 In case of a grave placement in a burial ground we presume that the choice of
-a location is influenced predominantly by other (previous) grave locations.
+a location is influenced predominantly by other (previous) grave locations and
+is largely independent on other parameters.
+In other words *first-order properties* are of little to no importance in
+our point of view.
 The *second-order properties*, and possibly *third-order properties* [@nakoinz2016, 130, 144]
 are thus considered major factors in locating of the graves.
+<!-- It is possible that the position of burials was dependent on parameters that were not
+captured by the excavation, for example location of trees but that is impossible to test.-->
 
 To characterize the pattern based on density, the quadrat test is employed.
 It divides the area of interest into several cells of fixed sizes
 (quadrats) and compares the count of events per quadrat with the count
 expected under the null hypothesis that the underlying point process
 is completely spatially random (approximated by a Poisson distribution).
-Functions $G$, $F$, Ripley's $K$ [@ripley1976] and $T$ [@schladitz2000] are
+Functions $G$, $F$, Ripley's $K$ [@ripley1976; @sayer2013] and $T$ [@schladitz2000] are
 based on the nearest neighbour distances [@nakoinz2016, 135-144].
 The $G$ function is a metric of how close events are and summarises
 cummulative frequency distribution of the nearest neighbour distances.
@@ -159,6 +166,24 @@ changes in the window size and works with all the proximal events up to a
 certain threshold, not only the nearest neighbours [@nakoinz2016, 138].
 It is widely used in archaeology [@negre2018].
 Last but not least, the $T$ function is a third-order parallel to the $K$ function [@schladitz2000].
+
+If $s_i$ is an event location, then 
+$G$ function is given by the formula
+\@ref(eq:gfun)
+
+\begin{equation}
+  \label{eq:gfun}
+  G(d) = \frac{\#[d_{min}(s_i)<d]}{n}
+\end{equation}
+
+$F$ function by 
+$$F(d) = \frac{\#[d_{min}(p_i, S)<d]}{m}$$
+where ${p_1 \cdots p_i \cdots p_m}$ is a set of $m$ randomly selected locations.
+Ripley's $K$ function
+$$K(d) = \frac{\alpha}{n}\frac{1}{n}\sum_{i=1}^n \#[S \in C(s_i, d)]$$
+$T$ function
+$$ $$
+
 
 Given statistics for independent random process are estimated using Monte Carlo
 simulation with 99 iterations.
@@ -182,10 +207,27 @@ knitr::include_graphics(here("plots", "plan_vedrovice_gabriel.pdf"))
 
 ## Randomness of artefact combinations
 
+<!--
+This study takes advantage of computer-intensive resam-
+pling techniques that are based on simulations of the behavior
+of statistical models through the generation of random samples
+(Baxter, 2003; Efron and Tibshirani, 1993; Manly, 1991). The
+strength of these techniques lies in the potential to effectively
+distinguish between random and non-random patterns and to
+test differences between samples without making assumptions
+about the population from which these samples were drawn
+(Drennan and Peterson, 2004). These techniques proved to
+be very effective for the analysis of patterns in cemeteries
+(Manly, 1996).
+@sosna2008 -->
+
+@sosna2013
+
 To determine non-randomness of various artefact combinations we conduct a
 permutation test on the presence/absence data matrix.
 The method based on generalized Monte Carlo tests was first
-introduced to archaeology by @manly1996.
+introduced to archaeology by @manly1996 and adapted by @sosna2008.
+Our approach is based on both of these works.
 Original (observed) co-occurence matrix is permutated $n$ times with constant
 row and column totals, i. e. both the count of artifacts in individual graves
 and sum of the given type of artifacts across the burials are fixed.
