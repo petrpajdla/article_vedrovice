@@ -1,5 +1,5 @@
 # Project "Vedrovice"
-# Script nr. ?
+# Script nr. 3.2
 # NEIGHBOURS
 # author: Petr Pajdla
 # Mean number of neighbours with a given sex
@@ -120,6 +120,9 @@ randomize_neigh_sex <- function(g, n_sim, metadata) {
   }
   return(res)
 }
+
+
+# simulation (99 iterations) ----------------------------------------------
 
 ved_rand_sex <- randomize_neigh_sex(ved_g, n_sim = 99, metadata = ved$metadata)
 

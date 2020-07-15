@@ -1,14 +1,14 @@
 # Project "Vedrovice"
-# Script nr. ?
+# Script nr. 3.1
 # SPATIAL ARRANGEMENT
 # author: Petr Pajdla
 # Spatial organization within the cemetery
 
 library(here)
-library(tidyverse)
-library(broom)
 library(spatstat)
 library(sf)
+library(tidyverse)
+library(broom)
 
 # theme for ggplot graphics
 theme_universe <- theme(panel.border = element_rect(colour = "black", 
@@ -60,12 +60,11 @@ window_poly <- as.owin(st_cast(ved_sf_hull, "POLYGON"))
 window_exc <- as.owin(ved_exc)
 
 # plot
-ggplot(data = ved_sf) +
+gg_baseplan <- ggplot(data = ved_sf) +
   geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   # geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
   geom_sf(aes(shape = sex), fill = "white") + 
   scale_shape_manual(values = c(22, 21, 24, 4)) +
-  # ggsflabel::geom_sf_text_repel(aes(label = id_burial)) + 
   theme_void() +
   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
                                     location = "br", 
@@ -75,7 +74,12 @@ ggplot(data = ved_sf) +
                               pad_y = unit(1, "cm")) +
   theme(legend.position = c(0.9, 0.8))
 
-ggsave(here("plots", "plan_vedrovice.pdf"), scale = 2)
+gg_baseplan
+
+gg_baseplan + ggsflabel::geom_sf_text_repel(aes(label = id_burial))
+
+ggsave(here("plots", "plan_vedrovice.pdf"), gg_baseplan, scale = 2)
+ggsave(here("plots", "plan_vedrovice_ids.pdf"), scale = 2)
 
 # write layouts -----------------------------------------------------------
 
