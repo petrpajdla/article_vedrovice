@@ -1,5 +1,5 @@
 # Project "Vedrovice"
-# Script nr. 1
+# Script nr. 1.1
 # DATA INPUT AND MANIPULATION
 # author: Petr Pajdla
 # Script manipulates input data and saves a list with manipulated dataset
@@ -17,8 +17,8 @@ binarize <- function(x, threshold = 0) {
 }
 
 # data input and manipulation ==================================================
-input <- readr::read_csv(here("data", "data_vedrovice.csv"), skip = 3) %>% 
-  filter(undisturbed == TRUE)
+input <- readr::read_csv(here("data", "data_vedrovice_v01.csv"), skip = 3) %>% 
+  filter(lbk == TRUE)
 
 # list to store the data
 ved <- list(bin_vars = list(count_mat = NA,
@@ -34,14 +34,16 @@ ved <- list(bin_vars = list(count_mat = NA,
             orig_dataset = input)
 
 # filling the data -------------------------------------------------------------
+
 # binary variables - artefact coocurences
 ved$bin_vars$count_mat <- input %>% 
   select(pigment, pol_adze, pol_axe, grinding, pebble, 
-         lit_other, lit_kl, lit_skj, 
+         lit_local, lit_nonlocal, 
          pot_special, pot_bowl, pot_globular, pot_bottle, 
-         pot_head, pot_mid, pot_leg, bone_tool, 
+         # pot_head, pot_mid, pot_leg, 
+         bone_tool, 
          pendant_L, pendant_U, pendant_I, buckle_O, 
-         bracelet_spond, beads_spond, beads_marble) %>% 
+         bracelet_spond, beads_spond, beads_marble, antler) %>% 
   as.matrix()
 
 rownames(ved$bin_vars$count_mat) <- ved$id_burials
@@ -50,7 +52,8 @@ ved$bin_vars$bin_mat <- apply(ved$bin_vars$count_mat, 2, binarize)
 
 # continuous variables
 ved$cont_vars$cont_vars <-  input %>% select(pit_len, pit_wid, pit_dep,
-                                             d13c, d15n, sr, sr_ppm, body_height) %>% 
+                                             d13c, d15n, sr, sr_ppm, 
+                                             body_height) %>% 
   as.data.frame()
 
 rownames(ved$cont_vars$cont_vars) <- ved$id_burials
@@ -87,27 +90,31 @@ ved$layout <- input %>% select(layout_x, layout_y) %>%
 
 rownames(ved$layout) <- input$id_burial
 
+
+# variable names ----------------------------------------------------------
+
 ved$var_names$full <- tibble(vnames = names(input),
-                             abbrv = c("id", "row", "id.unified", "id.full", "undist",
+                             abbrv = c("id", "row", "id.unified", "id.full", "undist", "lbk",
                                        "x", "y", "sex", "sex.d", "sex.p",
                                        "age.cat", "age.int", "pit.l", "pit.w", "pit.d",
                                        "pit.o", "pit.o.cat", "head.o", "head.o.cat",
                                        "body.side",
                                        "pigm", "pol.sum", "adz", "axe", "grnd", "peb",
-                                       "l.sum", "l.kl", "l.skj", "l.oth", "l.rad", "l.sgs",
+                                       "l.sum", "l.loc", "l.non", "l.kl", "l.skj", "l.oth", "l.rad", "l.sgs",
                                        "p.sum", "p.bow", "p.glo", "p.bot", "p.oth", "p.frag",
                                        "p.top", "p.mid", "p.leg","p.fill",
                                        "bon.t", "bon.awl", "pen", "pen.L", "pen.U", "pen.I", 
                                        "buck", "brac", "neck", "b.sp", "b.mar", "b.div",
                                        "b.cyl", "b.circ", "b.olive", "d.tooth", "ant", "shell",
                                        "dat", "d13C", "d15N", "Sr", "Sr.ppm", "body.h"),
-                             long = c("Burial ID", "row", "id.unified", "id.full", "undist",
+                             long = c("Burial ID", "row", "id.unified", "id.full", "undist", "lbk",
                                        "x", "y", "sex", "sex.d", "sex.p",
                                        "Age", "age.int", "Pit length", "Pit width", "Pit depth",
                                        "Pit orientation", "Pit orientation", "Head orientation", "Head orientation",
                                        "Side",
-                                       "Pigment", "PST(sum)", "Adze", "Axe", "Grinding tool", "Pebble",
-                                       "Lithics (sum)", "Lithics (KF)", "Lithics (SKJ)", "Lithics (other)", "Lithics (Rad.)", "Lithics (SGS)",
+                                       "Pigment", "PST (sum)", "Adze", "Axe", "Grinding tool", "Pebble",
+                                       "Lithics (sum)", "Local lithics", "Non-local lithics", "Lithics (KF)", 
+                                      "Lithics (SKJ)", "Lithics (other)", "Lithics (Rad.)", "Lithics (SGS)",
                                        "Pottery (sum)", "Bowl", "Globular pot", "Bottle", "Other pottery", "Pottery fragment",
                                        "Pot around head", "Pot in the middle ", "Pot around legs","Pot in fill",
                                        "Bone tool", "Bone awl", "Pendant", "L-shaped pendant", "U-shaped pendant", "I-shaped pendant", 
