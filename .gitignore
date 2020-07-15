@@ -53,4 +53,5 @@ vignettes/*.pdf
 /text/*.pdf
 /text/*.docx
 
-
+# Preview of Readme file
+/README.html
