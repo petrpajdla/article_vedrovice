@@ -61,7 +61,8 @@ window_exc <- as.owin(ved_exc)
 
 # plot
 gg_baseplan <- ggplot(data = ved_sf) +
-  geom_sf(data = ved_exc, fill = "gray90", color = NA) +
+  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+  # geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   # geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
   geom_sf(aes(shape = sex), fill = "white") + 
   scale_shape_manual(values = c(22, 21, 24, 4)) +
@@ -76,15 +77,15 @@ gg_baseplan <- ggplot(data = ved_sf) +
 
 gg_baseplan
 
-gg_baseplan + ggsflabel::geom_sf_text_repel(aes(label = id_burial))
+gg_ids <- gg_baseplan + ggsflabel::geom_sf_text_repel(aes(label = id_burial))
 
-ggsave(here("plots", "plan_vedrovice.pdf"), gg_baseplan, scale = 2)
-ggsave(here("plots", "plan_vedrovice_ids.pdf"), scale = 2)
+ggsave(here("plots", "plan_base.pdf"), gg_baseplan, scale = 2)
+ggsave(here("plots", "plan_ids.pdf"), gg_ids, scale = 2)
 
 # write layouts -----------------------------------------------------------
 
-write_sf(ved_sf, here("data/temp/", "layout.shp"))
-write_sf(ved_exc, here("data/temp/", "window.shp"))
+write_sf(ved_sf, here("data/temp", "layout.shp"))
+write_sf(ved_exc, here("data/temp", "window.shp"))
 
 # marks ------------------------------------------------------------------------
 ved_marks <- ved$metadata %>% 
@@ -209,7 +210,7 @@ plot_estimate(ved_l, "L")
 
 # estimate T fun/stat
 ved_t <- envelope(ved_pp, Tstat, nrank = 2, nsim = 99) %>% 
-  fix_data_frame()
+  as_tibble()
 
 plot_estimate(ved_t, "T")
 
@@ -229,9 +230,11 @@ grid_fns <- bind_rows("G(r)" = ved_g,
   mutate(fun = as_factor(fun)) %>% 
   plot_estimate_facet()
 
-ggsave(plot = grid_fns, here("plots", "pointprocess_fun.pdf"), device = "pdf",
-       width = 12, height = 3)
+grid_fns
 
+ggsave(here("plots", "pointprocess_fun.pdf"), width = 12, height = 3)
+
+# --------------------------------------------------------------------------------------------
 # for different marks ==========================================================
 ved_pp_split <- split(ved_pp)
 plot(ved_pp_split)

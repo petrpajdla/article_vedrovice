@@ -30,13 +30,19 @@ ved <- list(bin_vars = list(count_mat = NA,
             var_names = list(full = NA,
                              short = NA,
                              long = NA),
-            id_burials = input$id_burial,
+            id_burials = NA,
             orig_dataset = input)
 
 # filling the data -------------------------------------------------------------
 
+# burial id
+ved$id_burials <- input %>% 
+  filter(undisturbed == TRUE) %>% 
+  pull(id_burial)
+
 # binary variables - artefact coocurences
 ved$bin_vars$count_mat <- input %>% 
+  filter(undisturbed == TRUE) %>% 
   select(pigment, pol_adze, pol_axe, grinding, pebble, 
          lit_local, lit_nonlocal, 
          pot_special, pot_bowl, pot_globular, pot_bottle, 
@@ -51,15 +57,18 @@ rownames(ved$bin_vars$count_mat) <- ved$id_burials
 ved$bin_vars$bin_mat <- apply(ved$bin_vars$count_mat, 2, binarize)
 
 # continuous variables
-ved$cont_vars$cont_vars <-  input %>% select(pit_len, pit_wid, pit_dep,
-                                             d13c, d15n, sr, sr_ppm, 
-                                             body_height) %>% 
+ved$cont_vars$cont_vars <-  input %>% 
+  filter(undisturbed == TRUE) %>% 
+  select(pit_len, pit_wid, pit_dep,
+         d13c, d15n, sr, sr_ppm, 
+         body_height) %>% 
   as.data.frame()
 
 rownames(ved$cont_vars$cont_vars) <- ved$id_burials
 
 # factor variables
 ved$cat_vars$cat_vars <- input %>% 
+  filter(undisturbed == TRUE) %>% 
   select(pit_orient_cat, head_orient_cat, body_side) %>%
   mutate_all(factor) %>% 
   as.data.frame()
@@ -90,7 +99,6 @@ ved$layout <- input %>% select(layout_x, layout_y) %>%
 
 rownames(ved$layout) <- input$id_burial
 
-
 # variable names ----------------------------------------------------------
 
 ved$var_names$full <- tibble(vnames = names(input),
@@ -108,19 +116,19 @@ ved$var_names$full <- tibble(vnames = names(input),
                                        "b.cyl", "b.circ", "b.olive", "d.tooth", "ant", "shell",
                                        "dat", "d13C", "d15N", "Sr", "Sr.ppm", "body.h"),
                              long = c("Burial ID", "row", "id.unified", "id.full", "undist", "lbk",
-                                       "x", "y", "sex", "sex.d", "sex.p",
-                                       "Age", "age.int", "Pit length", "Pit width", "Pit depth",
-                                       "Pit orientation", "Pit orientation", "Head orientation", "Head orientation",
-                                       "Side",
-                                       "Pigment", "PST (sum)", "Adze", "Axe", "Grinding tool", "Pebble",
-                                       "Lithics (sum)", "Local lithics", "Non-local lithics", "Lithics (KF)", 
+                                      "x", "y", "sex", "sex.d", "sex.p",
+                                      "Age", "age.int", "Pit length", "Pit width", "Pit depth",
+                                      "Pit orientation", "Pit orientation", "Head orientation", "Head orientation",
+                                      "Side",
+                                      "Pigment", "PST (sum)", "Adze", "Axe", "Grinding tool", "Pebble",
+                                      "Lithics (sum)", "Local lithics", "Non-local lithics", "Lithics (KF)", 
                                       "Lithics (SKJ)", "Lithics (other)", "Lithics (Rad.)", "Lithics (SGS)",
-                                       "Pottery (sum)", "Bowl", "Globular pot", "Bottle", "Other pottery", "Pottery fragment",
-                                       "Pot around head", "Pot in the middle ", "Pot around legs","Pot in fill",
-                                       "Bone tool", "Bone awl", "Pendant", "L-shaped pendant", "U-shaped pendant", "I-shaped pendant", 
-                                       "O-shaped Buckle", "Bracelet", "Necklace", "Spondylus bead", "Marble bead", "Dividing bead",
-                                       "Cylinder bead", "Circular bead", "Olive-shaped bead", "Deer tooth", "Antler", "Shell",
-                                       "Relative chrono.", "d13C", "d15N", "Sr", "Sr.ppm", "Body height"))
+                                      "Pottery (sum)", "Bowl", "Globular pot", "Bottle", "Other pottery", "Pottery fragment",
+                                      "Pot around head", "Pot in the middle ", "Pot around legs","Pot in fill",
+                                      "Bone tool", "Bone awl", "Pendant", "L-shaped pendant", "U-shaped pendant", "I-shaped pendant", 
+                                      "O-shaped Buckle", "Bracelet", "Necklace", "Spondylus bead", "Marble bead", "Dividing bead",
+                                      "Cylinder bead", "Circular bead", "Olive-shaped bead", "Deer tooth", "Antler", "Shell",
+                                      "Relative chrono.", "d13C", "d15N", "Sr", "Sr.ppm", "Body height"))
 
 ved$var_names$short <- ved$var_names$full$abbrv
 names(ved$var_names$short) <- ved$var_names$full$vnames

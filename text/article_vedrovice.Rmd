@@ -1,5 +1,7 @@
 ---
-title           : "A resampling approach to spatial arrangement and contents of burials in the Vedrovice cemetery"
+title           : "Spatial Analysis and Grave Goods Distribution at the Cemetery of Vedrovice"
+# "A resampling approach to spatial arrangement and contents of burials in the Vedrovice cemetery"
+
 author          : "Petr Pajdla"
     # name          : "Petr Pajdla"
     # affiliation   : "Department of Archaeology and Museology,
@@ -167,7 +169,7 @@ certain threshold, not only the nearest neighbours [@nakoinz2016, 138].
 It is widely used in archaeology [@negre2018].
 Last but not least, the $T$ function is a third-order parallel to the $K$ function [@schladitz2000].
 
-If $s_i$ is an event location, then 
+If $s_i$ is an event location, then
 $G$ function is given by the formula
 \@ref(eq:gfun)
 
@@ -176,7 +178,7 @@ $G$ function is given by the formula
   G(d) = \frac{\#[d_{min}(s_i)<d]}{n}
 \end{equation}
 
-$F$ function by 
+$F$ function by
 $$F(d) = \frac{\#[d_{min}(p_i, S)<d]}{m}$$
 where ${p_1 \cdots p_i \cdots p_m}$ is a set of $m$ randomly selected locations.
 Ripley's $K$ function

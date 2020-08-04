@@ -1,11 +1,12 @@
 # Project "Vedrovice"
-# Script nr. 3
-# COUNT EXCEPTIONAITY INDEX OF BURIALS
+# Script nr. 2.2
+# EXCEPTIONAITY INDEX FOR BURIALS
 # author: Petr Pajdla
 # Exceptionality index of individual burials in order to create groups...
 
 # packages =====================================================================
-library(dplyr)
+library(here)
+library(tidyverse)
 
 # functions ====================================================================
 # root mean square (quadratic mean) for vector x
@@ -15,11 +16,29 @@ rms <- function(x) {
 }
 
 # data =========================================================================
-ved <- readRDS("./data/vedrovice_dataset.RDS")
-non_rand_vars <- readLines("./data/output/non_random_vars.txt")
+ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
+# non_rand_vars <- readLines(here("data/temp", "non_random_vars.txt"))
+var_weights <- read_csv(here("data/temp/v_statistics.csv"))
+
+normalize01 <- function(x) {
+  rg <- range(x, na.rm = TRUE)
+  (x - rg[1]) / (rg[2] - rg[1])
+}
+
+var_weights <- var_weights %>% mutate(v_norm = normalize01(v) + 1)
+
 # exceptionality index =========================================================
 # non random variables
-art_pca <- prcomp(ved$bin_vars$bin_mat[, non_rand_vars], 
+matr <- matrix(nrow = nrow(ved$bin_vars$bin_mat), ncol = ncol(ved$bin_vars$bin_mat))
+for (i in 1:ncol(ved$bin_vars$bin_mat)) {
+  matr[, i] <- ved$bin_vars$bin_mat[, i] * var_weights$v_norm[i]
+}
+colnames(matr) <- colnames(ved$bin_vars$bin_mat)
+
+art_pca <- prcomp(matr, 
+                  scale. = FALSE, center = FALSE)
+
+art_pca <- prcomp(ved$bin_vars$bin_mat[, ] * matrix(var_weights$v_norm, nrow = 1), 
                   scale. = FALSE, center = FALSE)
 summary(art_pca)
 ggbiplot::ggbiplot(art_pca)

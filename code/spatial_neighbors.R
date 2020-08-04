@@ -14,7 +14,6 @@ library(igraph)
 set.seed(42)
 
 # theme for ggplot graphics
-# theme for ggplot graphics
 theme_universe <- theme(panel.border = element_rect(colour = "black", 
                                                     fill = NA, 
                                                     size = 0.8),
@@ -30,7 +29,8 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 
 # data prep ====================================================================
-ved_sf <- read_sf(here("data/temp", "layout.shp"))
+ved_sf <- read_sf(here("data/temp", "layout.shp")) %>% 
+  mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
 ved_layout <- st_coordinates(ved_sf)
 ved_exc <- read_sf(here("data/temp", "window.shp"))
 
@@ -43,10 +43,12 @@ ved_gabriel_lines <- ved_gabriel %>%
   st_as_sf()
 
 ggplot() +
-  geom_sf(data = ved_exc, fill = "gray90", color = NA) +
+  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
   geom_sf(data = ved_gabriel_lines, linetype = 3) +
-  geom_sf(data = ved_sf, shape = 21, fill = "white") +
-  theme_void() +
+  geom_sf(data = ved_sf, aes(shape = sex), fill = "white") +
+  scale_shape_manual(values = c(22, 21, 24, 4)) +
+  theme_void() + 
+  theme(legend.position = c(0.9, 0.8)) +
   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
                                     location = "br", 
                                     pad_y = unit(2, "cm")) +
@@ -54,7 +56,7 @@ ggplot() +
                               location = "br",
                               pad_y = unit(1, "cm"))
 
-ggsave(here("plots", "plan_vedrovice_gabriel.pdf"), scale = 2)
+ggsave(here("plots", "plan_gabriel.pdf"), scale = 2)
 
 # get sex of neighbors
 ved_g <- graph_from_edgelist(cbind(from = ved_gabriel$from, to = ved_gabriel$to), 
@@ -91,7 +93,6 @@ nb_sex <- neigh_sex(ved_g, ved_sex) %>%
 # randomization of sex for neighbors --------------------------------------
 
 randomize_neigh_sex <- function(g, n_sim, metadata) {
-  n_sim <- n_sim
   n_bur <- nrow(metadata)
   prob <- metadata %>%
     select(id_burial, sex) %>%
@@ -124,16 +125,16 @@ randomize_neigh_sex <- function(g, n_sim, metadata) {
 
 # simulation (99 iterations) ----------------------------------------------
 
-ved_rand_sex <- randomize_neigh_sex(ved_g, n_sim = 99, metadata = ved$metadata)
+ved_rand_sex <- randomize_neigh_sex(ved_g, n_sim = 200, metadata = ved$metadata)
 
 ved_rand_sex %>% 
   bind_rows() %>% 
-  ggplot(aes(mean)) +
-  geom_density(fill = "gray80", color = NA, alpha = 0.6) +
-  geom_vline(data = nb_sex, aes(xintercept = mean), size = 0.8) +
+  ggplot(aes(sum)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = nb_sex, aes(xintercept = sum), size = 0.8) +
   geom_rug() +
-  facet_grid(to_sex ~ from_sex, scales = "free_y") +
-  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+  facet_grid(rows = vars(from_sex), cols = vars(to_sex), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
   scale_x_continuous(expand = c(0, 0)) +
   xlab("mean neighbours") +
   theme_universe

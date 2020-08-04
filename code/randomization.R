@@ -1,6 +1,6 @@
 # Project "Vedrovice"
-# Script nr. 2
-# ANALYSIS OF ARTEFACT CO-OCCURRENCES 
+# Script nr. 2.1
+# ANALYSIS OF ARTEFACT CO-OCCURRENCES RANDOMNESS
 # author: Petr Pajdla
 # Randomization test on the input binary matrix is performed in order to 
 # find structure in artefact coocurences
@@ -60,23 +60,25 @@ get_v <- function(df, expected, R) {
 # @var v_exp = expected values of statistic v (data frame)
 # @var v_obs = observed v values (data frame)
 # @var size = number of v values derived by randomization
-get_p <- function(v_exp, v_obs, size) {
-  res <- (sum(v_exp >= v_obs)/size)
-  return(res)
+get_p <- function(v_exp, v_obs) {
+  mean(v_exp >= v_obs)
 }
 
 # read data ====================================================================
 ved <- readRDS(here("data/temp", "vedrovice_dataset.RDS"))
 
 # counting co-occurrences in observed matrix ===================================
-cooc_obs <- count_cooccurrence(matrix = ved$bin_vars$bin_mat)
+input_matrix <- ved$bin_vars$bin_mat
+ncol_input <- ncol(input_matrix)
+
+cooc_obs <- count_cooccurrence(matrix = input_matrix)
 cooc_obs <- cooc_obs %>% filter(var1 != var2)
 # cooc_obs %>% tidyr::spread(var2, nr.cooc)
 
 # randomization of co-occurrence matrix - list of many matrices ----------------
-n_permutations <-  999
+n_permutations <-  9999
 # # ======
-# rand_mat <- vegan::permatfull(ved$bin_vars$bin_mat,
+# rand_mat <- vegan::permatfull(input_matrix,
 #                               fixedmar = "both",
 #                               mtype = "prab",
 #                               times = n_permutations)
@@ -109,7 +111,7 @@ cooc_exp <- cooc_rand %>% bind_rows() %>%
 # v values =====================================================================
 # observed v values ------------------------------------------------------------
 v_observed <- tidyr::spread(get_v(cooc_obs, cooc_exp, 
-                                  R = length(colnames(ved$bin_vars$bin_mat))),
+                                  R = ncol_input),
                             var1, v)
 
 # counting expected v values ---------------------------------------------------
@@ -117,18 +119,19 @@ v_observed <- tidyr::spread(get_v(cooc_obs, cooc_exp,
 cl <- parallel::makeCluster(no_cores, type = "FORK")
 v_experimental <- parallel::parLapply(cl, cooc_rand,
                                       get_v, cooc_exp, 
-                                      length(colnames(ved$bin_vars$bin_mat)))
+                                      ncol_input)
 v_experimental <- bind_rows(parallel::parLapply(cl, v_experimental, 
                                                 tidyr::spread, "var1", "v"))
 parallel::stopCluster(cl)
 
 # P-val: percentage of experimental v values that are larger than observed v ---
-v_p_values <- purrr::map2(v_experimental, v_observed, get_p, n_permutations) %>% unlist()
+v_p_values <- purrr::map2(v_experimental, v_observed, get_p) %>% 
+  unlist()
 
 v_statistic <- tibble(variable = names(v_observed),
                       v = t(unname(v_observed))[, 1],
                       p = unname(v_p_values),
-                      signif = unname(v_p_values < (5 / length(v_p_values)))) %>% 
+                      signif = unname(v_p_values < 0.05)) %>% 
   mutate(abbrv = unname(ved$var_names$short[variable]),
          long = unname(ved$var_names$long[variable]))
 
@@ -142,43 +145,53 @@ v_obs_g <- v_observed %>% tidyr::gather(variable, value) %>%
   mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])),
          long = forcats::as_factor(unname(ved$var_names$long[variable])))
 
-v_annot <- v_statistic %>% select(long, p, signif) %>% 
-  mutate(signif = if_else(signif, "*", "")) %>% 
-  mutate(p = paste0(round(p, 2)*100, "% ", signif))
+v_annot <- v_statistic %>% select(long, p, signif) %>%
+  mutate(p = round(p, 2),
+         long = forcats::as_factor(long),
+         signif = if_else(signif == TRUE, "*", ""),
+         txt = paste0(p, signif))
 
-ggplot(v_exp_g, mapping = aes(x = value)) +
+v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
-  geom_rug() +
+  geom_rug(alpha = 0.2) +
   geom_vline(data = v_obs_g, mapping = aes(xintercept = value), size = 0.8) +
   facet_wrap(vars(long), scales = "free", nrow = 4) +
   xlab("v statistic") +
-  # geom_text(data = v_annot, aes(x = Inf, y = Inf, label = p), size = 3.4,
-  #           hjust = +1.1, vjust = +1.2) +
+  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
+            hjust = +1.2, vjust = +1.5) +
   scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
   theme_universe
 
-ggsave(here("plots", "v_values.pdf"), width = 12, height = 8)
+v_plot
+
+ggsave(here("plots", "v_values.pdf"), plot = v_plot, width = 12, height = 6)
 
 # S statistic ==================================================================
-s_observed <- sum(v_observed / length(names(ved$bin_vars)))
+s_observed <- sum(v_observed / ncol_input)
+
+s_p_value <- get_p(s_experimental, s_observed)
+s_p_value < 0.05
 
 s_experimental <- rowSums(apply(v_experimental, 2, 
-                                "/", length(names(ved$bin_vars))))
+                                "/", ncol_input))
 
-ggplot(as_tibble(s_experimental), aes(value)) +
+s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
-  geom_rug() +
+  geom_rug(alpha = 0.2) +
   geom_vline(xintercept = s_observed, size = 0.8) +
+  geom_text(data = tibble(p = paste0(round(s_p_value, 4), "*")), 
+            aes(x = Inf, y = Inf, label = p), 
+            size = 3,
+            hjust = +1.1, vjust = +1.4) +
   xlab("S statistic") +
   scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
   theme_universe
 
-ggsave(here("plots", "s_statistic.pdf"), width = 4, height = 2)
+s_plot
 
-s_p_value <- get_p(s_experimental, s_observed, n_permutations + 1)
-s_p_value < 0.05
+ggsave(here("plots", "s_statistic.pdf"), plot = s_plot, width = 4, height = 2)
 
 # The S statistic is significantly larger than experimental S and
 # occures in less then 5% of cases (p is smaller than 0.05), i.e. there is
@@ -210,13 +223,17 @@ cooccurrence <- left_join(cooc_obs, cooc_exp, by = c("var1", "var2")) %>%
   reshape2::acast(var1 ~ var2, value.var = "dif")
 cooccurrence[is.na(cooccurrence)] <- 0
 
+# bw <- colorRampPalette(colors = c("gray90", "gray20"))
+
 pdf(here("plots", "cooccurrence.pdf"), width = 7, height = 7)
-corrplot::corrplot(cooccurrence, 
+corrplot::corrplot(round(cooccurrence, 2), 
                    is.corr = FALSE, method = "pie", 
                    type = "upper", diag = FALSE, 
                    order = "FPC", 
                    tl.col = "gray20", tl.cex = 0.8, 
-                   cl.cex = 0.6)
+                   cl.cex = 0.6, 
+                   # col = bw(12)
+)
 dev.off()
 
 # pdf(here("plots", "cooccurrence_alphabet.pdf"), width = 7, height = 7)
@@ -228,20 +245,48 @@ dev.off()
 #                    cl.cex = 0.6)
 # dev.off()
 
+# co-occurrence networks for:
+#   1) non random variables only
+#   2) all variables *
 # non random variables =========================================================
-non_rand_vars <- v_statistic %>% filter(signif == TRUE) %>% pull(abbrv)
-non_rand_cooc <- list(pos = cooccurrence[non_rand_vars, non_rand_vars],
-                      neg = cooccurrence[non_rand_vars, non_rand_vars])
-non_rand_cooc$pos[non_rand_cooc$pos < 0] <- 0
-non_rand_cooc$neg[non_rand_cooc$neg > 0] <- 0
-non_rand_cooc$neg <- abs(non_rand_cooc$neg)
+# non_rand_vars <- v_statistic %>% filter(signif == TRUE) %>% pull(abbrv)
+# non_rand_cooc <- list(pos = cooccurrence[non_rand_vars, non_rand_vars],
+#                       neg = cooccurrence[non_rand_vars, non_rand_vars])
+# non_rand_cooc$pos[non_rand_cooc$pos < 0] <- 0
+# non_rand_cooc$neg[non_rand_cooc$neg > 0] <- 0
+# non_rand_cooc$neg <- abs(non_rand_cooc$neg)
+# 
+# g_cooc_positive <- simplify(graph_from_adjacency_matrix(non_rand_cooc$pos, 
+#                                                         mode = "undirected", 
+#                                                         weighted = TRUE))
+# g_cooc_negative <- simplify(graph_from_adjacency_matrix(non_rand_cooc$neg, 
+#                                                         mode = "undirected",
+#                                                         weighted = TRUE))
 
-g_cooc_positive <- simplify(graph_from_adjacency_matrix(non_rand_cooc$pos, 
-                                                        mode = "undirected", 
-                                                        weighted = TRUE))
-g_cooc_negative <- simplify(graph_from_adjacency_matrix(non_rand_cooc$neg, 
+# create co-occurrence / co-absence matrix
+cooc_posneg <- list(pos = cooccurrence,
+                    neg = cooccurrence)
+cooc_posneg$pos[cooccurrence < 0] <- 0
+cooc_posneg$neg[cooccurrence > 0] <- 0
+cooc_posneg$neg <- cooc_posneg$neg * -1
+
+# filter for co-occurrences / co-absences over 1
+cooc_posneg$pos[cooc_posneg$pos <= 1] <- 0
+cooc_posneg$neg[cooc_posneg$neg <= 1] <- 0
+
+# create networks, simplify edges, delete vertices with 0 edges
+g_cooc_positive <- simplify(graph_from_adjacency_matrix(cooc_posneg$pos,
                                                         mode = "undirected",
                                                         weighted = TRUE))
+g_cooc_positive <- delete.vertices(g_cooc_positive, 
+                                   degree(g_cooc_positive) == 0)
+
+g_cooc_negative <- simplify(graph_from_adjacency_matrix(cooc_posneg$neg,
+                                                        mode = "undirected",
+                                                        weighted = TRUE))
+g_cooc_negative <- delete.vertices(g_cooc_negative, 
+                                   degree(g_cooc_negative) == 0)
+
 pdf(here("plots", "cooc_networks.pdf"), width = 12)
 par(mfrow = c(1, 2), mar = c(rep(2, 4)))
 plot(g_cooc_positive, 
@@ -252,10 +297,11 @@ plot(g_cooc_positive,
      vertex.label.cex = .6,
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_positive)$weight^1.2,
-     mark.groups = cluster_fast_greedy(g_cooc_positive),
+     edge.color = "black",
+     mark.groups = cluster_louvain(g_cooc_positive),
      mark.col = "gray90",
-     mark.border = NA)
-title(main = "copresence", cex.main = 1, family = "sans", font.main = 1)
+     mark.border = "white")
+title(main = "present", cex.main = 1, family = "sans", font.main = 1)
 plot(g_cooc_negative, 
      vertex.shape = "circle", 
      vertex.color = "white",
@@ -264,10 +310,11 @@ plot(g_cooc_negative,
      vertex.label.cex = .6,
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_negative)$weight^1.2,
-     mark.groups = cluster_fast_greedy(g_cooc_negative),
-     mark.col = "gray90", 
-     mark.border = NA)
-title(main = "coabsence", cex.main = 1, family = "sans", font.main = 1)
+     edge.color = "black",
+     mark.groups = cluster_louvain(g_cooc_negative),
+     mark.col = "gray90",
+     mark.border = "white")
+title(main = "absent", cex.main = 1, family = "sans", font.main = 1)
 dev.off()
 
 # output =======================================================================
