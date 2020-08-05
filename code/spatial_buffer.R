@@ -89,7 +89,7 @@ randomize_neighbors <- function(sf, variable, dist, n_sim = 99) {
   res %>% bind_rows()
 }
 
-expected <- randomize_neighbors(ved_sf, "sex", distance)
+expected <- randomize_neighbors(ved_sf, "sex", distance, n_sim = 200)
 
 # plot
 expected %>% ggplot(aes(value)) +
