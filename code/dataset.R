@@ -23,8 +23,8 @@ input <- readr::read_csv(here("data", "data_vedrovice_v01.csv"), skip = 3) %>%
 # list to store the data
 ved <- list(bin_vars = list(count_mat = NA,
                             bin_mat = NA),
-            cont_vars = list(cont_vars = NA),
-            cat_vars = list(cat_vars = NA),
+            cont_vars = NA,
+            cat_vars = NA,
             metadata = NA,
             layout = NA,
             var_names = list(full = NA,
@@ -35,9 +35,9 @@ ved <- list(bin_vars = list(count_mat = NA,
 
 # filling the data -------------------------------------------------------------
 
-# burial id
-ved$id_burials <- input %>% 
-  filter(undisturbed == TRUE) %>% 
+# # burial id
+ved$id_burials <- input %>%
+  filter(undisturbed == TRUE) %>%
   pull(id_burial)
 
 # binary variables - artefact coocurences
@@ -57,29 +57,30 @@ rownames(ved$bin_vars$count_mat) <- ved$id_burials
 ved$bin_vars$bin_mat <- apply(ved$bin_vars$count_mat, 2, binarize)
 
 # continuous variables
-ved$cont_vars$cont_vars <-  input %>% 
+ved$cont_vars <- input %>% 
   filter(undisturbed == TRUE) %>% 
   select(pit_len, pit_wid, pit_dep,
          d13c, d15n, sr, sr_ppm, 
          body_height) %>% 
   as.data.frame()
 
-rownames(ved$cont_vars$cont_vars) <- ved$id_burials
+rownames(ved$cont_vars) <- ved$id_burials
 
 # factor variables
-ved$cat_vars$cat_vars <- input %>% 
+ved$cat_vars <- input %>% 
   filter(undisturbed == TRUE) %>% 
   select(pit_orient_cat, head_orient_cat, body_side) %>%
   mutate_all(factor) %>% 
   as.data.frame()
 
-rownames(ved$cat_vars$cat_vars) <- ved$id_burials
+rownames(ved$cat_vars) <- ved$id_burials
 
 # metadata
 lookup_sex <- c("n. a." = "gold", "F" = "tomato", "M" = "steelblue")
 
 ved$metadata <- input %>% select(id_burial, sex, age_cat, dat) %>% 
-  mutate(sex = factor(sex),
+  mutate(id_burial = as.character(id_burial),
+         sex = factor(sex),
          sex_col = unname(lookup_sex[input$sex]),
          age_cat = ordered(age_cat, 
                            levels = c("I1", "I", "I2", "J",

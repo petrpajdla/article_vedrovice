@@ -24,6 +24,8 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
 
 # read data
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
+origin <- read_rds(here("data/temp/local.rds")) %>% 
+  select(id_burial, age_mean, origin)
 
 # data prep ====================================================================
 scale_m <- 4.762 # scale by a factor so 1 unit is 1 meter
@@ -37,6 +39,7 @@ ved_layout <- tibble(layout_x = ved_layout$x, layout_y = ved_layout$y)
 # not a rectangle, but a polygon closely bounding the burials using convex hull
 ved_sf <- st_as_sf(bind_cols(ved_layout, ved$metadata), 
                    coords = c("layout_x", "layout_y")) %>% 
+  left_join(origin) %>% 
   mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
 # ved_sf_buffer <- st_buffer(ved_sf, dist = 1.6)
 # ved_sf_buffer <- st_simplify(ved_sf_buffer, dTolerance = 1)
@@ -81,6 +84,26 @@ gg_ids <- gg_baseplan + ggsflabel::geom_sf_text_repel(aes(label = id_burial))
 
 ggsave(here("plots", "plan_base.pdf"), gg_baseplan, scale = 2)
 ggsave(here("plots", "plan_ids.pdf"), gg_ids, scale = 2)
+
+# plan local vs non-local
+ggplot(data = filter(ved_sf, !is.na(origin))) +
+  geom_sf(data = select(ved_sf, -origin), color = "gray90") +
+  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+  stat_density2d(aes(st_coordinates(filter(ved_sf, !is.na(origin)))[, 1], 
+                     st_coordinates(filter(ved_sf, !is.na(origin)))[, 2]),
+                 color = "black", alpha = 0.4) +
+  geom_sf(shape = 21, fill = "white") + 
+  facet_wrap(~origin) +
+  theme_void() +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                                    location = "br",
+                                    pad_y = unit(2, "cm")) +
+  ggspatial::annotation_scale(plot_unit = "m",
+                              location = "br",
+                              pad_y = unit(1, "cm")) +
+  theme(legend.position = c(0.9, 0.8))
+
+ggsave(here("plots", "plan_origin.pdf"), width = 10.5, height = 5)
 
 # write layouts -----------------------------------------------------------
 

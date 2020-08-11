@@ -1,6 +1,6 @@
 # Project "Vedrovice"
 # Script nr. 3.4
-# SPATIAL ARRANGEMENT: neighbors based on a buffer
+# SPATIAL NEIGHBORS: Buffer zone
 # author: Petr Pajdla
 # Prevalent sex at a certain distance (buffer)
 

@@ -1,8 +1,8 @@
 # Project "Vedrovice"
-# Script nr. 3.2
-# NEIGHBOURS
+# Script nr. 3.3
+# SPATIAL NEIGHBORS: Gabriel graph
 # author: Petr Pajdla
-# Mean number of neighbours with a given sex
+# Mean number of neighbours with a given sex based on Gabriel graph
 
 library(here)
 library(tidyverse)
@@ -13,7 +13,8 @@ library(igraph)
 
 set.seed(42)
 
-# theme for ggplot graphics
+# theme -------------------------------------------------------------------
+
 theme_universe <- theme(panel.border = element_rect(colour = "black", 
                                                     fill = NA, 
                                                     size = 0.8),
@@ -25,10 +26,10 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
                         # axis.title.y = element_blank(), 
                         panel.spacing = unit(1, "lines"))
 
-# read data
+# data --------------------------------------------------------------------
+
 # ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 
-# data prep ====================================================================
 ved_sf <- read_sf(here("data/temp", "layout.shp")) %>% 
   mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
 ved_layout <- st_coordinates(ved_sf)

@@ -48,8 +48,8 @@ get_kde <- function(x, win = NA, variable = NA, value = NA) {
 # plot kde ----------------------------------------------------------------
 
 ved <- bind_cols(ved_sf, 
-               x = st_coordinates(ved_sf)[, 1],
-               y = st_coordinates(ved_sf)[, 2])
+                 x = st_coordinates(ved_sf)[, 1],
+                 y = st_coordinates(ved_sf)[, 2])
 
 ved_bg <- ved %>% transmute(s = sex, x, y)
 
@@ -71,8 +71,9 @@ ggplot(data = ved_fg) +
   labs(shape = "sex") +
   facet_wrap(vars(sex)) +
   theme_void() +
-  theme(strip.text = element_text(face = "italic"),
-        legend.position = c(0.96, 0.8))
+  theme(
+    # strip.text = element_text(face = "italic"),
+    legend.position = c(0.96, 0.8))
 
 ggsave(here("plots", "plan_kde.pdf"), width = 16, height = 5)
 
