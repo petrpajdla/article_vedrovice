@@ -41,6 +41,35 @@ library(here)
 
 # Introduction
 
+The Cemetery of Vedrovice is one of the earliest and most extensively studied
+cemeteries of the *Linearbandkeramik* (LBK).
+Recent contributions use the evidence from the cemetery in a broader discussion
+of post-marital residence patterns [@hrncir2020] and
+sexual inequalities and gender in the Neolithic [@masclanslatorre2020; @bickle2020].
+Here we focus on detailed analysis of the distribution of the grave goods and
+spatial analysis of the Vedrovice cemetery in respect to gender relations.
+
+<!-- gender relations -->
+
+
+<!-- view of gender in the Neolithic, archaeological context -->
+@robb2017 [128] noted lack of gender archaeology debate for the
+European Neolithic in comparison with other periods, especially the Bronze Age.
+They argue that a the perception of gender in the Neolithic and the Bronze Age is
+not the same (ibid. 142).
+In response, @bickle2020 [14] shows that 'biological sex may not have defined gender
+during the LBK' although the 'sexed bodies did matter'.
+
+
+<!-- resampling and computer-intensive techniques-->
+The approach taken is a quantitative one embracing resampling techniques and
+computer-intensive methods in general.
+The resampling techniques were introduced to mortuary studies by
+@manly1996 but the application is still limited [@sosna2008, 343].
+As noted by Sosna (ibid.), the most important benefit of resampling is in its
+ability to distinguish random and non-random patterns.
+
+
 ### Questions
 
 * Is there evidence that certain artefacts covary,
@@ -61,6 +90,10 @@ library(here)
 <!-- ======================================================================= -->
 
 # Material and methods
+
+<!-- site -->
+
+<!-- sample (burials, artefacts) -->
 
 The material analyzed here comes from Vedrovice – Široká u lesa cemetery.
 Originally, the burial ground consisted of at least 108 burials.
@@ -106,12 +139,18 @@ position of the body.
 I. e. size of the pit, its orientation, position of the body on one of
 the sides and direction of the head.
 
+<!-- methods -->
+
+<!-- spatial analysis -->
+
 Data is analyzed in an R environment for statistical computing and graphics
 [@rcore]  using functions of readr [@wickham2017a], dplyr [@wickham2016] and
 reshape2 [@wickham2007] packages to manipulate the data.
 Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
 count distances between observations used in further analyses.
 <!-- ADD METHODS AND PACKAGES USED IN R, or into SI?-->
+
+<!-- software packages -->
 
 ## Spatial patterning
 
@@ -204,7 +243,7 @@ The observed values of neighbors sex categories are compared against distributio
 derived from the simulated data.
 
 ```{r gabriel, fig.cap = "Gabriel graph"}
-knitr::include_graphics(here("plots", "plan_vedrovice_gabriel.pdf"))
+knitr::include_graphics(here("plots", "plan_gabriel.pdf"))
 ```
 
 ## Randomness of artefact combinations
@@ -278,6 +317,8 @@ variables is treated as nominal data.
 
 <!-- ======================================================================= -->
 
+<!-- results -->
+
 # Results
 
 ## Spatial patterning
@@ -305,15 +346,17 @@ label_spat_funs <- paste("Functions *G*, *F*, *K* and *T*.",
 knitr::include_graphics(here("plots", "pointprocess_fun.pdf"))
 ```
 
-```{r label-neigh_sex}
+```{r label-nb}
 label_neigh_sex <- paste("Mean neighbors in a given sex category",
 "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value.",
 "*F* -- female, *M* -- male, *n. a.* -- non adult.")
 ```
-```{r neigh-sex, fig.cap = label_neigh_sex}
-knitr::include_graphics(here("plots", "prob_neighbour_sex.pdf"))
+```{r nb-buffer, fig.cap = label_neigh_sex}
+knitr::include_graphics(here("plots", "nb_buffer_sex.pdf"))
 ```
-
+```{r nb-gabriel, fig.cap = label_neigh_sex}
+knitr::include_graphics(here("plots", "nb_gabriel_sex.pdf"))
+```
 
 ## Randomness of artefact combinations
 
