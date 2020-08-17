@@ -17,6 +17,49 @@ csl             : "european-journal-of-archaeology.csl"
 ---
 
 
+```{r}
+library(here)
+library(tidyverse)
+```
+
+# Spatial analysis
+
+<!--
+If $s_i$ is an event location, then
+$G$ function is given by the formula
+\@ref(eq:gfun)
+
+\begin{equation}
+\label{eq:gfun}
+G(d) = \frac{\#[d_{min}(s_i)<d]}{n}
+\end{equation}
+
+$F$ function by
+$$F(d) = \frac{\#[d_{min}(p_i, S)<d]}{m}$$
+where ${p_1 \cdots p_i \cdots p_m}$ is a set of $m$ randomly selected locations.
+Ripley's $K$ function
+$$K(d) = \frac{\alpha}{n}\frac{1}{n}\sum_{i=1}^n \#[S \in C(s_i, d)]$$
+$T$ function
+$$ $$
+-->
+
+$s_i$ is an event location.
+
+## G function
+
+$$ G(d) = \frac{\sum[d_{min}(s_i)<d]}{n} $$
+
+## F function
+
+$$F(d) = \frac{\#[d_{min}(p_i, S)<d]}{m}$$
+
+where ${p_1 \cdots p_i \cdots p_m}$ is a set of $m$ randomly selected locations.
+
+## Ripley's K function
+
+$$K(d) = \frac{\alpha}{n}\frac{1}{n}\sum_{i=1}^n \#[S \in C(s_i, d)]$$
+
+
 # Randomness of Artefact Combinations
 
 For pair of artefacts $i$ and $j$, the observed and expected number of co-occurences are
@@ -38,3 +81,32 @@ where
 $$ v_i = \sum_{j=1}^{R} \frac{(o_{ij} - e_{ij})^2}{R}$$
 
 ## Implementation
+
+
+
+# Results
+
+```{r neighborhood-sex, echo = FALSE}
+knitr::include_graphics(here("plots", "nb_buffer_sex.pdf"))
+knitr::include_graphics(here("plots", "nb_delaunay_sex.pdf"))
+knitr::include_graphics(here("plots", "nb_gabriel_sex.pdf"))
+```
+
+```{r, echo = FALSE, message = FALSE, results = 'asis'}
+b <- read_csv(here("data/temp/nb_p_buffer.csv"))
+d <- read_csv(here("data/temp/nb_p_delaunay.csv"))
+g <- read_csv(here("data/temp/nb_p_gabriel.csv"))
+
+tab <- full_join(g, d, by = c("from", "to"), suffix = c(".gabriel", ".delaunay")) %>% 
+  full_join(b, by = c("from", "to")) %>% 
+  mutate(across(where(is.numeric), round, 2)) %>% 
+  transmute(relation = str_c(from, to, sep = " - "),
+            gabriel = mean.gabriel,
+            p.gabriel = if_else(signif.gabriel, str_c(p.gabriel, "*"), as.character(p.gabriel)),
+            delaunay = mean.delaunay,
+            p.delaunay = if_else(signif.delaunay, str_c(p.delaunay, "*"), as.character(p.delaunay)),
+            buffer = value,
+            p.buffer = if_else(signif, str_c(p, "*"), as.character(p)))
+
+knitr::kable(tab)
+```

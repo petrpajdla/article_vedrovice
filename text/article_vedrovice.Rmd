@@ -41,25 +41,34 @@ library(here)
 
 # Introduction
 
-The Cemetery of Vedrovice is one of the earliest and most extensively studied
-cemeteries of the *Linearbandkeramik* (LBK).
+The Cemetery of Vedrovice is one of the earliest and most intensively studied
+*Linearbandkeramik* (LBK) cemeteries.
 Recent contributions use the evidence from the cemetery in a broader discussion
 of post-marital residence patterns [@hrncir2020] and
 sexual inequalities and gender in the Neolithic [@masclanslatorre2020; @bickle2020].
-Here we focus on detailed analysis of the distribution of the grave goods and
-spatial analysis of the Vedrovice cemetery in respect to gender relations.
-
-<!-- gender relations -->
-
+<!-- Here we focus on detailed analysis of the distribution of the grave goods and
+spatial analysis of the Vedrovice cemetery in respect to gender relations and
+social structure. -->
+Here we explore the relations between burials and bodies in terms of biologicall
+sex, age, localness, exceptionality of grave goods and position within the cemetery.
 
 <!-- view of gender in the Neolithic, archaeological context -->
 @robb2017 [128] noted lack of gender archaeology debate for the
-European Neolithic in comparison with other periods, especially the Bronze Age.
-They argue that a the perception of gender in the Neolithic and the Bronze Age is
-not the same (ibid. 142).
-In response, @bickle2020 [14] shows that 'biological sex may not have defined gender
+European Neolithic in comparison with other periods.
+This is due to the notion of gender in the Neolihic that is presented as being
+of a very different nature than gender in the later prehistory.
+Authors show that gender in the Neolithic is not clearly expressed and
+biological differences between sexes are not transformed into binary cultural
+categories (ibid. 140-142).
+Considering the Neolithic burial evidence across Europe, authors find that it
+'shows very little gender distinction; when it does, it is rarely a clear-cut
+binary categorization but a matter of degree and overlap, sometimes polythetically
+combined with factors such as age and localness' (ibid. 138).
+In response, @bickle2020 [14] argues that 'biological sex may not have defined gender
 during the LBK' although the 'sexed bodies did matter'.
 
+<!-- gender relations in LBK -->
+Although gender relations in the LBK might not be
 
 <!-- resampling and computer-intensive techniques-->
 The approach taken is a quantitative one embracing resampling techniques and
@@ -92,23 +101,24 @@ ability to distinguish random and non-random patterns.
 # Material and methods
 
 <!-- site -->
+The material analyzed here comes from Vedrovice – Široká u lesa cemetery.
 
 <!-- sample (burials, artefacts) -->
-
-The material analyzed here comes from Vedrovice – Široká u lesa cemetery.
 Originally, the burial ground consisted of at least 108 burials.
 Some of the burials were disturbed by later settlement and burial pits in the
 area of the cemetery, amateur excavations during the 19th century or later
 agricultural activities.
-Thus some of the burials are excluded from the analysis due to missing and/or
+These burials are excluded from the analysis due to missing and/or
 incomplete data and only a sample of 78 well-preserved burials is analyzed here.
 Most of the data was obtained from the original publication [@podborsky2002],
 anthropological determination of sex and age were corrected based on
 more recent analysis by @dockalova2008. Carbon, nitrogen and strontium isotope
 ratios were collected in @whittle2013 and @richards2008.
+Further details on use and function of the artefacts were gathered from
+@masclamasclanslatorre2020.
 
-Each burial was originally characterized by 55 variables but only 35 are
-selected for further analysis.
+Each burial was originally characterized by 55 variables but only subset of
+35 variables was selected for further analysis.
 Some of  the original variables are omitted due to their rare occurrence,
 for instance spondylus arm ring is present in a single burial only,
 thus being useless in establishing relationships between pairs of burials.
@@ -117,10 +127,10 @@ Other variables are removed because they are highly dependent on each other.
 The variables fall into several categories.
 Firstly there are biological and anthropological characteristics derived from
 retrieved human skeletal remains including sex, age simplified into age groups,
-isotope ratios or body height.
+isotope ratios and body height.
 
-Second large category of variables consists of data on artifacts present in the
-burials.
+Second large category of variables consists of data on artifacts presence and
+absence in the burials.
 These include variables noting quantities of various types of pottery and
 positions of the pottery vessels within the graves,
 counts of various raw materials of chipped stone tools,
@@ -142,31 +152,21 @@ the sides and direction of the head.
 <!-- methods -->
 
 <!-- spatial analysis -->
-
-Data is analyzed in an R environment for statistical computing and graphics
-[@rcore]  using functions of readr [@wickham2017a], dplyr [@wickham2016] and
-reshape2 [@wickham2007] packages to manipulate the data.
-Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
-count distances between observations used in further analyses.
-<!-- ADD METHODS AND PACKAGES USED IN R, or into SI?-->
-
-<!-- software packages -->
-
 ## Spatial patterning
 
 Spatial patterning in prehistoric burial grounds is often examined to find
 any internal structure, arrangement or possible grouping.
 We approach the task as a point pattern analysis problem given that
 a burial (event) is simplified as its centroid location in a two dimensional space.
-A polygon of the excavation extent is used as a study area (a window).
+A polygon of idealized excavation extent is used as a study area (a window).
 Using a window closely approximating locations of the burials was considered,
 e. g. buffer zone or convex/concave hull but simplified excavation polygon is
-deemed the most useful because it preserves the *natural* borders and empty areas
+deemed the most useful because it preserves the borders and empty areas
 of the original cemetery.
 
 Overall structure of the burial ground is examined using both density based approach
-and distance based methods <!--[@osullivan2010, 121-154]-->.
-It is argued that density based approaches, for instance quadrat tests,
+and distance based methods. <!--[@osullivan2010, 121-154]-->
+Density based approaches, for instance quadrat tests,
 characterize the point pattern in terms of its *first-order properties* [@osullivan2010, 126].
 The assumption underlying the *first-order effects* is that any point location is
 independent on other point locations and different parameters influence the location.
@@ -183,7 +183,7 @@ a location is influenced predominantly by other (previous) grave locations and
 is largely independent on other parameters.
 In other words *first-order properties* are of little to no importance in
 our point of view.
-The *second-order properties*, and possibly *third-order properties* [@nakoinz2016, 130, 144]
+The *second-order properties*, and possibly *third-order properties*
 are thus considered major factors in locating of the graves.
 <!-- It is possible that the position of burials was dependent on parameters that were not
 captured by the excavation, for example location of trees but that is impossible to test.-->
@@ -199,7 +199,7 @@ The $G$ function is a metric of how close events are and summarises
 cummulative frequency distribution of the nearest neighbour distances.
 Because of its dependence on the intensity of events in the study area, it is
 subject to changes in the size of the study area.
-The $F$ function, also empty-space function, is based on simulating a point pattern
+The $F$ function, an empty-space function, is based on simulating a point pattern
 and calculating of distances between random locations and the observed locations.
 It is a measure of how far are observed events from any arbitrary location [@osullivan2010, 132-135].
 Ripley's $K$ function is in comparison with the $G$ function resilient to
@@ -207,24 +207,7 @@ changes in the window size and works with all the proximal events up to a
 certain threshold, not only the nearest neighbours [@nakoinz2016, 138].
 It is widely used in archaeology [@negre2018].
 Last but not least, the $T$ function is a third-order parallel to the $K$ function [@schladitz2000].
-
-If $s_i$ is an event location, then
-$G$ function is given by the formula
-\@ref(eq:gfun)
-
-\begin{equation}
-  \label{eq:gfun}
-  G(d) = \frac{\#[d_{min}(s_i)<d]}{n}
-\end{equation}
-
-$F$ function by
-$$F(d) = \frac{\#[d_{min}(p_i, S)<d]}{m}$$
-where ${p_1 \cdots p_i \cdots p_m}$ is a set of $m$ randomly selected locations.
-Ripley's $K$ function
-$$K(d) = \frac{\alpha}{n}\frac{1}{n}\sum_{i=1}^n \#[S \in C(s_i, d)]$$
-$T$ function
-$$ $$
-
+For formulas of the individual functions see the supplement.
 
 Given statistics for independent random process are estimated using Monte Carlo
 simulation with 99 iterations.
@@ -232,19 +215,42 @@ The most extreme results of simulations are discarded as outliers and the
 second most extreme results are used to construct envelopes encompassing the
 expected range for a given function [@baddeley2016 384-403].
 
-To explore whether neighboring individuals are more often of the same sex we
-construct a Gabriel graph [@gabriel1969] with burial locations as nodes (Fig. \@ref(fig:gabriel)).
+To explore whether neighboring individuals are more often of the same sex we use
+two methods to establish neighborhood.
+The first method is based on constructing a Gabriel graph [@gabriel1969]
+with burial locations as nodes (Fig. \@ref(fig:gabriel)).
+Gabriel graph is a subgraph of a Delaunay triangulation
+
 For each node, mean sex of the neighbors is determined and recorded.
-To check how common the observed value is, we perform a permutation test
+To check how common the observed value is, a permutation test
 where sex of burials is randomly assigned while preserving the overall
 proportion of given categories and the neighborhood struture determined by the
-Gabriel graph.
+Gabriel graph is performed.
 The observed values of neighbors sex categories are compared against distributions
 derived from the simulated data.
 
 ```{r gabriel, fig.cap = "Gabriel graph"}
 knitr::include_graphics(here("plots", "plan_gabriel.pdf"))
 ```
+
+The second approach of establishing neigborhood is by constructing buffer zones
+around each of the burials with 6m radius.
+The size of a radius is based on the results of nearest neighbors analysis, where
+at the given radius there is strong evidence of a clustering process (Fig. \ref(fig:spat-funs)).
+The randomness is again tested using a permutation test similar to the one
+described for the neighborhood derived from the Gabriel graph.
+
+<!-- software packages -->
+Data is analyzed in an R environment for statistical computing and graphics
+[@rcore]  using functions of many different packages, for the complete list
+see the supplementary information.
+<!-- readr [@wickham2017a], dplyr [@wickham2016] and
+reshape2 [@wickham2007] packages to manipulate the data.
+Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
+count distances between observations used in further analyses. -->
+
+
+
 
 ## Randomness of artefact combinations
 
