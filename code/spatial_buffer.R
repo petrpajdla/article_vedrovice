@@ -99,7 +99,7 @@ expected %>% ggplot(aes(value)) +
   facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
   scale_y_continuous(expand = c(0, 0, 0, 0)) +
   scale_x_continuous(expand = c(0, 0)) +
-  xlab("mean neighbors") +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on buffer") +
   theme_universe
 
 ggsave(here("plots", "nb_buffer_sex.pdf"), width = 12, height = 6)
@@ -111,7 +111,7 @@ ggsave(here("plots", "nb_buffer_sex.pdf"), width = 12, height = 6)
 # ggplot(data = ved_sf) +
 #   geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
 #   geom_sf(data = ved_buff, fill = "gray80", color = "gray80", alpha = 0.2) +
-#   geom_sf(aes(shape = sex), fill = "white", size = 2) + 
+#   geom_sf(aes(shape = sex), fill = "white", size = 2) +
 #   scale_shape_manual(values = c(22, 21, 24, 4)) +
 #   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
 #                                     location = "br",
@@ -123,3 +123,22 @@ ggsave(here("plots", "nb_buffer_sex.pdf"), width = 12, height = 6)
 #   facet_wrap(vars(sex)) +
 #   theme_void()
 
+
+# p-value -----------------------------------------------------------------
+pval <- function(obs, exp) {
+  lvls <- levels(obs$from)
+  res <- obs %>% mutate(p = 0)
+  for (i in seq_along(lvls)) {
+    for (j in seq_along(lvls)) {
+      obs_val <- obs %>% filter(from == lvls[i], to == lvls[j]) %>% 
+        pull(value)
+      exp_val <- exp %>% filter(from == lvls[i], to == lvls[j]) %>% 
+        pull(value)
+      res[(res[, "from"] == lvls[i]) & (res[, "to"] == lvls[j]), "p"] <- mean(exp_val >= obs_val)
+    }
+  }
+  res <- res %>% mutate(signif = if_else(p <= 0.05, TRUE, FALSE))
+  return(res)
+}
+
+pval(observed, expected) %>% write_csv(here("data/temp/nb_p_buffer.csv"))
