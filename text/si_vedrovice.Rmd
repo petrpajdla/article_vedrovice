@@ -20,6 +20,8 @@ csl             : "european-journal-of-archaeology.csl"
 ```{r}
 library(here)
 library(tidyverse)
+library(knitr)
+library(kableExtra)
 ```
 
 # Spatial analysis
@@ -86,27 +88,14 @@ $$ v_i = \sum_{j=1}^{R} \frac{(o_{ij} - e_{ij})^2}{R}$$
 
 # Results
 
-```{r neighborhood-sex, echo = FALSE}
-knitr::include_graphics(here("plots", "nb_buffer_sex.pdf"))
-knitr::include_graphics(here("plots", "nb_delaunay_sex.pdf"))
-knitr::include_graphics(here("plots", "nb_gabriel_sex.pdf"))
-```
 
 ```{r, echo = FALSE, message = FALSE, results = 'asis'}
-b <- read_csv(here("data/temp/nb_p_buffer.csv"))
-d <- read_csv(here("data/temp/nb_p_delaunay.csv"))
-g <- read_csv(here("data/temp/nb_p_gabriel.csv"))
+tab <- read_csv(here("data/temp/nb_sex_p.csv")) %>% 
+         mutate(relation = str_c(from, to, sep = " - ")) %>% 
+  select(relation, everything(), -from, -to)
 
-tab <- full_join(g, d, by = c("from", "to"), suffix = c(".gabriel", ".delaunay")) %>% 
-  full_join(b, by = c("from", "to")) %>% 
-  mutate(across(where(is.numeric), round, 2)) %>% 
-  transmute(relation = str_c(from, to, sep = " - "),
-            gabriel = mean.gabriel,
-            p.gabriel = if_else(signif.gabriel, str_c(p.gabriel, "*"), as.character(p.gabriel)),
-            delaunay = mean.delaunay,
-            p.delaunay = if_else(signif.delaunay, str_c(p.delaunay, "*"), as.character(p.delaunay)),
-            buffer = value,
-            p.buffer = if_else(signif, str_c(p, "*"), as.character(p)))
+tnames <- c("relation", rep(c("mean", "p"), 3))
 
-knitr::kable(tab)
+kable(tab, booktabs = TRUE, col.names = tnames) %>% 
+  add_header_above(c(" ", "Buffer" = 2, "Delaunay" = 2, "Gabriel" = 2))
 ```

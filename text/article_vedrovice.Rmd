@@ -14,8 +14,7 @@ abstract        :
   distributions of objects from the Early Neolithic cemetery in Vedrovice.
 
 
-  As a result of the investigation we conclude that...
-  "
+  As a result of the investigation we conclude that...  "
 
 output:
     bookdown::pdf_document2:
@@ -115,7 +114,7 @@ anthropological determination of sex and age were corrected based on
 more recent analysis by @dockalova2008. Carbon, nitrogen and strontium isotope
 ratios were collected in @whittle2013 and @richards2008.
 Further details on use and function of the artefacts were gathered from
-@masclamasclanslatorre2020.
+@masclanslatorre2020.
 
 Each burial was originally characterized by 55 variables but only subset of
 35 variables was selected for further analysis.
@@ -216,34 +215,32 @@ second most extreme results are used to construct envelopes encompassing the
 expected range for a given function [@baddeley2016 384-403].
 
 To explore whether neighboring individuals are more often of the same sex we use
-two methods to establish neighborhood.
-The first method is based on constructing a Gabriel graph [@gabriel1969]
-with burial locations as nodes (Fig. \@ref(fig:gabriel)).
-Gabriel graph is a subgraph of a Delaunay triangulation
-
-For each node, mean sex of the neighbors is determined and recorded.
+three methods to establish neighborhood relations.
+The first two methods are based on constructing neighborhood graphs.
+We use Delaunay triangulation and its subgraph, a Gabriel graph [@gabriel1969]
+with burial locations as nodes (Fig. \@ref(fig:plan-graphs)).
+The Delaunay triangulation can be considered a maximum number of neighbors case
+scenario while the Gabriel graph the exact opposite.
+For each node, mean number of neighbors of a given sex is determined and recorded.
 To check how common the observed value is, a permutation test
 where sex of burials is randomly assigned while preserving the overall
-proportion of given categories and the neighborhood struture determined by the
-Gabriel graph is performed.
+proportion of given categories and the neighborhood structure determined by the
+graphs is performed.
 The observed values of neighbors sex categories are compared against distributions
 derived from the simulated data.
 
-```{r gabriel, fig.cap = "Gabriel graph"}
-knitr::include_graphics(here("plots", "plan_gabriel.pdf"))
-```
-
-The second approach of establishing neigborhood is by constructing buffer zones
-around each of the burials with 6m radius.
+The third approach of establishing neigborhood is by constructing buffer zones
+around each of the burials with 6 meters radius.
 The size of a radius is based on the results of nearest neighbors analysis, where
-at the given radius there is strong evidence of a clustering process (Fig. \ref(fig:spat-funs)).
+at the given radius there is strong evidence of a clustering process (Fig. \@ref(fig:spat-funs)).
 The randomness is again tested using a permutation test similar to the one
-described for the neighborhood derived from the Gabriel graph.
+described for the neighborhood derived from the graphs.
 
 <!-- software packages -->
 Data is analyzed in an R environment for statistical computing and graphics
-[@rcore]  using functions of many different packages, for the complete list
+[@rcore] using functions of many different packages, for the complete list
 see the supplementary information.
+
 <!-- readr [@wickham2017a], dplyr [@wickham2016] and
 reshape2 [@wickham2007] packages to manipulate the data.
 Function daisy [@kaufman1990] from package cluster [@maechler2016] is used to
@@ -343,26 +340,26 @@ envelope boundaries.
 These functions thus show evidence for clustering process in the observed point
 pattern.
 
+## Neighborhood structure
 
-```{r label-spat-funs}
-label_spat_funs <- paste("Functions *G*, *F*, *K* and *T*.",
-"*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope.")
-```
-```{r spat-funs, fig.cap = label_spat_funs}
-knitr::include_graphics(here("plots", "pointprocess_fun.pdf"))
-```
+Three methods of neighborhood relationship construction were examined.
+One is distance based where all the neighbors that fall into a given buffer are considered,
+the other two are based on neighborhood graphs, the Delaunay triangulation as a
+maximum number of neighbors scenario and a Gabriel graph as a minimal scenario.
 
-```{r label-nb}
-label_neigh_sex <- paste("Mean neighbors in a given sex category",
-"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value.",
-"*F* -- female, *M* -- male, *n. a.* -- non adult.")
-```
-```{r nb-buffer, fig.cap = label_neigh_sex}
-knitr::include_graphics(here("plots", "nb_buffer_sex.pdf"))
-```
-```{r nb-gabriel, fig.cap = label_neigh_sex}
-knitr::include_graphics(here("plots", "nb_gabriel_sex.pdf"))
-```
+For relationships (see Fig. \@ref(fig:nb-sex) and Tab. \@ref(tab:nb-tab-sex)) of male-sexed bodies, none of the methods showed any significant
+differences between expected and observed number of neighbors of a given sex.
+The relationship with female-sexed bodies is rather extreme for all of the methods employed,
+but never significant ($p > 0.07$).
+In case of bodies unsexed due to early age (non-adults), the neigborhood based
+on buffer zones show a signficant realtionship with other non-adults ($p \approx 0.04$).
+Finally burials with female-sexed bodies show a significantly higher number of
+burials with male-sexed bodies in both the methods based on neighborhood networks
+(Delaunay triangulation $p \approx 0.02$ and Gabriel graph $p \approx 0.03$).
+Two further relationships showed non-random deviations.
+In case of Delaunay trinagulation for burials with bodies with indeterminate sex with
+non-adults ($p \approx 0.02$) and in case of Gabriel graph between non-adults and
+indeterminate category $p \approx 0.02$.
 
 ## Randomness of artefact combinations
 
@@ -389,8 +386,40 @@ artefacts in the graves is not random.
 <!-- ) -->
 <!-- ``` -->
 
+<!-- ======================================================================= -->
+
+# Discussion
+
+
+
+
+
+<!-- ======================================================================= -->
+<!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES -->
+```{r plan-graphs, fig.cap = "Neighborhood graphs: Delaunay triangulation and Gabriel graph"}
+knitr::include_graphics(here("plots/plan_gabriel.pdf"))
+```
+
+```{r label-spat-funs}
+label_spat_funs <- paste("Functions *G*, *F*, *K* and *T*.",
+"*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope.")
+```
+```{r spat-funs, fig.cap=label_spat_funs}
+knitr::include_graphics(here("plots/pointprocess_fun.pdf"))
+```
+
+```{r label-nb-sex}
+label_nb_sex <- paste("Mean neighbors in a given sex category.",
+"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value.",
+"*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non adult, *ind.* -- indetermined sex.")
+```
+```{r nb-sex, fig.cap=label_nb_sex}
+knitr::include_graphics(here("plots/nb_sex.pdf"))
+```
+
+
 ```{r f-sstat, fig.cap = "Distribution of simulated and observed S statistic"}
-knitr::include_graphics(here("plots", "s_statistic.pdf"))
+knitr::include_graphics(here("plots/s_statistic.pdf"))
 ```
 
 ```{r f-vstat, fig.cap = "Simulated and observed v statistics for different variables"}
@@ -403,8 +432,18 @@ knitr::include_graphics(here("plots", "cooc_networks.pdf"))
 
 
 <!-- ======================================================================= -->
+<!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES -->
+```{r nb-tab-sex}
+tab <- read_csv(here("data/temp/nb_sex_p.csv")) %>%
+         mutate(relation = str_c(from, to, sep = " - ")) %>%
+  select(relation, everything(), -from, -to)
 
-# Discussion
+tnames <- c("relation", rep(c("mean", "p"), 3))
+
+knitr::kable(tab, booktabs = TRUE, col.names = tnames, linesep = "", caption = "Results...") %>%
+  kableExtra::add_header_above(c(" ", "Buffer" = 2, "Delaunay" = 2, "Gabriel" = 2))
+```
+
 
 <!-- ======================================================================= -->
 
