@@ -11,7 +11,7 @@ library(tidyverse)
 
 # number of simulations ---------------------------------------------------
 nsim = 999
-nrank = 10
+nrank = 5
 
 # k...nrank
 # M...nsim
@@ -139,7 +139,7 @@ quadrat.test(ved_pp, alternative = "regular")
 
 # distance based ---------------------------------------------------------------
 # estimating function G
-ved_g <- envelope(ved_pp, Gest, nrank = nrank, nsim = nsim) %>% 
+ved_g <- envelope(ved_pp, Gest, nrank = nrank, nsim = nsim) %>%
   as_tibble()
 
 plot_estimate(ved_g, "G")
@@ -152,7 +152,7 @@ plot_estimate(ved_f, "F")
 
 # estimating Ripley's K function
 # ved_k <- Kest(ved_pp)
-ved_k <- envelope(ved_pp, Kest, nrank = nrank, nsim = nsim) %>% 
+ved_k <- envelope(ved_pp, Kest, nrank = nrank, nsim = nsim) %>%
   as_tibble()
 
 plot_estimate(ved_k, "K")
@@ -163,56 +163,138 @@ ved_l <- estimate_L(ved_pp)
 plot_estimate(ved_l, "L")
 
 # estimate T fun/stat
-ved_t <- envelope(ved_pp, Tstat, nrank = nrank, nsim = nsim) %>% 
+ved_t <- envelope(ved_pp, Tstat, nrank = nrank, nsim = nsim) %>%
   as_tibble()
 
 plot_estimate(ved_t, "T")
 
 # export combined figure -------------------------------------------------------
 # using grid and individual plots
-# grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
-#                                     plot_estimate(ved_f, "F"),
-#                                     plot_estimate(ved_k, "K"),
-#                                     plot_estimate(ved_t, "T"),
-#                                     nrow = 1)
+grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
+                                    plot_estimate(ved_f, "F"),
+                                    plot_estimate(ved_k, "K"),
+                                    plot_estimate(ved_t, "T"),
+                                    nrow = 1)
 
 # using facets
-grid_fns <- bind_rows("G(r)" = ved_g, 
-                      "F(r)" = ved_f, 
-                      "K(r)" = ved_k, 
-                      "T(r)" = ved_t, .id = "fun") %>% 
-  mutate(fun = as_factor(fun)) %>% 
+grid_fns <- bind_rows("G(r)" = ved_g,
+                      "F(r)" = ved_f,
+                      "K(r)" = ved_k,
+                      "T(r)" = ved_t, .id = "fun") %>%
+  mutate(fun = as_factor(fun)) %>%
   plot_estimate_facet()
 
 grid_fns
 
 ggsave(here("plots", "pointprocess_fun.pdf"), width = 12, height = 3)
 
-# # --------------------------------------------------------------------------------------------
-# # for different marks ==========================================================
+# for different marks ==========================================================
 # ved_pp_split <- split(ved_pp)
 # plot(ved_pp_split)
 # # density based ----------------------------------------------------------------
-# estimate_L(ved_pp_split[["M"]]) %>% plot_estimate("fuu")
+# # estimate_L(ved_pp_split[["M"]])
+# # 
+# # estimate_L(ved_pp_split[["F"]])
+# # 
+# # estimate_L(ved_pp_split[["n. a."]])
 # 
-# estimate_L(ved_pp_split[["F"]]) %>%  plot_estimate("fuu")
+# ved_m <- ved_pp_split[["M"]]
+# ved_f <- ved_pp_split[["F"]]
+# ved_na <- ved_pp_split[["n. a."]]
 # 
-# estimate_L(ved_pp_split[["n. a."]]) %>%  plot_estimate("fuu")
+# estimate_all <- function(pp, nrank, nsim) {
+#   g <- envelope(pp, Gest, nrank = nrank, nsim = nsim) %>%
+#     as_tibble()
+#   f <- envelope(pp, Fest, nrank = nrank, nsim = nsim) %>%
+#     as_tibble()
+#   k <- envelope(pp, Kest, nrank = nrank, nsim = nsim) %>%
+#     as_tibble()
+#   t <- envelope(pp, Tstat, nrank = nrank, nsim = nsim) %>%
+#     as_tibble()
+#   
+#   grid_fns <- bind_rows("G(r)" = g,
+#                         "F(r)" = f,
+#                         "K(r)" = k,
+#                         "T(r)" = t, .id = "fun") %>%
+#     mutate(fun = as_factor(fun))
+#   
+#   return(grid_fns)
+# }
+# 
+# est_m <- estimate_all(ved_m, nrank = 1, nsim = 99)
+# est_f <- estimate_all(ved_f, nrank = 1, nsim = 99)
+# est_na <- estimate_all(ved_na, nrank = 1, nsim = 99)
+# 
+# p_m <- est_m %>% plot_estimate_facet() + labs(title = "M")
+# p_f <- est_f %>% plot_estimate_facet() + labs(title = "F")
+# p_na <- est_na %>% plot_estimate_facet() + labs(title = "n. a.")
+# 
+# p_all <- gridExtra::grid.arrange(p_m, p_f, p_na)
+# 
+# ggsave(here("plots/pointprocess_fun_sex.pdf"), plot = p_all, 
+#        width = 12, height = 9)
+
+# Cross functions  --------------------------------------------------------
+# plot(envelope(ved_pp, Kcross, funargs = list(i = "M", j = "F")))
+# plot(envelope(ved_pp, Kcross, funargs = list(i = "F", j = "M")))
+# plot(envelope(ved_pp, Kcross, funargs = list(i = "M", j = "n. a.")))
+# plot(envelope(ved_pp, Kcross, funargs = list(i = "n. a.", j = "M")))
+# plot(envelope(ved_pp, Kcross, funargs = list(i = "F", j = "n. a.")))
+# plot(envelope(ved_pp, Kcross, funargs = list(i = "n. a.", j = "F")))
+
+all_k <- alltypes(ved_pp, Kcross, nsim = nsim, nrank = nrank, envelope = TRUE)
+all_g <- alltypes(ved_pp, Gcross, nsim = nsim, nrank = nrank, envelope = TRUE)
+
+# plot(all_k)
+# plot(all_g)
+
+all_k_tibble <- bind_rows(lapply(all_k[["fns"]][c(6:8, 10:12, 14:16)], 
+                                 as_tibble), .id = "id")
+all_g_tibble <- bind_rows(lapply(all_g[["fns"]][c(6:8, 10:12, 14:16)], 
+                                 as_tibble), .id = "id")
+
+panelnames <- c("F-F", "F-M", "F-n.a.",
+                "M-F", "M-M", "M-n.a.",
+                "n.a.-F", "n.a.-M", "n.a.-n.a.")
+
+multiK <- all_k_tibble %>% 
+  mutate(id = panelnames[as.integer(id)]) %>% 
+  separate(id, into = c("from", "to"), sep = "-") %>% 
+  ggplot(aes(x = r)) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+  geom_line(aes(y = theo), linetype = 2) +
+  geom_line(aes(y = obs), size = 0.8) + 
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(x = "r (m)", title = "Multitype K(r)") +
+  theme_universe +
+  facet_grid(from ~ to)
+
+multiG <- all_g_tibble %>% 
+  mutate(id = panelnames[as.integer(id)]) %>% 
+  separate(id, into = c("from", "to"), sep = "-") %>% 
+  ggplot(aes(x = r)) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+  geom_line(aes(y = theo), linetype = 2) +
+  geom_line(aes(y = obs), size = 0.8) + 
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(x = "r (m)", title = "Multitype G(r)") +
+  theme_universe +
+  facet_grid(from ~ to)
+  
+ggsave(filename = here("plots/pointprocess_multiK_sex.pdf"), plot = multiK, 
+       width = 9, height = 9)
+ggsave(filename = here("plots/pointprocess_multiG_sex.pdf"), plot = multiG, 
+       width = 9, height = 9)
+
+
+# # fuuu --------------------------------------------------------------------
 # 
 # # density
-# plot(ved_pp_split)
+# plot(density(ved_pp_split), equal.ribbon = TRUE)
 # plot(density(ved_pp_split), equal.ribbon = TRUE)
 # 
-# # pp with marks ----------------------------------------------------------------
-# plot(envelope(split(ved_pp)[[2]], Kest))
-# plot(envelope(split(ved_pp)[[3]], Kest))
-# plot(envelope(split(ved_pp)[[4]], Kest))
+# str(density(ved_pp_split))
 # 
 # plot(density(split(ved_pp)[2:4]))
-# 
-# k <- Kcross(ved_pp, "M", "F")
-# plot(k)
-# plot(envelope(ved_pp, Kcross, funargs = list(i = "M", j = "F")))
-
-
-
