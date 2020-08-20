@@ -209,10 +209,9 @@ Last but not least, the $T$ function is a third-order parallel to the $K$ functi
 For formulas of the individual functions see the supplement.
 
 Given statistics for independent random process are estimated using Monte Carlo
-simulation with 99 iterations.
-The most extreme results of simulations are discarded as outliers and the
-second most extreme results are used to construct envelopes encompassing the
-expected range for a given function [@baddeley2016 384-403].
+simulation with 999 iterations.
+Ten most extreme realizations of the simulation are discarded as outliers to
+get a significance level $\alpha = 0.01$ [@baddeley2016 384-403].
 
 To explore whether neighboring individuals are more often of the same sex we use
 three methods to establish neighborhood relations.
@@ -326,19 +325,43 @@ variables is treated as nominal data.
 
 ## Spatial patterning
 
-The quadrat test suggests both random and clustered processes with p values
+The quadrat test shows evidence for both random and clustered processes taking place with p values
 under the 0.05 alpha value but the $\chi^2$ approximation is inaccurate due to small
 expected counts (for the details see supplementary information).
-Fig. \@ref(fig:spat-funs) shows that the curves of $G$ and $F$ functions do not
-deviate too much from the curves expected under independent random process nor
-do they traverse the boundaries of the envelopes.
-This tells us that both the cummulative nearest-neighbor distance (*G*) and
-distance to any random location in the space of the window (*F*) are well
-approximated by random processes and do not show evidence for spatial clustering.
-On the other hand, both *K* and *T* curves have a steep rise and exceed the
-envelope boundaries.
-These functions thus show evidence for clustering process in the observed point
-pattern.
+Inconclusive result of the quadrat test is not suprising because as was noted
+earlier, we do not expect *first-order* properties to play major roles in
+placing of the individual burials.
+Results of functions based on nearest neighbors are reported in Fig. \@ref(fig:spat-funs).
+*G* function does deviate from the curve expected under independent random process
+but does not traverse the boundaries of the envelope.
+Thus the cummulative nearest-neighbor distance (*G*) is well approximated by
+random process and does not show evidence for spatial clustering nor repelent functions
+taking place.
+The empty-space function *F* deviates slightly from the area defined by
+the envelope at around 6 meters.
+This means that the number of nearest neighbours to any empty-space point
+at this and larger distances is lower than it would be expected under complete spatial randomness.
+On the contrary to only slight deviations in case of *G* and *F*
+the *K* and *T* functions show clear deviations from the expected curve and exceed
+the boundaries of given envelopes at the distance of around 5 to 6 meters in
+case of *K* and slightly more in case of *T* function.
+This means that numbers of nearest neighbors at this and larger distances is
+significantly higher than we would exect under complete spatial randomness.
+The overall point pattern thus shows clear signs of clustering process taking place.
+
+This means that the locations of new burials were not chosen at random
+but were affected by the positions of previous burials.
+The pattern begins to cluster at the distance of around 5 to 6 meters, meaning
+that beginning at this distance, the probability of finding a neighboring burial is
+much higher than it would be if the burials were placed randomly.
+The community burying their dead at the cemetery of Vedrovice -- Široká u lesa
+did so in an organized manner taking into account previous burials at the same place,
+meaning their positions were known, probably marked on the surface somehow.
+This would imply either non-perishable marks on the surface of the cemetery or their
+maintenance from time to time.
+
+Spatial pattern was also explored for differently sexed bodies.
+
 
 ## Neighborhood structure
 
@@ -347,7 +370,8 @@ One is distance based where all the neighbors that fall into a given buffer are 
 the other two are based on neighborhood graphs, the Delaunay triangulation as a
 maximum number of neighbors scenario and a Gabriel graph as a minimal scenario.
 
-For relationships (see Fig. \@ref(fig:nb-sex) and Tab. \@ref(tab:nb-tab-sex)) of male-sexed bodies, none of the methods showed any significant
+For relationships (see Fig. \@ref(fig:nb-sex) and Tab. \@ref(tab:nb-tab-sex))
+of male-sexed bodies, none of the methods showed any significant
 differences between expected and observed number of neighbors of a given sex.
 The relationship with female-sexed bodies is rather extreme for all of the methods employed,
 but never significant ($p > 0.07$).
