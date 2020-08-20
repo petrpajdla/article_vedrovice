@@ -158,18 +158,18 @@ any internal structure, arrangement or possible grouping.
 We approach the task as a point pattern analysis problem given that
 a burial (event) is simplified as its centroid location in a two dimensional space.
 A polygon of idealized excavation extent is used as a study area (a window).
-Using a window closely approximating locations of the burials was considered,
+<!-- Using a window closely approximating locations of the burials was considered,
 e. g. buffer zone or convex/concave hull but simplified excavation polygon is
 deemed the most useful because it preserves the borders and empty areas
-of the original cemetery.
+of the original cemetery. -->
 
-Overall structure of the burial ground is examined using both density based approach
-and distance based methods. <!--[@osullivan2010, 121-154]-->
+Overall structure of the burial ground can be examined using either density based approaches
+or methods based on distances between neighbors. <!--[@osullivan2010, 121-154]-->
 Density based approaches, for instance quadrat tests,
 characterize the point pattern in terms of its *first-order properties* [@osullivan2010, 126].
 The assumption underlying the *first-order effects* is that any point location is
-independent on other point locations and different parameters influence the location.
-On the other hand the methods based on distances between neighbours and triples of neighbors
+independent on other point locations and different parameters influence its location.
+On the other hand the methods based on distances between pairs and triples of neighbours
 characterize the point pattern based on *second- and third-order effects*
 [@nakoinz2016, 130-135; @osullivan2010, 107].
 <!-- [@nakoinz2016, 135-144; @osullivan2010, 130-139] -->
@@ -178,7 +178,7 @@ In spatial analysis of settlement patterns individual locations of
 settlements (points) can depend on a number of parameters, for instance
 elevation, soil type etc.
 In case of a grave placement in a burial ground we presume that the choice of
-a location is influenced predominantly by other (previous) grave locations and
+a graves location is either random or influenced predominantly by other (previous) grave locations and
 is largely independent on other parameters.
 In other words *first-order properties* are of little to no importance in
 our point of view.
@@ -187,39 +187,42 @@ are thus considered major factors in locating of the graves.
 <!-- It is possible that the position of burials was dependent on parameters that were not
 captured by the excavation, for example location of trees but that is impossible to test.-->
 
-To characterize the pattern based on density, the quadrat test is employed.
+<!-- To characterize the pattern based on density, the quadrat test is employed.
 It divides the area of interest into several cells of fixed sizes
 (quadrats) and compares the count of events per quadrat with the count
 expected under the null hypothesis that the underlying point process
-is completely spatially random (approximated by a Poisson distribution).
+is completely spatially random (approximated by a Poisson distribution). -->
 Functions $G$, $F$, Ripley's $K$ [@ripley1976; @sayer2013] and $T$ [@schladitz2000] are
-based on the nearest neighbour distances [@nakoinz2016, 135-144].
+based on the nearest neighbour distances and are commonly used
+to characterize point patterns in archaeology [@nakoinz2016, 135-144].
 The $G$ function is a metric of how close events are and summarises
 cummulative frequency distribution of the nearest neighbour distances.
 Because of its dependence on the intensity of events in the study area, it is
-subject to changes in the size of the study area.
+subject to changes in the size of the study area (window).
 The $F$ function, an empty-space function, is based on simulating a point pattern
 and calculating of distances between random locations and the observed locations.
 It is a measure of how far are observed events from any arbitrary location [@osullivan2010, 132-135].
 Ripley's $K$ function is in comparison with the $G$ function resilient to
 changes in the window size and works with all the proximal events up to a
 certain threshold, not only the nearest neighbours [@nakoinz2016, 138].
-It is widely used in archaeology [@negre2018].
+It is widely used in archaeology cf. [@negre2018].
 Last but not least, the $T$ function is a third-order parallel to the $K$ function [@schladitz2000].
-For formulas of the individual functions see the supplement.
+For formulas and details on individual functions see the supplement.
 
 Given statistics for independent random process are estimated using Monte Carlo
 simulation with 999 iterations.
+Although much smaller number of permutations should be sufficient
+[@baddeley2016, 384] same as @sayer2013 [78] we chose to use 999 permutations.
 Ten most extreme realizations of the simulation are discarded as outliers to
-get a significance level $\alpha = 0.01$ [@baddeley2016 384-403].
+get a significance level $\alpha = 0.01$ [@baddeley2016 410].
 
 To explore whether neighboring individuals are more often of the same sex we use
-three methods to establish neighborhood relations.
+multiple methods to establish neighborhood relations.
 The first two methods are based on constructing neighborhood graphs.
 We use Delaunay triangulation and its subgraph, a Gabriel graph [@gabriel1969]
 with burial locations as nodes (Fig. \@ref(fig:plan-graphs)).
 The Delaunay triangulation can be considered a maximum number of neighbors case
-scenario while the Gabriel graph the exact opposite.
+scenario while the Gabriel graph the opposite.
 For each node, mean number of neighbors of a given sex is determined and recorded.
 To check how common the observed value is, a permutation test
 where sex of burials is randomly assigned while preserving the overall
@@ -228,12 +231,17 @@ graphs is performed.
 The observed values of neighbors sex categories are compared against distributions
 derived from the simulated data.
 
-The third approach of establishing neigborhood is by constructing buffer zones
+Another approach of establishing neigborhood is by constructing buffer zones
 around each of the burials with 6 meters radius.
-The size of a radius is based on the results of nearest neighbors analysis, where
+The size of the radius is based on the results of nearest neighbors analysis, where
 at the given radius there is strong evidence of a clustering process (Fig. \@ref(fig:spat-funs)).
 The randomness is again tested using a permutation test similar to the one
 described for the neighborhood derived from the graphs.
+
+Lastly, a modification of *K* and *G* functions for multitype point patterns
+are used to explore the reationship between individual sex categories.
+These take into account not all of the neighbors of the point pattern, but
+count the statistic for pairs of categories in a given variable.
 
 <!-- software packages -->
 Data is analyzed in an R environment for statistical computing and graphics
@@ -365,10 +373,10 @@ Spatial pattern was also explored for differently sexed bodies.
 
 ## Neighborhood structure
 
-Three methods of neighborhood relationship construction were examined.
-One is distance based where all the neighbors that fall into a given buffer are considered,
+<!-- Methods of neighborhood relationship construction examined include
+distance based approaches where all the neighbors that fall into a given buffer are considered,
 the other two are based on neighborhood graphs, the Delaunay triangulation as a
-maximum number of neighbors scenario and a Gabriel graph as a minimal scenario.
+maximum number of neighbors scenario and a Gabriel graph as a minimal scenario. -->
 
 For relationships (see Fig. \@ref(fig:nb-sex) and Tab. \@ref(tab:nb-tab-sex))
 of male-sexed bodies, none of the methods showed any significant
