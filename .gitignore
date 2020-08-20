@@ -49,9 +49,13 @@ vignettes/*.pdf
 # Plots created by the scripts
 /plots/
 
-# Output text files
+# Output text files and associated logs
 /text/*.pdf
 /text/*.docx
+/text/*.log
 
 # Preview of Readme file
 /README.html
+
+# Bibliography logs
+/text/*bak
