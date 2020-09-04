@@ -19,6 +19,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(ggforce)
+library(ggspatial)
 
 # theme for ggplot graphics
 theme_universe <- theme(panel.border = element_rect(colour = "black", 
@@ -34,7 +35,8 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
 
 # data --------------------------------------------------------------------
 
-ved_sf <- sf::read_sf(here::here("data/temp", "layout.shp"))
+ved_sf <- sf::read_sf(here::here("data/temp", "layout.shp")) %>% 
+  mutate(sex = forcats::fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
 ved_coord <- sf::st_coordinates(ved_sf)
 ved_exc <- sf::read_sf(here::here("data/temp", "window.shp"))
 
@@ -149,12 +151,12 @@ percolation <- function(x, lower = NULL, upper = NULL, step = NULL) {
 
 # percolation on ved ------------------------------------------------------
 
-p <- percolation(ved_coord, lower = 1, upper = 11, step = 0.2)
+p <- percolation(ved_coord, lower = 1, upper = 11, step = 0.1)
 
 
 # percolation stats -------------------------------------------------------
 
-p_breaks <- c(2.8, 4, 4.6, 5.6, 6.4, 8.8, 10.2)
+p_breaks <- c(2.8, 4, 4.6, 5.6, 6.3, 7.1, 8.8, 10.1)
 
 # number of clusters
 p$stats %>% 
@@ -218,20 +220,39 @@ init_coords <- bind_cols(id = 1:nrow(ved_coord), x = ved_coord[, "X"], y = ved_c
 #          radius <= 9.4)
 
 g_long <- left_join(p$membership_long, init_coords, by = "id") %>% 
-  filter(radius %in% c(1.6, 3.6, p_breaks)) %>% 
+  filter(radius %in% c(1.6, p_breaks[1:7])) %>% # 1.6, 3.6,
   mutate(label_radius = paste("dist.", radius, "m"),
          label_radius = forcats::fct_reorder(label_radius, radius))
 
+clust_col <- rep("gray", 19)
+
+scale_facet <- tibble::tibble(
+  label_radius = factor(c("dist. 8.8 m")),
+  location = c("br"),
+)
+
 ggplot() +
   geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.1) +
-  geom_mark_hull(data = g_long, aes(x, y, fill = clust), color = NA, expand = 0.02,
-                 show.legend = FALSE) +
-  scale_fill_manual(values = rep("gray60", 19)) +
-  geom_point(data = init_coords, aes(x, y), shape = 4, color = "gray40", size = 0.8) + 
-  facet_wrap(vars(label_radius)) +
+  ggforce::geom_mark_hull(data = g_long, aes(x, y, fill = clust), color = NA, expand = 0.025,
+                          show.legend = FALSE) +
+  # geom_point(data = g_long, aes(x, y, color = clust), show.legend = FALSE) +
+  scale_fill_manual(values = clust_col) +
+  scale_color_manual(values = clust_col) +
+  geom_sf(data = ved_sf, aes(shape = sex), size = 0.6) + 
+  scale_shape_manual(values = c(22, 21, 24, 4)) +
+  facet_wrap(vars(label_radius), ncol = 2) +
   coord_sf() +
+  annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                         aes(location = location), 
+                         data = scale_facet,
+                         pad_y = unit(0.8, "cm")) +
+  annotation_scale(aes(location = location),
+                   data = scale_facet,
+                   plot_unit = "m") +
   theme_void() +
   theme(strip.text = element_text(face = "italic"),
-        panel.spacing = unit(1, "lines"))
+        panel.spacing = unit(1, "lines"), 
+        legend.position = "bottom", 
+        legend.direction = "horizontal")
 
-ggsave(here::here("plots", "perc_plan.pdf"), width = 9, height = 9)
+ggsave(here::here("plots", "perc_plan.pdf"), width = 7, height = 14)
