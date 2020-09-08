@@ -48,15 +48,13 @@ sexual inequalities and gender in the Neolithic [@masclanslatorre2020; @bickle20
 <!-- Here we focus on detailed analysis of the distribution of the grave goods and
 spatial analysis of the Vedrovice cemetery in respect to gender relations and
 social structure. -->
-Here we explore the relations between burials and bodies in terms of biologicall
-sex, age, localness, exceptionality of grave goods and position within the cemetery.
 
 <!-- view of gender in the Neolithic, archaeological context -->
 @robb2017 [128] noted lack of gender archaeology debate for the
 European Neolithic in comparison with other periods.
-This is due to the notion of gender in the Neolihic that is presented as being
+Authors present gender in the Neolihic as being
 of a very different nature than gender in the later prehistory.
-Authors show that gender in the Neolithic is not clearly expressed and
+It is shown that gender in the Neolithic is not clearly expressed and
 biological differences between sexes are not transformed into binary cultural
 categories (ibid. 140-142).
 Considering the Neolithic burial evidence across Europe, authors find that it
@@ -66,8 +64,19 @@ combined with factors such as age and localness' (ibid. 138).
 In response, @bickle2020 [14] argues that 'biological sex may not have defined gender
 during the LBK' although the 'sexed bodies did matter'.
 
+Here we explore the relations between burials and bodies in terms of biological
+sex, age, local origin, exceptionality of grave goods and location within the
+cemetery.
+We focus predominantly on investigating non-random patterns in artefact
+co-occurences and spatial arragement of the cemetery in relation to the
+proposed *levels* of neolithic identity, i.e. sex, age and localness.
+Our question is thus how are grave good assemblages related to aforementioned
+categories and whether there is a consistent relationship between
+these categories forming the *identity*, grave goods and spatial arrangement
+of the cemetery.
+
 <!-- gender relations in LBK -->
-Although gender relations in the LBK might not be
+<!-- Although gender relations in the LBK might not be -->
 
 <!-- resampling and computer-intensive techniques-->
 The approach taken is a quantitative one embracing resampling techniques and
@@ -78,8 +87,7 @@ As noted by Sosna (ibid.), the most important benefit of resampling is in its
 ability to distinguish random and non-random patterns.
 
 
-### Questions
-
+<!-- ### Questions
 * Is there evidence that certain artefacts covary,
     either positively or negatively?
     Do certain artefacts tend to occur together, or are certain combinations
@@ -93,7 +101,7 @@ ability to distinguish random and non-random patterns.
     *between the different* **artefacts** in terms of their
     **distributions in graves**?
 * How are grave good assemblages related to age and sex?
-(... variations in burial rite coinciding with age or sex of the deceased ...)
+(... variations in burial rite coinciding with age or sex of the deceased ...) -->
 
 <!-- ======================================================================= -->
 
@@ -115,6 +123,7 @@ more recent analysis by @dockalova2008. Carbon, nitrogen and strontium isotope
 ratios were collected in @whittle2013 and @richards2008.
 Further details on use and function of the artefacts were gathered from
 @masclanslatorre2020.
+Information on localness of different bodies was derived from @hrncir2020.
 
 Each burial was originally characterized by 55 variables but only subset of
 35 variables was selected for further analysis.
@@ -192,29 +201,29 @@ It divides the area of interest into several cells of fixed sizes
 (quadrats) and compares the count of events per quadrat with the count
 expected under the null hypothesis that the underlying point process
 is completely spatially random (approximated by a Poisson distribution). -->
-Functions $G$, $F$, Ripley's $K$ [@ripley1976; @sayer2013] and $T$ [@schladitz2000] are
+Functions *G*, *F*, Ripley's *K* [@ripley1976; @sayer2013] and *T* [@schladitz2000] are
 based on the nearest neighbour distances and are commonly used
 to characterize point patterns in archaeology [@nakoinz2016, 135-144].
-The $G$ function is a metric of how close events are and summarises
+The *G* function is a metric of how close events are and summarises
 cummulative frequency distribution of the nearest neighbour distances.
 Because of its dependence on the intensity of events in the study area, it is
 subject to changes in the size of the study area (window).
-The $F$ function, an empty-space function, is based on simulating a point pattern
+The *F* function, an empty-space function, is based on simulating a point pattern
 and calculating of distances between random locations and the observed locations.
-It is a measure of how far are observed events from any arbitrary location [@osullivan2010, 132-135].
-Ripley's $K$ function is in comparison with the $G$ function resilient to
+It is a measure of how far observed events are from any arbitrary location [@osullivan2010, 132-135].
+Ripley's *K* function is in comparison with the *G* function resilient to
 changes in the window size and works with all the proximal events up to a
 certain threshold, not only the nearest neighbours [@nakoinz2016, 138].
 It is widely used in archaeology cf. [@negre2018].
-Last but not least, the $T$ function is a third-order parallel to the $K$ function [@schladitz2000].
+Last but not least, the *T* function is a third-order parallel to the *K* function [@schladitz2000].
 For formulas and details on individual functions see the supplement.
 
 Given statistics for independent random process are estimated using Monte Carlo
 simulation with 999 iterations.
 Although much smaller number of permutations should be sufficient
 [@baddeley2016, 384] same as @sayer2013 [78] we chose to use 999 permutations.
-Ten most extreme realizations of the simulation are discarded as outliers to
-get a significance level $\alpha = 0.01$ [@baddeley2016 410].
+Ten most extreme realizations of the simulation are discarded as outliers so
+the significance level $\alpha = 0.01$ [@baddeley2016 410].
 
 To explore whether neighboring individuals are more often of the same sex we use
 multiple methods to establish neighborhood relations.
@@ -223,16 +232,24 @@ We use Delaunay triangulation and its subgraph, a Gabriel graph [@gabriel1969]
 with burial locations as nodes (Fig. \@ref(fig:plan-graphs)).
 The Delaunay triangulation can be considered a maximum number of neighbors case
 scenario while the Gabriel graph the opposite.
-For each node, mean number of neighbors of a given sex is determined and recorded.
-To check how common the observed value is, a permutation test
-where sex of burials is randomly assigned while preserving the overall
+For each node, mean number of neighbors of a given category is determined and recorded.
+To check how common the observed value is, a permutation test is performed
+where categories are randomly assigned while preserving the overall
 proportion of given categories and the neighborhood structure determined by the
-graphs is performed.
-The observed values of neighbors sex categories are compared against distributions
-derived from the simulated data.
+graph.
+The observed values of neighbors categories are compared against distributions
+derived from 999 permutations of the simulated data.
 
-Another approach of establishing neigborhood is by constructing buffer zones
-around each of the burials with 6 meters radius.
+Another approach considered for establishing neigborhood relations is by
+constructing buffer zones around each of the burials.
+The question arises how large the buffer zones should be.
+To solve this problem we utilise percolation analysis [@maddison2020].
+Percolation analysis is a method used to identify clusters of points based
+on Euclidean distance.
+
+
+@maddison2020
+
 The size of the radius is based on the results of nearest neighbors analysis, where
 at the given radius there is strong evidence of a clustering process (Fig. \@ref(fig:spat-funs)).
 The randomness is again tested using a permutation test similar to the one
@@ -245,7 +262,7 @@ count the statistic for pairs of categories in a given variable.
 
 <!-- software packages -->
 Data is analyzed in an R environment for statistical computing and graphics
-[@rcore] using functions of many different packages, for the complete list
+[@rcore] using functions of several different packages, for the complete list
 see the supplementary information.
 
 <!-- readr [@wickham2017a], dplyr [@wickham2016] and
