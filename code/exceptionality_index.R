@@ -5,8 +5,8 @@
 # Exceptionality index of individual burials in order to create groups...
 
 # packages =====================================================================
-library(here)
 library(tidyverse)
+library(ggdendro)
 
 # functions ====================================================================
 # root mean square (quadratic mean) for vector x
@@ -15,59 +15,121 @@ rms <- function(x) {
   return(x)
 }
 
-# data =========================================================================
-ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
-# non_rand_vars <- readLines(here("data/temp", "non_random_vars.txt"))
-var_weights <- read_csv(here("data/temp/v_statistics.csv"))
+# # scaling
+# normalize01 <- function(x) {
+#   rg <- range(x, na.rm = TRUE)
+#   (x - rg[1]) / (rg[2] - rg[1])
+# }
 
-normalize01 <- function(x) {
-  rg <- range(x, na.rm = TRUE)
-  (x - rg[1]) / (rg[2] - rg[1])
+# data =========================================================================
+ved <- read_rds(here::here("data/temp/vedrovice_dataset.RDS"))
+# non_rand_vars <- readLines(here("data/temp", "non_random_vars.txt"))
+v_vals <- read_csv(here::here("data/temp/v_statistics.csv")) %>% 
+  select(variable, p) %>% 
+  mutate(weight = 1 - p)
+
+var_weights <- v_vals %>% pull(weight)
+names(var_weights) <- v_vals %>% pull(variable)
+
+
+# weighting variables -----------------------------------------------------
+# m_cont <- matrix(nrow = nrow(ved$bin_vars$count_mat), 
+#                  ncol = ncol(ved$bin_vars$count_mat))
+
+m_bin <- matrix(nrow = nrow(ved$bin_vars$bin_mat), 
+                ncol = ncol(ved$bin_vars$bin_mat))
+
+# for (i in 1:ncol(m_cont)) {
+#   m_cont[, i] <- ved$bin_vars$count_mat[, i] * var_weights[i]
+# }
+
+for (i in 1:ncol(m_bin)) {
+  m_bin[, i] <- ved$bin_vars$bin_mat[, i] * var_weights[i]
 }
 
-var_weights <- var_weights %>% mutate(v_norm = normalize01(v) + 1)
+# colnames(m_cont) <- colnames(ved$bin_vars$count_mat)
+colnames(m_bin) <- colnames(ved$bin_vars$bin_mat)
+
 
 # exceptionality index =========================================================
-# non random variables
-matr <- matrix(nrow = nrow(ved$bin_vars$bin_mat), ncol = ncol(ved$bin_vars$bin_mat))
-for (i in 1:ncol(ved$bin_vars$bin_mat)) {
-  matr[, i] <- ved$bin_vars$bin_mat[, i] * var_weights$v_norm[i]
-}
-colnames(matr) <- colnames(ved$bin_vars$bin_mat)
+# art_pca_c <- prcomp(m_cont, scale. = TRUE, center = TRUE)
+art_pca_b <- prcomp(m_bin)
 
-art_pca <- prcomp(matr, 
-                  scale. = FALSE, center = FALSE)
+# summary(art_pca_c)
+# ggbiplot::ggbiplot(art_pca_c)
 
-art_pca <- prcomp(ved$bin_vars$bin_mat[, ] * matrix(var_weights$v_norm, nrow = 1), 
-                  scale. = FALSE, center = FALSE)
-summary(art_pca)
-ggbiplot::ggbiplot(art_pca)
+summary(art_pca_b)
+# ggbiplot::ggbiplot(art_pca_b)
 
-# # for_pca <- ved %>% select(c("pit_len", "pit_wid", "pit_dep", vars_binary)) %>% 
-# #   mutate_at(c("pit_len", "pit_wid", "pit_dep"), scale) %>% 
-# #   mutate_all(replace_na)
-# 
-# # pca object
-# pca <- princomp(for_pca, scores = T)
-# # summary(pca)
+pc_threshold <- which(summary(art_pca_b)$importance[3, ] >= 0.9)[1]
 
 # counting ei for individual burials
-ei <- apply(art_pca$x[, 1:9], 1, rms) / max(apply(art_pca$x[, 1:9], 1, rms))
-hist(as.matrix(ei))
+ei_b <- apply(art_pca_b$x[, 1:pc_threshold], 1, rms) / 
+  max(apply(art_pca_b$x[, 1:pc_threshold], 1, rms))
+hist(as.matrix(ei_b))
 
-ei_tbl <- tibble(burial = names(ei), ei)
+
+# explore ei --------------------------------------------------------------
+
+ei_tbl <- tibble(burial = ved$id_burials, ei = ei_b)
 ei_tbl %>% arrange(desc(ei))
 
-ggplot(ei_tbl, aes(x = forcats::fct_reorder(burial, ei), y = ei)) +
+# plots
+ggplot(ei_tbl, aes(x = forcats::fct_reorder(factor(burial), ei), y = ei)) +
   geom_point() +
   coord_flip() +
   xlab("burial nr.")
 
-ei_tbl %>% arrange(desc(ei)) %>% View()
+# relationship with amount of grave goods
+ei_gg <- bind_cols(ei_tbl,
+                   n_gg = rowSums(ved$bin_vars$count_mat),
+                   n_gg_types = rowSums(ved$bin_vars$bin_mat))
 
-output <- ei_tbl %>% mutate(group = if_else(ei > 0.6, "group1",
-                                  if_else((ei < 0.6 & ei > 0.5), "group2", 
-                                          if_else((ei < 0.5 & ei > 0.4), "group3",
-                                                  if_else((ei < 0.4 & ei > 0.2), "group4", "group5")))))
+ei_gg %>% ggplot(aes(ei, n_gg)) +
+  geom_point() +
+  stat_smooth()
 
-readr::write_csv(output, "./data/output/exceptionality.csv")
+ei_gg %>% ggplot(aes(ei, n_gg_types)) +
+  geom_point() +
+  stat_smooth()
+
+cor(ei_gg$ei, ei_gg$n_gg)
+cor(ei_gg$ei, ei_gg$n_gg_types)
+
+
+# groups in ei ------------------------------------------------------------
+ei_mat <- as.matrix(ei_tbl$ei)
+rownames(ei_mat) <- ei_tbl$burial
+
+ei_hcl <- hclust(dist(ei_mat), method = "ward.D2")
+
+h <- 0.18
+dendro <- ggdendrogram(ei_hcl, rotate = FALSE) +
+  scale_y_sqrt(expand = expansion(c(0, 0))) +
+  geom_hline(yintercept = h, color = "gray", size = 2, alpha = 0.4)
+
+dendro
+
+ggsave(here::here("plots", "ei_dendrogram.pdf"), width = 9, height = 3)
+
+# cut dendrogram
+ei_clusters <- cutree(ei_hcl, h = h)
+
+ggplot(ei_tbl, aes(x = forcats::fct_reorder(factor(burial), ei), y = ei)) +
+  geom_point(aes(color = factor(ei_clusters))) +
+  coord_flip() +
+  xlab("burial nr.") +
+  theme_bw()
+
+# output data - ei groups
+output <- ei_tbl %>% bind_cols(ei_cluster = ei_clusters) %>% 
+  dplyr::mutate(fct = fct_reorder(factor(ei_cluster), ei, .desc = TRUE),
+                fct = fct_relabel(fct, ~ paste0(letters[1:7])))
+
+ggplot(ei_tbl, aes(x = forcats::fct_reorder(factor(burial), ei), y = ei)) +
+  geom_point(aes(color = output$fct)) +
+  coord_flip() +
+  xlab("burial nr.") +
+  theme_bw()
+
+write_csv(output, here::here("data/temp", "exceptionality.csv"))
