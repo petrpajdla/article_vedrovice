@@ -64,6 +64,12 @@ get_p <- function(v_exp, v_obs) {
   mean(v_exp >= v_obs)
 }
 
+# normalize to 0-1 range
+normalize01 <- function(x) {
+  rg <- range(x, na.rm = TRUE)
+  (x - rg[1]) / (rg[2] - rg[1])
+}
+
 # read data ====================================================================
 ved <- readRDS(here("data/temp", "vedrovice_dataset.RDS"))
 
@@ -167,14 +173,42 @@ v_plot
 
 ggsave(here("plots", "v_values.pdf"), plot = v_plot, width = 12, height = 6)
 
+
+# normalizing to range 0-1 ------------------------------------------------
+v_normalized <- bind_rows(exp = v_exp_g, obs = v_obs_g, .id = "orig") %>% 
+  group_by(variable) %>% 
+  nest() %>% 
+  mutate(data = map(data, mutate, value_norm = normalize01(value))) %>% 
+  unnest(cols = data)
+
+v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"), 
+                            mapping = aes(x = value_norm)) +
+  geom_density(fill = "gray80", color = NA, alpha = 0.6) +
+  geom_rug(alpha = 0.2) +
+  geom_vline(data = filter(v_normalized, orig == "obs"), 
+             mapping = aes(xintercept = value_norm), size = 0.8) +
+  facet_wrap(vars(long), scales = "free", nrow = 4) +
+  xlab("v statistic (normalized to 0 - 1 range)") +
+  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
+            hjust = +1.2, vjust = +1.5) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+  theme_universe
+
+ggsave(here("plots", "v_values_normalized.pdf"), plot = v_normalized_plot, 
+       width = 12, height = 6)
+
+write_csv(v_normalized, here("data/temp", "v_normalized.csv"))
+
+
 # S statistic ==================================================================
 s_observed <- sum(v_observed / ncol_input)
 
-s_p_value <- get_p(s_experimental, s_observed)
-s_p_value < 0.05
-
 s_experimental <- rowSums(apply(v_experimental, 2, 
                                 "/", ncol_input))
+
+s_p_value <- get_p(s_experimental, s_observed)
+s_p_value < 0.05
 
 s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
@@ -318,4 +352,4 @@ title(main = "absent", cex.main = 1, family = "sans", font.main = 1)
 dev.off()
 
 # output =======================================================================
-writeLines(non_rand_vars, here("data/temp", "non_random_vars.txt"))
+# writeLines(non_rand_vars, here("data/temp", "non_random_vars.txt"))
