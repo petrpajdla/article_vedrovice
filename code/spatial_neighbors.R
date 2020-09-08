@@ -29,9 +29,17 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
 # data --------------------------------------------------------------------
 
 # ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
-
+ei <- read_csv(here("data/temp", "exceptionality.csv"), col_types = "cdff") %>% 
+  select(id_burial = burial, ei, ei_clust = fct)
 ved_sf <- read_sf(here("data/temp", "layout.shp")) %>% 
-  mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
+  mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")),
+         age_sim = if_else(is.na(age_sim), "ind.", age_sim),
+         age_sim = fct_relevel(age_sim, c("you", "mid", "old", "ind.")),
+         origin = if_else(is.na(origin), "ind.", origin),
+         origin = fct_relevel(origin, c("local", "non-local"))) %>% 
+  left_join(ei, by = "id_burial") %>% 
+  mutate(ei_clust = if_else(is.na(ei_clust), "ind.", as.character(ei_clust)),
+         ei_clust = factor(ei_clust, levels = c(letters[1:7], "ind.")))
 ved_layout <- st_coordinates(ved_sf)
 ved_exc <- read_sf(here("data/temp", "window.shp"))
 
@@ -99,9 +107,18 @@ V(ved_g)$name <- ved_sf$id_burial
 ved_d <- graph_from_adj_list(ved_delaunay)
 V(ved_d)$name <- ved_sf$id_burial
 
-# variable vector of categorical variable --------------------------------
+# variable vector of categorical variables --------------------------------
 ved_sex <- ved_sf$sex
 names(ved_sex) <- ved_sf$id_burial
+
+ved_age <- ved_sf$age_sim
+names(ved_age) <- ved_sf$id_burial
+
+ved_origin <- ved_sf$origin
+names(ved_origin) <- ved_sf$id_burial
+
+ved_ei <- ved_sf$ei_clust
+names(ved_ei) <- ved_sf$id_burial
 
 # count mean neighbors ----------------------------------------------------
 mean_neighbors_networks <- function(g, variable_vector) {
@@ -126,6 +143,15 @@ mean_neighbors_networks <- function(g, variable_vector) {
 
 nb_sex_g <- mean_neighbors_networks(ved_g, ved_sex)
 nb_sex_d <- mean_neighbors_networks(ved_d, ved_sex)
+
+nb_age_g <- mean_neighbors_networks(ved_g, ved_age)
+nb_age_d <- mean_neighbors_networks(ved_d, ved_age)
+
+nb_orig_g <- mean_neighbors_networks(ved_g, ved_origin)
+nb_orig_d <- mean_neighbors_networks(ved_d, ved_origin)
+
+nb_ei_g <- mean_neighbors_networks(ved_g, ved_ei)
+nb_ei_d <- mean_neighbors_networks(ved_d, ved_ei)
 
 # randomization of sex for neighbors --------------------------------------
 # sf - the attribute table - first column is ID
@@ -155,16 +181,45 @@ randomize_neighbors_network <- function(g, sf, variable, n_sim = 99) {
     mutate(across(c(from, to), fct_relevel, lvls))
 }
 
-# simulation (200 iterations) ----------------------------------------------
+# simulation (999 iterations) ----------------------------------------------
 
-ved_rand_sex_g <- randomize_neighbors_network(ved_g, ved_sf, "sex", n_sim = 200)
-ved_rand_sex_d <- randomize_neighbors_network(ved_d, ved_sf, "sex", n_sim = 200)
+# ved_rand_sex_g <- randomize_neighbors_network(ved_g, ved_sf, "sex", n_sim = 999)
+# write_csv(ved_rand_sex_g, here("data/temp", "ved_rand_sex_g.csv"))
+ved_rand_sex_g <- read_csv(here("data/temp", "ved_rand_sex_g.csv"))
+# ved_rand_sex_d <- randomize_neighbors_network(ved_d, ved_sf, "sex", n_sim = 999)
+# write_csv(ved_rand_sex_d, here("data/temp", "ved_rand_sex_d.csv"))
+ved_rand_sex_d <- read_csv(here("data/temp", "ved_rand_sex_d.csv"))
+
+# ved_rand_age_g <- randomize_neighbors_network(ved_g, ved_sf, "age_sim", n_sim = 999)
+# write_csv(ved_rand_age_g, here("data/temp", "ved_rand_age_g.csv"))
+ved_rand_age_g <- read_csv(here("data/temp", "ved_rand_age_g.csv"))
+# ved_rand_age_d <- randomize_neighbors_network(ved_d, ved_sf, "age_sim", n_sim = 999)
+# write_csv(ved_rand_age_d, here("data/temp", "ved_rand_age_d.csv"))
+ved_rand_age_d <- read_csv(here("data/temp", "ved_rand_age_d.csv"))
+  
+# ved_rand_orig_g <- randomize_neighbors_network(ved_g, ved_sf, "origin", n_sim = 999)
+# write_csv(ved_rand_orig_g, here("data/temp", "ved_rand_orig_g.csv"))
+ved_rand_orig_g <- read_csv(here("data/temp", "ved_rand_orig_g.csv"))
+# ved_rand_orig_d <- randomize_neighbors_network(ved_d, ved_sf, "origin", n_sim = 999)
+# write_csv(ved_rand_orig_d, here("data/temp", "ved_rand_orig_d.csv"))
+ved_rand_orig_d <- read_csv(here("data/temp", "ved_rand_orig_d.csv"))
+  
+# ved_rand_ei_g <- randomize_neighbors_network(ved_g, ved_sf, "ei_clust", n_sim = 999)
+# write_csv(ved_rand_ei_g, here("data/temp", "ved_rand_ei_g.csv"))
+ved_rand_ei_g <- read_csv(here("data/temp", "ved_rand_ei_g.csv"))
+# ved_rand_ei_d <- randomize_neighbors_network(ved_d, ved_sf, "ei_clust", n_sim = 999)
+# write_csv(ved_rand_ei_d, here("data/temp", "ved_rand_ei_d.csv"))
+ved_rand_ei_d <- read_csv(here("data/temp", "ved_rand_ei_d.csv"))
+
 
 # plots -------------------------------------------------------------------
-g_d <- ved_rand_sex_g %>% 
+# sex
+g_sex_g <- ved_rand_sex_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
   ggplot(aes(mean)) +
   geom_density(fill = "gray90", color = NA) +
-  geom_vline(data = nb_sex_g, aes(xintercept = mean), size = 0.8) +
+  geom_vline(data = filter(nb_sex_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
   geom_rug() +
   facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
   scale_y_continuous(expand = c(0, 0, 0, 0)) +
@@ -172,12 +227,14 @@ g_d <- ved_rand_sex_g %>%
   labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
   theme_universe
 
-ggsave(here("plots/nb_gabriel_sex.pdf"), g_d, width = 12, height = 6)
+ggsave(here("plots/nb_gabriel_sex.pdf"), g_sex_g, width = 9, height = 6)
 
-g_g <- ved_rand_sex_d %>% 
+g_sex_d <- ved_rand_sex_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
   ggplot(aes(mean)) +
   geom_density(fill = "gray90", color = NA) +
-  geom_vline(data = nb_sex_d, aes(xintercept = mean), size = 0.8) +
+  geom_vline(data = filter(nb_sex_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
   geom_rug() +
   facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
   scale_y_continuous(expand = c(0, 0, 0, 0)) +
@@ -185,106 +242,199 @@ g_g <- ved_rand_sex_d %>%
   labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
   theme_universe
 
-ggsave(here("plots/nb_delaunay_sex.pdf"), g_g,  width = 12, height = 6)
+ggsave(here("plots/nb_delaunay_sex.pdf"), g_sex_d,  width = 9, height = 6)
 
-
-# neighborhood based on buffer --------------------------------------------
-# buffer zone -------------------------------------------------------------
-# 6 m (based on NN functions)
-distance <- 6
-
-mean_neighbors_buffer <- function(sf, variable, dist) {
-  variable <- as.symbol(variable)
-  lvls <- levels(factor(pull(sf, !!variable)))
-  res <- matrix(nrow = length(lvls), ncol = length(lvls))
-  colnames(res) <- lvls
-  rownames(res) <- lvls
-  # get buffer for each level of a variable
-  for (i in seq_along(lvls)) {
-    buffer <- sf %>% filter(!!variable == lvls[i]) %>% 
-      st_buffer(dist = dist) %>% 
-      st_geometry()
-    all_nbs <- sum(st_intersects(buffer, st_geometry(sf), sparse = FALSE)) - length(buffer)
-    for (j in seq_along(lvls)) {
-      points <- sf %>% filter(!!variable == lvls[j]) %>% 
-        st_geometry()
-      intersect <- sum(st_intersects(buffer, points, sparse = FALSE))
-      if (lvls[i] == lvls[j]) {
-        res[i, j] <- (intersect - length(buffer)) / all_nbs
-      } else {
-        res[i, j] <- intersect / all_nbs
-      }
-    }
-  }
-  as.data.frame(res) %>% 
-    rownames_to_column(var = "from") %>% 
-    pivot_longer(-from, names_to = "to") %>% 
-    mutate(across(c(from, to), fct_relevel, lvls)) %>% 
-    rename(mean = value)
-}
-
-observed <- mean_neighbors_buffer(ved_sf, "sex", distance)
-# mean_neighbors_buffer(ved_sf, "age_sim", distance)
-
-# resampling --------------------------------------------------------------
-
-randomize_neighbors_buffer <- function(sf, variable, dist, n_sim = 99) {
-  n_bur <- nrow(sf)
-  variable <- as.symbol(variable)
-  lvls <- levels(factor(pull(sf, !!variable)))
-  
-  prob <- sf %>%
-    st_drop_geometry() %>% 
-    select(!!variable) %>%
-    group_by(!!variable) %>%
-    count() %>%
-    mutate(prob = n / n_bur)
-  
-  res <- vector("list", n_sim)
-  
-  for (i in 1:n_sim) {
-    rand_lvls <- randomizr::simple_ra(n_bur, prob_each = prob$prob, 
-                                      conditions = pull(prob, !!variable))
-    
-    res[[i]] <- sf %>% bind_cols(rand = rand_lvls) %>% 
-      mean_neighbors_buffer("rand", dist)
-  }
-  res %>% bind_rows()
-}
-
-expected <- randomize_neighbors_buffer(ved_sf, "sex", distance, n_sim = 200)
-
-# plot
-g_b <- expected %>% ggplot(aes(mean)) +
+# age
+g_age_g <- ved_rand_age_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
   geom_density(fill = "gray90", color = NA) +
-  geom_vline(data = observed, aes(xintercept = mean), size = 0.8) +
+  geom_vline(data = filter(nb_age_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
   geom_rug() +
   facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
   scale_y_continuous(expand = c(0, 0, 0, 0)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  labs(xlab = "mean neighbours", title = "Neighborhood based on buffer") +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
   theme_universe
 
-ggsave(here("plots", "nb_buffer_sex.pdf"), g_b, width = 12, height = 6)
+ggsave(here("plots/nb_gabriel_age.pdf"), g_age_g, width = 9, height = 6)
 
-# plot buffer -------------------------------------------------------------
+g_age_d <- ved_rand_age_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_age_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
+  theme_universe
 
-# ved_buff <- st_buffer(ved_sf, dist = distance)
+ggsave(here("plots/nb_delaunay_age.pdf"), g_age_d,  width = 9, height = 6)
+
+# localness
+g_orig_g <- ved_rand_orig_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_orig_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
+  theme_universe
+
+ggsave(here("plots/nb_gabriel_orig.pdf"), g_orig_g, width = 6, height = 4)
+
+g_orig_d <- ved_rand_orig_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_orig_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
+  theme_universe
+
+ggsave(here("plots/nb_delaunay_orig.pdf"), g_orig_d,  width = 6, height = 4)
+
+# exceptionality index
+g_ei_g <- ved_rand_ei_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_ei_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
+  theme_universe
+
+ggsave(here("plots/nb_gabriel_ei.pdf"), g_ei_g, width = 6, height = 4)
+
+g_ei_d <- ved_rand_ei_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_ei_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
+  theme_universe
+
+ggsave(here("plots/nb_delaunay_ei.pdf"), g_ei_d,  width = 6, height = 4)
+
+
+# # neighborhood based on buffer --------------------------------------------
+# # buffer zone -------------------------------------------------------------
+# # 6 m (based on NN functions)
+# distance <- 6
 # 
-# ggplot(data = ved_sf) +
-#   geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
-#   geom_sf(data = ved_buff, fill = "gray80", color = "gray80", alpha = 0.2) +
-#   geom_sf(aes(shape = sex), fill = "white", size = 2) +
-#   scale_shape_manual(values = c(22, 21, 24, 4)) +
-#   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
-#                                     location = "br",
-#                                     pad_y = unit(2, "cm")) +
-#   ggspatial::annotation_scale(plot_unit = "m",
-#                               location = "br",
-#                               pad_y = unit(1, "cm")) +
-#   labs(shape = "body sex") +
-#   facet_wrap(vars(sex)) +
-#   theme_void()
+# mean_neighbors_buffer <- function(sf, variable, dist) {
+#   variable <- as.symbol(variable)
+#   lvls <- levels(factor(pull(sf, !!variable)))
+#   res <- matrix(nrow = length(lvls), ncol = length(lvls))
+#   colnames(res) <- lvls
+#   rownames(res) <- lvls
+#   # get buffer for each level of a variable
+#   for (i in seq_along(lvls)) {
+#     buffer <- sf %>% filter(!!variable == lvls[i]) %>% 
+#       st_buffer(dist = dist) %>% 
+#       st_geometry()
+#     all_nbs <- sum(st_intersects(buffer, st_geometry(sf), sparse = FALSE)) - length(buffer)
+#     for (j in seq_along(lvls)) {
+#       points <- sf %>% filter(!!variable == lvls[j]) %>% 
+#         st_geometry()
+#       intersect <- sum(st_intersects(buffer, points, sparse = FALSE))
+#       if (lvls[i] == lvls[j]) {
+#         res[i, j] <- (intersect - length(buffer)) / all_nbs
+#       } else {
+#         res[i, j] <- intersect / all_nbs
+#       }
+#     }
+#   }
+#   as.data.frame(res) %>% 
+#     rownames_to_column(var = "from") %>% 
+#     pivot_longer(-from, names_to = "to") %>% 
+#     mutate(across(c(from, to), fct_relevel, lvls)) %>% 
+#     rename(mean = value)
+# }
+# 
+# observed <- mean_neighbors_buffer(ved_sf, "sex", distance)
+# # mean_neighbors_buffer(ved_sf, "age_sim", distance)
+# 
+# # resampling --------------------------------------------------------------
+# 
+# randomize_neighbors_buffer <- function(sf, variable, dist, n_sim = 99) {
+#   n_bur <- nrow(sf)
+#   variable <- as.symbol(variable)
+#   lvls <- levels(factor(pull(sf, !!variable)))
+#   
+#   prob <- sf %>%
+#     st_drop_geometry() %>% 
+#     select(!!variable) %>%
+#     group_by(!!variable) %>%
+#     count() %>%
+#     mutate(prob = n / n_bur)
+#   
+#   res <- vector("list", n_sim)
+#   
+#   for (i in 1:n_sim) {
+#     rand_lvls <- randomizr::simple_ra(n_bur, prob_each = prob$prob, 
+#                                       conditions = pull(prob, !!variable))
+#     
+#     res[[i]] <- sf %>% bind_cols(rand = rand_lvls) %>% 
+#       mean_neighbors_buffer("rand", dist)
+#   }
+#   res %>% bind_rows()
+# }
+# 
+# expected <- randomize_neighbors_buffer(ved_sf, "sex", distance, n_sim = 200)
+# 
+# # plot
+# g_b <- expected %>% ggplot(aes(mean)) +
+#   geom_density(fill = "gray90", color = NA) +
+#   geom_vline(data = observed, aes(xintercept = mean), size = 0.8) +
+#   geom_rug() +
+#   facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+#   scale_y_continuous(expand = c(0, 0, 0, 0)) +
+#   scale_x_continuous(expand = c(0, 0)) +
+#   labs(xlab = "mean neighbours", title = "Neighborhood based on buffer") +
+#   theme_universe
+# 
+# ggsave(here("plots", "nb_buffer_sex.pdf"), g_b, width = 12, height = 6)
+# 
+# # plot buffer -------------------------------------------------------------
+# 
+# # ved_buff <- st_buffer(ved_sf, dist = distance)
+# # 
+# # ggplot(data = ved_sf) +
+# #   geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+# #   geom_sf(data = ved_buff, fill = "gray80", color = "gray80", alpha = 0.2) +
+# #   geom_sf(aes(shape = sex), fill = "white", size = 2) +
+# #   scale_shape_manual(values = c(22, 21, 24, 4)) +
+# #   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+# #                                     location = "br",
+# #                                     pad_y = unit(2, "cm")) +
+# #   ggspatial::annotation_scale(plot_unit = "m",
+# #                               location = "br",
+# #                               pad_y = unit(1, "cm")) +
+# #   labs(shape = "body sex") +
+# #   facet_wrap(vars(sex)) +
+# #   theme_void()
 
 
 
@@ -294,7 +444,9 @@ g_full <- gridExtra::grid.arrange(g_b, g_d, g_g, nrow = 3)
 
 ggsave(here("plots/nb_sex.pdf"), g_full, width = 12, height = 18)
 
+
 # p-value -----------------------------------------------------------------
+
 pval <- function(obs, exp) {
   lvls <- levels(obs$from)
   res <- obs %>% mutate(p = 0)
@@ -316,18 +468,68 @@ pval <- function(obs, exp) {
   return(res)
 }
 
-p_d <- pval(nb_sex_d, ved_rand_sex_d) %>% select(-sum)
-p_g <- pval(nb_sex_g, ved_rand_sex_g) %>% select(-sum)
-p_b <- pval(observed, expected)
+# sex
+p_sex_d <- pval(nb_sex_d, ved_rand_sex_d) %>% select(-sum)
+p_sex_g <- pval(nb_sex_g, ved_rand_sex_g) %>% select(-sum)
 
-bind_rows(delaunay = p_d, gabriel = p_g, buffer = p_b, .id = "method") %>% 
+bind_rows(delaunay = p_sex_d, gabriel = p_sex_g, .id = "method") %>% 
   pivot_wider(values_from = c(mean, p), 
               names_from = method, 
               names_glue = "{method}_{.value}") %>% 
   select(from, to, 
-         starts_with("buffer"), 
          starts_with("delaunay"), 
          starts_with("gabriel")) %>% 
   write_csv(here("data/temp/nb_sex_p.csv"))
+
+# age
+p_age_d <- pval(nb_age_d, ved_rand_age_d) %>% select(-sum)
+p_age_g <- pval(nb_age_g, ved_rand_age_g) %>% select(-sum)
+
+bind_rows(delaunay = p_age_d, gabriel = p_age_g, .id = "method") %>% 
+  pivot_wider(values_from = c(mean, p), 
+              names_from = method, 
+              names_glue = "{method}_{.value}") %>% 
+  select(from, to, 
+         starts_with("delaunay"), 
+         starts_with("gabriel")) %>% 
+  write_csv(here("data/temp/nb_age_p.csv"))
+
+# origin
+p_orig_d <- pval(nb_orig_d, ved_rand_orig_d) %>% select(-sum)
+p_orig_g <- pval(nb_orig_g, ved_rand_orig_g) %>% select(-sum)
+
+bind_rows(delaunay = p_orig_d, gabriel = p_orig_g, .id = "method") %>% 
+  pivot_wider(values_from = c(mean, p), 
+              names_from = method, 
+              names_glue = "{method}_{.value}") %>% 
+  select(from, to, 
+         starts_with("delaunay"), 
+         starts_with("gabriel")) %>% 
+  write_csv(here("data/temp/nb_orig_p.csv"))
+
+# ei
+p_ei_d <- pval(nb_ei_d, ved_rand_ei_d) %>% select(-sum)
+p_ei_g <- pval(nb_ei_g, ved_rand_ei_g) %>% select(-sum)
+
+bind_rows(delaunay = p_ei_d, gabriel = p_ei_g, .id = "method") %>% 
+  pivot_wider(values_from = c(mean, p), 
+              names_from = method, 
+              names_glue = "{method}_{.value}") %>% 
+  select(from, to, 
+         starts_with("delaunay"), 
+         starts_with("gabriel")) %>% 
+  write_csv(here("data/temp/nb_ei_p.csv"))
+
+# p_b <- pval(observed, expected)
+
+# bind_rows(delaunay = p_d, gabriel = p_g, buffer = p_b, .id = "method") %>% 
+#   pivot_wider(values_from = c(mean, p), 
+#               names_from = method, 
+#               names_glue = "{method}_{.value}") %>% 
+#   select(from, to, 
+#          starts_with("buffer"), 
+#          starts_with("delaunay"), 
+#          starts_with("gabriel")) %>% 
+#   write_csv(here("data/temp/nb_sex_p.csv"))
 
 
