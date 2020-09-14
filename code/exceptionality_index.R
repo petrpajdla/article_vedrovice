@@ -33,6 +33,7 @@ names(var_weights) <- v_vals %>% pull(variable)
 
 
 # weighting variables -----------------------------------------------------
+# variables are weighted by the p value (measure of departure from norm) of v stats
 # m_cont <- matrix(nrow = nrow(ved$bin_vars$count_mat), 
 #                  ncol = ncol(ved$bin_vars$count_mat))
 
@@ -95,7 +96,9 @@ ei_gg %>% ggplot(aes(ei, n_gg_types)) +
 
 cor(ei_gg$ei, ei_gg$n_gg)
 cor(ei_gg$ei, ei_gg$n_gg_types)
-
+# there is a significant correlation between exceptionality and:
+# amount of grave goods - 0.78
+# amount of grave good types - 0.95
 
 # groups in ei ------------------------------------------------------------
 ei_mat <- as.matrix(ei_tbl$ei)
@@ -131,5 +134,11 @@ ggplot(ei_tbl, aes(x = forcats::fct_reorder(factor(burial), ei), y = ei)) +
   coord_flip() +
   xlab("burial nr.") +
   theme_bw()
+
+ei_gg %>% ggplot(aes(ei, n_gg)) +
+  geom_point(aes(color = output$fct))
+
+ei_gg %>% ggplot(aes(ei, n_gg_types)) +
+  geom_point(aes(color = output$fct))
 
 write_csv(output, here::here("data/temp", "exceptionality.csv"))

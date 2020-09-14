@@ -2,7 +2,7 @@
 # Script nr. 1.1
 # DATA INPUT AND MANIPULATION
 # author: Petr Pajdla
-# Script manipulates input data and saves a list with manipulated dataset
+# Script manipulates input data and saves a list with manipulated dataset (processed data)
 
 # packages =====================================================================
 library(dplyr)
