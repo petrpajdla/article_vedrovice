@@ -74,7 +74,7 @@ normalize01 <- function(x) {
 ved <- readRDS(here("data/temp", "vedrovice_dataset.RDS"))
 
 # counting co-occurrences in observed matrix ===================================
-input_matrix <- ved$bin_vars$bin_mat
+input_matrix <- ved$bin_vars$bin_mat[, ved$bin_vars$over5]
 ncol_input <- ncol(input_matrix)
 
 cooc_obs <- count_cooccurrence(matrix = input_matrix)
@@ -83,26 +83,26 @@ cooc_obs <- cooc_obs %>% filter(var1 != var2)
 
 # randomization of co-occurrence matrix - list of many matrices ----------------
 n_permutations <-  9999
-# # ======
-# rand_mat <- vegan::permatfull(input_matrix,
-#                               fixedmar = "both",
-#                               mtype = "prab",
-#                               times = n_permutations)
-# # ======
+# ======
+rand_mat <- vegan::permatfull(input_matrix,
+                              fixedmar = "both",
+                              mtype = "prab",
+                              times = n_permutations)
+# ======
 
 # going parallel to speed up randomization...
 # detecting cores for parallel
 no_cores <- parallel::detectCores() - 1
-
+  
 # cooccurences on random matrices ==============================================
-# # ======
-# cl <- parallel::makeCluster(no_cores)
-# cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
-# parallel::stopCluster(cl)
-# 
-# # save counts of co-occurences on random matrices
-# readr::write_rds(cooc_rand, here("data/temp", "cooc_random_mat.RDS"))
-# # ======
+# ======
+cl <- parallel::makeCluster(no_cores)
+cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
+parallel::stopCluster(cl)
+
+# save counts of co-occurences on random matrices
+readr::write_rds(cooc_rand, here("data/temp", "cooc_random_mat.RDS"))
+# ======
 
 # load from temporary data
 cooc_rand <- readr::read_rds(here("data/temp", "cooc_random_mat.RDS"))
@@ -332,7 +332,7 @@ plot(g_cooc_positive,
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_positive)$weight^1.2,
      edge.color = "black",
-     mark.groups = cluster_louvain(g_cooc_positive),
+     mark.groups = cluster_fast_greedy(g_cooc_positive),
      mark.col = "gray90",
      mark.border = "white")
 title(main = "present", cex.main = 1, family = "sans", font.main = 1)
@@ -345,7 +345,7 @@ plot(g_cooc_negative,
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_negative)$weight^1.2,
      edge.color = "black",
-     mark.groups = cluster_louvain(g_cooc_negative),
+     mark.groups = cluster_fast_greedy(g_cooc_negative),
      mark.col = "gray90",
      mark.border = "white")
 title(main = "absent", cex.main = 1, family = "sans", font.main = 1)

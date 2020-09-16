@@ -29,17 +29,18 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
 # data --------------------------------------------------------------------
 
 # ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
-ei <- read_csv(here("data/temp", "exceptionality.csv"), col_types = "cdff") %>% 
-  select(id_burial = burial, ei, ei_clust = fct)
+# ei <- read_csv(here("data/temp", "exceptionality.csv"), col_types = "cdff") %>% 
+#   select(id_burial = burial, ei, ei_clust = fct)
 ved_sf <- read_sf(here("data/temp", "layout.shp")) %>% 
   mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")),
          age_sim = if_else(is.na(age_sim), "ind.", age_sim),
          age_sim = fct_relevel(age_sim, c("you", "mid", "old", "ind.")),
          origin = if_else(is.na(origin), "ind.", origin),
-         origin = fct_relevel(origin, c("local", "non-local"))) %>% 
-  left_join(ei, by = "id_burial") %>% 
-  mutate(ei_clust = if_else(is.na(ei_clust), "ind.", as.character(ei_clust)),
-         ei_clust = factor(ei_clust, levels = c(letters[1:7], "ind.")))
+         origin = fct_relevel(origin, c("local", "non-local")),
+         ei_clust = if_else(is.na(ei_clust), "ind.", as.character(ei_clust)),
+         ei_clust = factor(ei_clust, 
+                           levels = c(letters[1:length(unique(.$ei_clust))-1], 
+                                      "ind.")))
 ved_layout <- st_coordinates(ved_sf)
 ved_exc <- read_sf(here("data/temp", "window.shp"))
 
@@ -185,30 +186,35 @@ randomize_neighbors_network <- function(g, sf, variable, n_sim = 99) {
 
 # ved_rand_sex_g <- randomize_neighbors_network(ved_g, ved_sf, "sex", n_sim = 999)
 # write_csv(ved_rand_sex_g, here("data/temp", "ved_rand_sex_g.csv"))
-ved_rand_sex_g <- read_csv(here("data/temp", "ved_rand_sex_g.csv"))
+# 
 # ved_rand_sex_d <- randomize_neighbors_network(ved_d, ved_sf, "sex", n_sim = 999)
 # write_csv(ved_rand_sex_d, here("data/temp", "ved_rand_sex_d.csv"))
-ved_rand_sex_d <- read_csv(here("data/temp", "ved_rand_sex_d.csv"))
-
+# 
 # ved_rand_age_g <- randomize_neighbors_network(ved_g, ved_sf, "age_sim", n_sim = 999)
 # write_csv(ved_rand_age_g, here("data/temp", "ved_rand_age_g.csv"))
-ved_rand_age_g <- read_csv(here("data/temp", "ved_rand_age_g.csv"))
+# 
 # ved_rand_age_d <- randomize_neighbors_network(ved_d, ved_sf, "age_sim", n_sim = 999)
 # write_csv(ved_rand_age_d, here("data/temp", "ved_rand_age_d.csv"))
-ved_rand_age_d <- read_csv(here("data/temp", "ved_rand_age_d.csv"))
-  
+# 
 # ved_rand_orig_g <- randomize_neighbors_network(ved_g, ved_sf, "origin", n_sim = 999)
 # write_csv(ved_rand_orig_g, here("data/temp", "ved_rand_orig_g.csv"))
-ved_rand_orig_g <- read_csv(here("data/temp", "ved_rand_orig_g.csv"))
+# 
 # ved_rand_orig_d <- randomize_neighbors_network(ved_d, ved_sf, "origin", n_sim = 999)
 # write_csv(ved_rand_orig_d, here("data/temp", "ved_rand_orig_d.csv"))
-ved_rand_orig_d <- read_csv(here("data/temp", "ved_rand_orig_d.csv"))
-  
+# 
 # ved_rand_ei_g <- randomize_neighbors_network(ved_g, ved_sf, "ei_clust", n_sim = 999)
 # write_csv(ved_rand_ei_g, here("data/temp", "ved_rand_ei_g.csv"))
-ved_rand_ei_g <- read_csv(here("data/temp", "ved_rand_ei_g.csv"))
+# 
 # ved_rand_ei_d <- randomize_neighbors_network(ved_d, ved_sf, "ei_clust", n_sim = 999)
 # write_csv(ved_rand_ei_d, here("data/temp", "ved_rand_ei_d.csv"))
+
+ved_rand_sex_g <- read_csv(here("data/temp", "ved_rand_sex_g.csv"))
+ved_rand_sex_d <- read_csv(here("data/temp", "ved_rand_sex_d.csv"))
+ved_rand_age_g <- read_csv(here("data/temp", "ved_rand_age_g.csv"))
+ved_rand_age_d <- read_csv(here("data/temp", "ved_rand_age_d.csv"))
+ved_rand_orig_g <- read_csv(here("data/temp", "ved_rand_orig_g.csv"))
+ved_rand_orig_d <- read_csv(here("data/temp", "ved_rand_orig_d.csv"))
+ved_rand_ei_g <- read_csv(here("data/temp", "ved_rand_ei_g.csv"))
 ved_rand_ei_d <- read_csv(here("data/temp", "ved_rand_ei_d.csv"))
 
 

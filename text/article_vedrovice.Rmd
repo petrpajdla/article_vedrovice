@@ -54,7 +54,7 @@ social structure. -->
 European Neolithic in comparison with other periods.
 Authors present gender in the Neolihic as being
 of a very different nature than gender in the later prehistory.
-It is shown that gender in the Neolithic is not clearly expressed and
+Gender in the Neolithic is not clearly expressed and
 biological differences between sexes are not transformed into binary cultural
 categories (ibid. 140-142).
 Considering the Neolithic burial evidence across Europe, authors find that it
@@ -65,7 +65,7 @@ In response, @bickle2020 [14] argues that 'biological sex may not have defined g
 during the LBK' although the 'sexed bodies did matter'.
 
 Here we explore the relations between burials and bodies in terms of biological
-sex, age, local origin, exceptionality of grave goods and location within the
+sex, age, origin, exceptionality of grave goods and location within the
 cemetery.
 We focus predominantly on investigating non-random patterns in artefact
 co-occurences and spatial arragement of the cemetery in relation to the
@@ -114,8 +114,8 @@ The material analyzed here comes from Vedrovice – Široká u lesa cemetery.
 Originally, the burial ground consisted of at least 108 burials.
 Some of the burials were disturbed by later settlement and burial pits in the
 area of the cemetery, amateur excavations during the 19th century or later
-agricultural activities.
-These burials are excluded from the analysis due to missing and/or
+agricultural activities [@podborsky2002].
+These burials are excluded from most of the analysis due to missing and/or
 incomplete data and only a sample of 78 well-preserved burials is analyzed here.
 Most of the data was obtained from the original publication [@podborsky2002],
 anthropological determination of sex and age were corrected based on
@@ -123,41 +123,94 @@ more recent analysis by @dockalova2008. Carbon, nitrogen and strontium isotope
 ratios were collected in @whittle2013 and @richards2008.
 Further details on use and function of the artefacts were gathered from
 @masclanslatorre2020.
-Information on localness of different bodies was derived from @hrncir2020.
+Information on localness of different bodies was adapted from @hrncir2020.
 
 Each burial was originally characterized by 55 variables but only subset of
 35 variables was selected for further analysis.
 Some of  the original variables are omitted due to their rare occurrence,
 for instance spondylus arm ring is present in a single burial only,
 thus being useless in establishing relationships between pairs of burials.
-Other variables are removed because they are highly dependent on each other.
+Some other variables are removed because they are highly interdependent.
 
 The variables fall into several categories.
-Firstly there are biological and anthropological characteristics derived from
+Firstly there are biological and anthropological variables derived from
 retrieved human skeletal remains including sex, age simplified into age groups,
-isotope ratios and body height.
+various isotope ratios and body height.
 
-Second large category of variables consists of data on artifacts presence and
-absence in the burials.
+Second large category of variables consists of data on artifacts present in the burials.
 These include variables noting quantities of various types of pottery and
 positions of the pottery vessels within the graves,
 counts of various raw materials of chipped stone tools,
-presence of polished stone axes or adzes, grinding slabs, pebbles,
+presence of polished and beveled stone axes or adzes, grinding slabs, pebbles,
 bone tools and different kinds of personal ornaments.
-The personal ornaments include beads made of spondylus shell or marble,
+The personal ornament includes beads made of spondylus shell or marble,
 sponylus pendants or oval shaped buckles.
-Presence of ochre pigment is also noted.
-All the variables in this category are simplified by binarization (presence vs
-absence of a trait) in order to minimize effects of only several numerous
-cases on the overall pattern, for instance 20 beads in a grave <!-- 70 -->
-would have much larger effect on the analysis then 1 pottery vessel in the same grave.
+Presence of ochre pigment in the grave is also noted.
 
 Last category describes physical characteristics of the grave pit and the
 position of the body.
 I. e. size of the pit, its orientation, position of the body on one of
-the sides and direction of the head.
+the sides and direction of the body and head.
+
+Quantities of various *grave goods* are simplified into a binary matrix indicating
+presence or absence of a given trait. 
+Only grave goods occuring in more than 5% of the graves are used in the analysis.
 
 <!-- methods -->
+
+## Randomness of artefact combinations
+
+<!--
+This study takes advantage of computer-intensive resam-
+pling techniques that are based on simulations of the behavior
+of statistical models through the generation of random samples
+(Baxter, 2003; Efron and Tibshirani, 1993; Manly, 1991). The
+strength of these techniques lies in the potential to effectively
+distinguish between random and non-random patterns and to
+test differences between samples without making assumptions
+about the population from which these samples were drawn
+(Drennan and Peterson, 2004). These techniques proved to
+be very effective for the analysis of patterns in cemeteries
+(Manly, 1996).
+@sosna2008 -->
+
+To determine non-randomness of various artefact combinations we conduct a
+permutation test on the presence/absence data matrix.
+The method based on generalized Monte Carlo tests was first
+introduced to archaeology by @manly1996 and adapted by @sosna2008.
+Our approach is based on both of these works.
+Original (observed) co-occurence matrix is permutated $n$ times with constant
+row and column totals, i.e. both the count of artifacts in individual graves
+and sum of the given type of artifacts across the burials are fixed.
+
+To examine which associations of variables, i.e. artefacts, are infrequent or even not present
+and which tend to appear together more often than it would be expected by random chance only
+the co-occurences of observed and simulated data
+are summarized using two statistics suggested by @manly1996.
+The $S$ statistic is a measure of overall deviation between expected and observed
+number of artefact occurences while
+the $v$ statistic is a measure of difference between co-occurences of
+individual artefact with other artifacts
+[@manly1996, 475, for details see SI].
+To assess relations between groups based on sex, age local origin and exceptionality,
+statistics introduced by @sosna2008 are used.
+
+With $n = 999$ permutations of the original data matrix the results obtained
+are robust+
+
+## Exceptionality index
+
+Exceptionality index ($EI$) is used in order to induce relative exceptionality
+of individual burials based on their attributes.
+This approach is independent on a prior selection of attributes of importance
+or *prestige*.
+It was defined by @demjan2015[367] based on a Root Mean Square (*quadratic mean*) of
+PCA factor scores:
+$$ EI_{attr_g}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}s_i^2} $$
+where $s_i$ are factor scores of individual graves. The mean value is
+normalized to range $[0-1]$:
+
+$$ EI_{attr_g}=\frac{EI_{attr_g}}{max~EI_{attr_g}} $$
 
 <!-- spatial analysis -->
 ## Spatial patterning
@@ -273,58 +326,7 @@ count distances between observations used in further analyses. -->
 
 
 
-## Randomness of artefact combinations
 
-<!--
-This study takes advantage of computer-intensive resam-
-pling techniques that are based on simulations of the behavior
-of statistical models through the generation of random samples
-(Baxter, 2003; Efron and Tibshirani, 1993; Manly, 1991). The
-strength of these techniques lies in the potential to effectively
-distinguish between random and non-random patterns and to
-test differences between samples without making assumptions
-about the population from which these samples were drawn
-(Drennan and Peterson, 2004). These techniques proved to
-be very effective for the analysis of patterns in cemeteries
-(Manly, 1996).
-@sosna2008 -->
-
-@sosna2013
-
-To determine non-randomness of various artefact combinations we conduct a
-permutation test on the presence/absence data matrix.
-The method based on generalized Monte Carlo tests was first
-introduced to archaeology by @manly1996 and adapted by @sosna2008.
-Our approach is based on both of these works.
-Original (observed) co-occurence matrix is permutated $n$ times with constant
-row and column totals, i. e. both the count of artifacts in individual graves
-and sum of the given type of artifacts across the burials are fixed.
-
-To examine which associations of variables are infrequent or even not present
-and which tend to appear together co-occurences of observed and simulated data
-are summarized using two statistics suggested by @manly1996.
-The $S$ statistic is a measure of overall deviation between expected and observed
-number of artefact occurences while
-the $v$ statistic is a measure of difference between co-occurences of
-individual artefact with other artifacts
-[@manly1996, 475, for details see SI].
-
-With $n = 999$ permutations of the original data matrix the results obtained
-are robust
-
-## Exceptionality index
-
-Exceptionality index ($EI$) is used in order to induce relative exceptionality
-of individual burials based on their attributes.
-This approach is independent on a prior selection of attributes of importance
-or *prestige*.
-It was defined by @demjan2015[367] based on a Root Mean Square (*quadratic mean*) of
-PCA factor scores:
-$$ EI_{attr_g}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}s_i^2} $$
-where $s_i$ are factor scores of individual graves. The mean value is
-normalized to range $[0-1]$:
-
-$$ EI_{attr_g}=\frac{EI_{attr_g}}{max~EI_{attr_g}} $$
 
 ## Distance between burials
 

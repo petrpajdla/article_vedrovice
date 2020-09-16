@@ -13,6 +13,10 @@ library(tidyverse)
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 origin <- read_rds(here("data/temp/local.rds")) %>% 
   select(id_burial, age_mean, origin)
+ei <- read_csv(here("data/temp", "exceptionality.csv")) %>% 
+  mutate(ei_clust = factor(fct),
+         id_burial = as.character(burial)) %>% 
+  select(-burial, -ei_cluster, -fct)
 
 # data prep ====================================================================
 scale_m <- 4.762 # scale by a factor so 1 unit is 1 meter
@@ -26,8 +30,9 @@ ved_layout <- tibble(layout_x = ved_layout$x, layout_y = ved_layout$y)
 # not a rectangle, but a polygon closely bounding the burials using convex hull
 ved_sf <- st_as_sf(bind_cols(ved_layout, ved$metadata), 
                    coords = c("layout_x", "layout_y")) %>% 
-  left_join(origin) %>% 
-  mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
+  left_join(origin, by = "id_burial") %>% 
+  mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind."))) %>% 
+  left_join(ei, by = "id_burial")
 # ved_sf_buffer <- st_buffer(ved_sf, dist = 1.6)
 # ved_sf_buffer <- st_simplify(ved_sf_buffer, dTolerance = 1)
 ved_sf_hull <- st_convex_hull(st_union(st_geometry(ved_sf)))
@@ -46,8 +51,8 @@ ved_exc <- st_cast(
         matrix(c(ved_exc$x, ved_exc$y), ncol = 2)))), "POLYGON")
 
 # window_rect <- owin(xrange = c(10, 22), yrange = c(10, 22.7))
-window_poly <- as.owin(st_cast(ved_sf_hull, "POLYGON"))
-window_exc <- as.owin(ved_exc)
+window_poly <- spatstat::as.owin(st_cast(ved_sf_hull, "POLYGON"))
+window_exc <- spatstat::as.owin(ved_exc)
 
 # plot
 gg_baseplan <- ggplot(data = ved_sf) +
@@ -91,6 +96,66 @@ ggplot(data = filter(ved_sf, !is.na(origin))) +
   theme(legend.position = c(0.9, 0.8))
 
 ggsave(here("plots", "plan_origin.pdf"), width = 10.5, height = 5)
+
+#plan age
+ggplot(data = filter(ved_sf, !is.na(age_sim))) +
+  geom_sf(data = select(ved_sf, -age_sim), color = "gray90") +
+  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+  stat_density2d(aes(st_coordinates(filter(ved_sf, !is.na(age_sim)))[, 1], 
+                     st_coordinates(filter(ved_sf, !is.na(age_sim)))[, 2]),
+                 color = "black", alpha = 0.4) +
+  geom_sf(shape = 21, fill = "white") + 
+  facet_wrap(~age_sim) +
+  theme_void() +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                                    location = "br",
+                                    pad_y = unit(2, "cm")) +
+  ggspatial::annotation_scale(plot_unit = "m",
+                              location = "br",
+                              pad_y = unit(1, "cm")) +
+  theme(legend.position = c(0.9, 0.8))
+
+ggsave(here("plots", "plan_age.pdf"), width = 15.5, height = 5)
+
+#plan sex
+ggplot(data = filter(ved_sf, sex != "ind.")) +
+  geom_sf(data = select(ved_sf, -sex), color = "gray90") +
+  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+  stat_density2d(aes(st_coordinates(filter(ved_sf, sex != "ind."))[, 1], 
+                     st_coordinates(filter(ved_sf, sex != "ind."))[, 2]),
+                 color = "black", alpha = 0.4) +
+  geom_sf(shape = 21, fill = "white") + 
+  facet_wrap(~sex) +
+  theme_void() +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                                    location = "br",
+                                    pad_y = unit(2, "cm")) +
+  ggspatial::annotation_scale(plot_unit = "m",
+                              location = "br",
+                              pad_y = unit(1, "cm")) +
+  theme(legend.position = c(0.9, 0.8))
+
+ggsave(here("plots", "plan_sex.pdf"), width = 15.5, height = 5)
+
+#plan ei
+ggplot(data = filter(ved_sf, !is.na(ei_clust))) +
+  geom_sf(data = select(ved_sf, -ei_clust), color = "gray90") +
+  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+  # stat_density2d(aes(st_coordinates(filter(ved_sf, !is.na(ei_clust)))[, 1], 
+  #                    st_coordinates(filter(ved_sf, !is.na(ei_clust)))[, 2]),
+  #                color = "black", alpha = 0.4) +
+  geom_sf(shape = 21, fill = "white") + 
+  facet_wrap(~ei_clust) +
+  theme_void() +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                                    location = "br",
+                                    pad_y = unit(2, "cm")) +
+  ggspatial::annotation_scale(plot_unit = "m",
+                              location = "br",
+                              pad_y = unit(1, "cm")) +
+  theme(legend.position = c(0.9, 0.8))
+
+ggsave(here("plots", "plan_ei.pdf"), width = 15.5, height = 10)
 
 # write layouts -----------------------------------------------------------
 

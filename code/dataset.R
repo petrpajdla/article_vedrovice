@@ -22,7 +22,9 @@ input <- readr::read_csv(here("data", "data_vedrovice_v01.csv"), skip = 3) %>%
 
 # list to store the data
 ved <- list(bin_vars = list(count_mat = NA,
-                            bin_mat = NA),
+                            bin_mat = NA,
+                            complete_mat = NA,
+                            over5 = NA), # variables (grave goods) present in more than 5% of graves
             cont_vars = NA,
             cat_vars = NA,
             metadata = NA,
@@ -55,6 +57,20 @@ ved$bin_vars$count_mat <- input %>%
 rownames(ved$bin_vars$count_mat) <- ved$id_burials
 
 ved$bin_vars$bin_mat <- apply(ved$bin_vars$count_mat, 2, binarize)
+
+# complete indicator matrix
+ved$bin_vars$complete_mat <- ved$bin_vars$bin_mat %>% 
+  as_tibble() %>% 
+  mutate(across(everything()), abs(. - 1)) %>% 
+  select_all(list(~ paste0(., ".neg"))) %>% 
+  bind_cols(as_tibble(ved$bin_vars$bin_mat)) %>% 
+  select(order(colnames(.))) %>% as.matrix()
+
+rownames(ved$bin_vars$complete_mat) <- ved$id_burials
+
+# grave goods present in more than 5% of graves
+n_burs <- nrow(ved$bin_vars$bin_mat)
+ved$bin_vars$over5 <- (colSums(ved$bin_vars$bin_mat) / n_burs) > 0.05
 
 # continuous variables
 ved$cont_vars <- input %>% 
@@ -138,6 +154,10 @@ ved$var_names$long <- ved$var_names$full$long
 names(ved$var_names$long) <- ved$var_names$full$vnames
 
 # saving processed dataset =====================================================
+if (!dir.exists(here("data", "temp"))) {
+  dir.create(here("data", "temp"))
+}
+
 saveRDS(ved, here("data/temp", "vedrovice_dataset.RDS"))
 
 # ved <- readRDS(here("data/temp", "vedrovice_dataset.RDS"))

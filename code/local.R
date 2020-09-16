@@ -2,7 +2,8 @@
 # Script nr. 1.2
 # LOCAL AND NON-LOCAL Sr RANGES
 # author: Petr Pajdla
-# Assign bodies into local vs non-local Sr range
+# Simplify and clean age groups 
+# Assign bodies into local vs non-local based on Sr range
 
 library(tidyverse)
 library(here)
@@ -43,11 +44,12 @@ ved_sr <- ved$metadata %>%
          ) %>% 
   filter(!is.na(group), !group %in% c("n. a.", "ind."))
 
-local <- ved_sr %>% group_by(group) %>% 
+local <- ved_sr %>% 
+  filter(group == "juvenile",
+         !is.na(sr)) %>%
   summarise(n(), 
             mean = mean(sr, na.rm = TRUE), 
             sd = sd(sr, na.rm = TRUE)) %>% 
-  filter(group == "juvenile") %>%
   mutate(min = mean - 2 * sd,
          max = mean + 2 * sd)
 
@@ -68,7 +70,7 @@ ved_local %>%
   facet_wrap(~group, nrow = 3) +
   ggthemes::theme_clean()
 
-
+ggsave(here("plots", "local_range.pdf"))
 
 # export ------------------------------------------------------------------
 

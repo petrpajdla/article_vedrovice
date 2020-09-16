@@ -31,36 +31,37 @@ v_vals <- read_csv(here::here("data/temp/v_statistics.csv")) %>%
 var_weights <- v_vals %>% pull(weight)
 names(var_weights) <- v_vals %>% pull(variable)
 
+ved_in <- ved$bin_vars$bin_mat[, ved$bin_vars$over5]
 
 # weighting variables -----------------------------------------------------
 # variables are weighted by the p value (measure of departure from norm) of v stats
 # m_cont <- matrix(nrow = nrow(ved$bin_vars$count_mat), 
 #                  ncol = ncol(ved$bin_vars$count_mat))
 
-m_bin <- matrix(nrow = nrow(ved$bin_vars$bin_mat), 
-                ncol = ncol(ved$bin_vars$bin_mat))
+m_bin <- matrix(nrow = nrow(ved_in), 
+                ncol = ncol(ved_in))
 
 # for (i in 1:ncol(m_cont)) {
 #   m_cont[, i] <- ved$bin_vars$count_mat[, i] * var_weights[i]
 # }
 
 for (i in 1:ncol(m_bin)) {
-  m_bin[, i] <- ved$bin_vars$bin_mat[, i] * var_weights[i]
+  m_bin[, i] <- ved_in[, i] * var_weights[i]
 }
 
 # colnames(m_cont) <- colnames(ved$bin_vars$count_mat)
-colnames(m_bin) <- colnames(ved$bin_vars$bin_mat)
+colnames(m_bin) <- colnames(ved_in)
 
 
 # exceptionality index =========================================================
 # art_pca_c <- prcomp(m_cont, scale. = TRUE, center = TRUE)
-art_pca_b <- prcomp(m_bin)
+art_pca_b <- prcomp(m_bin, scale. = TRUE, center = TRUE)
 
 # summary(art_pca_c)
 # ggbiplot::ggbiplot(art_pca_c)
 
-summary(art_pca_b)
-# ggbiplot::ggbiplot(art_pca_b)
+# summary(art_pca_b)
+ggbiplot::ggbiplot(art_pca_b)
 
 pc_threshold <- which(summary(art_pca_b)$importance[3, ] >= 0.9)[1]
 
@@ -97,8 +98,8 @@ ei_gg %>% ggplot(aes(ei, n_gg_types)) +
 cor(ei_gg$ei, ei_gg$n_gg)
 cor(ei_gg$ei, ei_gg$n_gg_types)
 # there is a significant correlation between exceptionality and:
-# amount of grave goods - 0.78
-# amount of grave good types - 0.95
+# amount of grave goods - 0.72
+# amount of grave good types - 0.87
 
 # groups in ei ------------------------------------------------------------
 ei_mat <- as.matrix(ei_tbl$ei)
@@ -106,7 +107,7 @@ rownames(ei_mat) <- ei_tbl$burial
 
 ei_hcl <- hclust(dist(ei_mat), method = "ward.D2")
 
-h <- 0.18
+h <- 0.25
 dendro <- ggdendrogram(ei_hcl, rotate = FALSE) +
   scale_y_sqrt(expand = expansion(c(0, 0))) +
   geom_hline(yintercept = h, color = "gray", size = 2, alpha = 0.4)
@@ -127,7 +128,7 @@ ggplot(ei_tbl, aes(x = forcats::fct_reorder(factor(burial), ei), y = ei)) +
 # output data - ei groups
 output <- ei_tbl %>% bind_cols(ei_cluster = ei_clusters) %>% 
   dplyr::mutate(fct = fct_reorder(factor(ei_cluster), ei, .desc = TRUE),
-                fct = fct_relabel(fct, ~ paste0(letters[1:7])))
+                fct = fct_relabel(fct, ~ paste0(letters[1:length(unique(ei_clusters))])))
 
 ggplot(ei_tbl, aes(x = forcats::fct_reorder(factor(burial), ei), y = ei)) +
   geom_point(aes(color = output$fct)) +
