@@ -12,8 +12,6 @@ abstract        :
   "Spatial patterns in cemeteries and grave goods associations are often explored using various informal methods.
   We adopt computationaly intensive methods utilizing resampling approaches both to spatial analysis and
   distributions of objects from the Early Neolithic cemetery in Vedrovice.
-
-
   As a result of the investigation we conclude that...  "
 
 output:
@@ -65,7 +63,7 @@ In response, @bickle2020 [14] argues that 'biological sex may not have defined g
 during the LBK' although the 'sexed bodies did matter'.
 
 Here we explore the relations between burials and bodies in terms of biological
-sex, age, origin, exceptionality of grave goods and location within the
+sex, age and origin, exceptionality of grave goods and location within the
 cemetery.
 We focus predominantly on investigating non-random patterns in artefact
 co-occurences and spatial arragement of the cemetery in relation to the
@@ -109,7 +107,6 @@ ability to distinguish random and non-random patterns.
 
 <!-- site -->
 The material analyzed here comes from Vedrovice – Široká u lesa cemetery.
-
 <!-- sample (burials, artefacts) -->
 Originally, the burial ground consisted of at least 108 burials.
 Some of the burials were disturbed by later settlement and burial pits in the
@@ -124,13 +121,16 @@ ratios were collected in @whittle2013 and @richards2008.
 Further details on use and function of the artefacts were gathered from
 @masclanslatorre2020.
 Information on localness of different bodies was adapted from @hrncir2020.
+Local Sr range is defined as two standard deviations from mean of Sr ranges of
+juveniles.
 
 Each burial was originally characterized by 55 variables but only subset of
 35 variables was selected for further analysis.
 Some of  the original variables are omitted due to their rare occurrence,
 for instance spondylus arm ring is present in a single burial only,
 thus being useless in establishing relationships between pairs of burials.
-Some other variables are removed because they are highly interdependent.
+Only grave goods occuring in more than 5% of the graves are used in the analysis.
+<!-- Some other variables are removed because they are highly interdependent.-->
 
 The variables fall into several categories.
 Firstly there are biological and anthropological variables derived from
@@ -153,8 +153,8 @@ I. e. size of the pit, its orientation, position of the body on one of
 the sides and direction of the body and head.
 
 Quantities of various *grave goods* are simplified into a binary matrix indicating
-presence or absence of a given trait. 
-Only grave goods occuring in more than 5% of the graves are used in the analysis.
+presence or absence of a given trait.
+
 
 <!-- methods -->
 
@@ -179,38 +179,35 @@ permutation test on the presence/absence data matrix.
 The method based on generalized Monte Carlo tests was first
 introduced to archaeology by @manly1996 and adapted by @sosna2008.
 Our approach is based on both of these works.
-Original (observed) co-occurence matrix is permutated $n$ times with constant
+Original co-occurence matrix is permutated *n = 9999* times with constant
 row and column totals, i.e. both the count of artifacts in individual graves
 and sum of the given type of artifacts across the burials are fixed.
 
 To examine which associations of variables, i.e. artefacts, are infrequent or even not present
-and which tend to appear together more often than it would be expected by random chance only
+and which tend to appear together more often than it would be expected by random chance
 the co-occurences of observed and simulated data
 are summarized using two statistics suggested by @manly1996.
-The $S$ statistic is a measure of overall deviation between expected and observed
+The *S* statistic is a measure of overall deviation between expected and observed
 number of artefact occurences while
-the $v$ statistic is a measure of difference between co-occurences of
+the *v* statistic is a measure of difference between co-occurences of
 individual artefact with other artifacts
 [@manly1996, 475, for details see SI].
-To assess relations between groups based on sex, age local origin and exceptionality,
+To assess relations between groups based on sex, age and origin,
 statistics introduced by @sosna2008 are used.
 
-With $n = 999$ permutations of the original data matrix the results obtained
-are robust+
+<!-- ## Exceptionality index -->
 
-## Exceptionality index
+<!-- Exceptionality index (*EI*) is used in order to induce relative exceptionality -->
+<!-- of individual burials based on their attributes. -->
+<!-- This approach is independent on a prior selection of attributes of importance -->
+<!-- or *prestige*. -->
+<!-- It was defined by @demjan2015[367] based on a Root Mean Square (*quadratic mean*) of -->
+<!-- PCA factor scores: -->
+<!-- $$ EI_{attr_g}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}s_i^2} $$ -->
+<!-- where $s_i$ are factor scores of individual graves. The mean value is -->
+<!-- normalized to range $[0-1]$: -->
 
-Exceptionality index ($EI$) is used in order to induce relative exceptionality
-of individual burials based on their attributes.
-This approach is independent on a prior selection of attributes of importance
-or *prestige*.
-It was defined by @demjan2015[367] based on a Root Mean Square (*quadratic mean*) of
-PCA factor scores:
-$$ EI_{attr_g}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}s_i^2} $$
-where $s_i$ are factor scores of individual graves. The mean value is
-normalized to range $[0-1]$:
-
-$$ EI_{attr_g}=\frac{EI_{attr_g}}{max~EI_{attr_g}} $$
+<!-- $$ EI_{attr_g}=\frac{EI_{attr_g}}{max~EI_{attr_g}} $$ -->
 
 <!-- spatial analysis -->
 ## Spatial patterning
@@ -293,20 +290,29 @@ graph.
 The observed values of neighbors categories are compared against distributions
 derived from 999 permutations of the simulated data.
 
+<!-- Percolation analysis -->
 Another approach considered for establishing neigborhood relations is by
 constructing buffer zones around each of the burials.
 The question arises how large the buffer zones should be.
-To solve this problem we utilise percolation analysis [@maddison2020].
+To avoid this problem we utilise percolation analysis.
 Percolation analysis is a method used to identify clusters of points based
-on Euclidean distance.
+on spatial separation measured by Euclidean distance [@maddison2020, 269].
+The introduction of percolation analysis to archaeology is relatively recent,
+nevertheless its effectivness and usefulness in studies with varied scales
+is already proven [@maddison2020].
+Percolation analysis is based on city clustering algorithm [@rozenfeld2008] and
+its generalization utilizing Euclidean distance [@rozenfeld2011].
+Nodes being in a given distance threshold (radius) are assigned into a cluster.
+This process is repeated for a set of thresholds while recording maximum
+cluster sizes and other statistics.
+This allows to identify distances at which clusters exhibit rapid grow (absorbing
+large number of nodes) and distances at which the clusters remain relatively stable.
+For more details refer to @maddison2020 and associated R package [@schmidt2020].
 
-
-@maddison2020
-
-The size of the radius is based on the results of nearest neighbors analysis, where
+<!-- The size of the radius is based on the results of nearest neighbors analysis, where
 at the given radius there is strong evidence of a clustering process (Fig. \@ref(fig:spat-funs)).
 The randomness is again tested using a permutation test similar to the one
-described for the neighborhood derived from the graphs.
+described for the neighborhood derived from the graphs.-->
 
 Lastly, a modification of *K* and *G* functions for multitype point patterns
 are used to explore the reationship between individual sex categories.
@@ -350,10 +356,50 @@ variables is treated as nominal data.
 
 # Results
 
+## Artifact combinations
+
+By counting co-occurences of analyzed variables on simulated data matrices and comparing
+the distributions of the two studied statistics with the values calculated for
+the original dataset we can establish whether the overall pattern of artefacts
+distribution in the graves is non-random and further identify artefacts that deviate
+from the random pattern.
+The overall deviation from expected co-occurences, i.e. the *S* statistic
+[@manly1996, 475] is significantly large at the 0.05 alpha level.
+This suggests that there is strong evidence that the overall distribution of
+artefacts in different graves is not random (see Fig. \@ref(fig:sstat)).
+
+Examining distributions of individual artefacts it is found that at the 0.05
+significance level only adzes, grinding tools, ceramic bowls and spondylus beads
+are distributed randomly.
+Close to the 0.05 alpha level are distributions of bone tools and ceramic bottles
+(Fig. \@ref(fig:vstat)).
+Among the grave goods that are found to be randomly distributed in the graves
+across the burial ground are ochre pigment, lithics, pebbles, globular pots and
+special types of pottery vessel shapes and spondylus pendants and *buckles*.
+The relationships between artefact types frequently occuring and missing together
+in graves are visualized in Fig. (\@ref(fig:coocnets)) with
+clusters highlighted using fast-greedy algorithm [@newman2004] and strength of the
+given association is expressed by the thickness of the edge connecting the nodes.
+Artifacts most frequently present with other artifacts are with 5 links grinding tools and
+ceramic bowls and with 4 links adzes, non-local lithic tools, ochre pigment and
+spondylus beads.
+The association is strongest between spondylus beads and (a) ceramic bottles and
+(b) pigment; and adzes and (a) non-local lithics and (b) bone tools.
+Artifacts that are frequently absent in the graves together are with 6 links
+local lithic tools, globular pots and ceramic bowls and spondylus buckels with
+5 and 4 links respectively.
+The strongest antagonist relationships are between globular pots and (a) bowls and
+(b) adzes.
+
+
+
+
+
+
 ## Spatial patterning
 
 The quadrat test shows evidence for both random and clustered processes taking place with p values
-under the 0.05 alpha value but the $\chi^2$ approximation is inaccurate due to small
+under the 0.05 alpha level but the $\chi^2$ approximation is inaccurate due to small
 expected counts (for the details see supplementary information).
 Inconclusive result of the quadrat test is not suprising because as was noted
 earlier, we do not expect *first-order* properties to play major roles in
@@ -370,8 +416,8 @@ This means that the number of nearest neighbours to any empty-space point
 at this and larger distances is lower than it would be expected under complete spatial randomness.
 On the contrary to only slight deviations in case of *G* and *F*
 the *K* and *T* functions show clear deviations from the expected curve and exceed
-the boundaries of given envelopes at the distance of around 5 to 6 meters in
-case of *K* and slightly more in case of *T* function.
+the boundaries of given envelopes at the distance of around 5 to 6 meters.
+<!-- in case of *K* and slightly more in case of *T* function.-->
 This means that numbers of nearest neighbors at this and larger distances is
 significantly higher than we would exect under complete spatial randomness.
 The overall point pattern thus shows clear signs of clustering process taking place.
@@ -384,10 +430,16 @@ much higher than it would be if the burials were placed randomly.
 The community burying their dead at the cemetery of Vedrovice -- Široká u lesa
 did so in an organized manner taking into account previous burials at the same place,
 meaning their positions were known, probably marked on the surface somehow.
-This would imply either non-perishable marks on the surface of the cemetery or their
+This would imply existence of non-perishable marks on the surface of the cemetery and/or their
 maintenance from time to time.
 
-Spatial pattern was also explored for differently sexed bodies.
+Results of percolation analysis reveal more detailed view of the clustering process
+taking place.
+The curve in Fig. \@ref(fig:perc-distance) reveals that most of the growth into
+a single cluster happens at distances between approximately 4 and 6 meters.
+The distances where relative stability of clusters emerges are labeled.
+The clusters at these distances are shown in Fig. \@ref(fig:perc-plan).
+
 
 
 ## Neighborhood structure
@@ -412,17 +464,7 @@ In case of Delaunay trinagulation for burials with bodies with indeterminate sex
 non-adults ($p \approx 0.02$) and in case of Gabriel graph between non-adults and
 indeterminate category $p \approx 0.02$.
 
-## Randomness of artefact combinations
 
-By counting co-occurences of analyzed variables on simulated data matrices and comparing
-the distributions of the two studied statistics with the values calculated for
-the original dataset we can establish whether the overall pattern of artefacts
-distribution in the graves is non-random and further identify artefacts that deviate
-from the random pattern.
-The value of $S$ statistic is deemed significantly large at the 0.05 alpha level with
-$S \approx 14$ and $p \approx xy$ (Fig. \@ref(fig:f-sstat)).
-This suggests that there is enough evidence that the overall distribution of
-artefacts in the graves is not random.
 
 
 <!-- ```{r t-vstat} -->
@@ -447,53 +489,56 @@ artefacts in the graves is not random.
 
 <!-- ======================================================================= -->
 <!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES -->
-```{r plan-graphs, fig.cap = "Neighborhood graphs: Delaunay triangulation and Gabriel graph"}
-knitr::include_graphics(here("plots/plan_gabriel.pdf"))
-```
 
-```{r label-spat-funs}
-label_spat_funs <- paste("Functions *G*, *F*, *K* and *T*.",
-"*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope.")
-```
-```{r spat-funs, fig.cap=label_spat_funs}
-knitr::include_graphics(here("plots/pointprocess_fun.pdf"))
-```
-
-```{r label-nb-sex}
-label_nb_sex <- paste("Mean neighbors in a given sex category.",
-"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value.",
-"*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non adult, *ind.* -- indetermined sex.")
-```
-```{r nb-sex, fig.cap=label_nb_sex}
-knitr::include_graphics(here("plots/nb_sex.pdf"))
-```
-
-
-```{r f-sstat, fig.cap = "Distribution of simulated and observed S statistic"}
+```{r sstat, fig.cap = "Distribution of simulated and observed *S* statistic"}
 knitr::include_graphics(here("plots/s_statistic.pdf"))
 ```
 
-```{r f-vstat, fig.cap = "Simulated and observed v statistics for different variables"}
+```{r vstat, fig.cap = "Simulated and observed *V* statistics for different variables"}
 knitr::include_graphics(here("plots", "v_values.pdf"))
 ```
 
-```{r f-cooc, fig.cap = "Networks of variables frequently present together and exluding each other"}
+```{r coocnets, fig.cap = "Networks of variables frequently present together and exluding each other"}
 knitr::include_graphics(here("plots", "cooc_networks.pdf"))
 ```
+
+<!-- ```{r plan-graphs, fig.cap = "Neighborhood graphs: Delaunay triangulation and Gabriel graph"} -->
+<!-- knitr::include_graphics(here("plots/plan_gabriel.pdf")) -->
+<!-- ``` -->
+
+<!-- ```{r label-spat-funs} -->
+<!-- label_spat_funs <- paste("Functions *G*, *F*, *K* and *T*.", -->
+<!-- "*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope.") -->
+<!-- ``` -->
+<!-- ```{r spat-funs, fig.cap=label_spat_funs} -->
+<!-- knitr::include_graphics(here("plots/pointprocess_fun.pdf")) -->
+<!-- ``` -->
+
+<!-- ```{r label-nb-sex} -->
+<!-- label_nb_sex <- paste("Mean neighbors in a given sex category.", -->
+<!-- "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value.", -->
+<!-- "*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non adult, *ind.* -- indetermined sex.") -->
+<!-- ``` -->
+<!-- ```{r nb-sex, fig.cap=label_nb_sex} -->
+<!-- knitr::include_graphics(here("plots/nb_sex.pdf")) -->
+<!-- ``` -->
+
+
+
 
 
 <!-- ======================================================================= -->
 <!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES -->
-```{r nb-tab-sex}
-tab <- read_csv(here("data/temp/nb_sex_p.csv")) %>%
-         mutate(relation = str_c(from, to, sep = " - ")) %>%
-  select(relation, everything(), -from, -to)
+<!-- ```{r nb-tab-sex} -->
+<!-- tab <- read_csv(here("data/temp/nb_sex_p.csv")) %>% -->
+<!--          mutate(relation = str_c(from, to, sep = " - ")) %>% -->
+<!--   select(relation, everything(), -from, -to) -->
 
-tnames <- c("relation", rep(c("mean", "p"), 3))
+<!-- tnames <- c("relation", rep(c("mean", "p"), 3)) -->
 
-knitr::kable(tab, booktabs = TRUE, col.names = tnames, linesep = "", caption = "Results...") %>%
-  kableExtra::add_header_above(c(" ", "Buffer" = 2, "Delaunay" = 2, "Gabriel" = 2))
-```
+<!-- knitr::kable(tab, booktabs = TRUE, col.names = tnames, linesep = "", caption = "Results...") %>% -->
+<!--   kableExtra::add_header_above(c(" ", "Buffer" = 2, "Delaunay" = 2, "Gabriel" = 2)) -->
+<!-- ``` -->
 
 
 <!-- ======================================================================= -->
