@@ -16,7 +16,8 @@ ii. `source_scr.R`: source all the scripts creating temporary outputs, figures e
 2. Randomization and exceptionality index    
     2.1 `randomization.R`: randomization (simulation) of artefact co-occurences  
         (includes parallel computations on randomly generated matrices)  
-        *output:* `cooc_random_mat.RDS`, `v_statistics.csv`, `v_normalized.csv`   
+        *output:* `cooc_random_mat.RDS`, `v_statistics.csv`, `v_normalized.csv`, 
+        `variable_clusters.csv`, `non_random_vars.txt`     
     2.2 `exceptionality_index.R`  
         *output:* `exceptionality.csv`   
     2.3 `exceptionality_explore.R`: explore exceptionality   

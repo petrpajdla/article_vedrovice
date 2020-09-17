@@ -11,6 +11,7 @@ set.seed(42)
 # packages =====================================================================
 library(here)
 library(dplyr)
+library(purrr)
 library(igraph)
 library(ggplot2)
 
@@ -83,26 +84,26 @@ cooc_obs <- cooc_obs %>% filter(var1 != var2)
 
 # randomization of co-occurrence matrix - list of many matrices ----------------
 n_permutations <-  9999
-# ======
-rand_mat <- vegan::permatfull(input_matrix,
-                              fixedmar = "both",
-                              mtype = "prab",
-                              times = n_permutations)
-# ======
+# # ======
+# rand_mat <- vegan::permatfull(input_matrix,
+#                               fixedmar = "both",
+#                               mtype = "prab",
+#                               times = n_permutations)
+# # ======
 
 # going parallel to speed up randomization...
 # detecting cores for parallel
 no_cores <- parallel::detectCores() - 1
   
 # cooccurences on random matrices ==============================================
-# ======
-cl <- parallel::makeCluster(no_cores)
-cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
-parallel::stopCluster(cl)
-
-# save counts of co-occurences on random matrices
-readr::write_rds(cooc_rand, here("data/temp", "cooc_random_mat.RDS"))
-# ======
+# # ======
+# cl <- parallel::makeCluster(no_cores)
+# cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
+# parallel::stopCluster(cl)
+# 
+# # save counts of co-occurences on random matrices
+# readr::write_rds(cooc_rand, here("data/temp", "cooc_random_mat.RDS"))
+# # ======
 
 # load from temporary data
 cooc_rand <- readr::read_rds(here("data/temp", "cooc_random_mat.RDS"))
@@ -131,7 +132,7 @@ v_experimental <- bind_rows(parallel::parLapply(cl, v_experimental,
 parallel::stopCluster(cl)
 
 # P-val: percentage of experimental v values that are larger than observed v ---
-v_p_values <- purrr::map2(v_experimental, v_observed, get_p) %>% 
+v_p_values <- map2(v_experimental, v_observed, get_p) %>% 
   unlist()
 
 v_statistic <- tibble(variable = names(v_observed),
@@ -161,7 +162,7 @@ v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
   geom_rug(alpha = 0.2) +
   geom_vline(data = v_obs_g, mapping = aes(xintercept = value), size = 0.8) +
-  facet_wrap(vars(long), scales = "free", nrow = 4) +
+  facet_wrap(vars(long), scales = "free", ncol = 3) +
   xlab("v statistic") +
   geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
             hjust = +1.2, vjust = +1.5) +
@@ -171,15 +172,15 @@ v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
 
 v_plot
 
-ggsave(here("plots", "v_values.pdf"), plot = v_plot, width = 12, height = 6)
+ggsave(here("plots", "v_values.pdf"), plot = v_plot, width = 6, height = 6)
 
 
 # normalizing to range 0-1 ------------------------------------------------
 v_normalized <- bind_rows(exp = v_exp_g, obs = v_obs_g, .id = "orig") %>% 
   group_by(variable) %>% 
-  nest() %>% 
+  tidyr::nest() %>% 
   mutate(data = map(data, mutate, value_norm = normalize01(value))) %>% 
-  unnest(cols = data)
+  tidyr::unnest(cols = data)
 
 v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"), 
                             mapping = aes(x = value_norm)) +
@@ -187,7 +188,7 @@ v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"),
   geom_rug(alpha = 0.2) +
   geom_vline(data = filter(v_normalized, orig == "obs"), 
              mapping = aes(xintercept = value_norm), size = 0.8) +
-  facet_wrap(vars(long), scales = "free", nrow = 4) +
+  facet_wrap(vars(long), scales = "free", ncol = 3) +
   xlab("v statistic (normalized to 0 - 1 range)") +
   geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
             hjust = +1.2, vjust = +1.5) +
@@ -196,9 +197,9 @@ v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"),
   theme_universe
 
 ggsave(here("plots", "v_values_normalized.pdf"), plot = v_normalized_plot, 
-       width = 12, height = 6)
+       width = 6, height = 6)
 
-write_csv(v_normalized, here("data/temp", "v_normalized.csv"))
+readr::write_csv(v_normalized, here("data/temp", "v_normalized.csv"))
 
 
 # S statistic ==================================================================
@@ -225,7 +226,7 @@ s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
 
 s_plot
 
-ggsave(here("plots", "s_statistic.pdf"), plot = s_plot, width = 4, height = 2)
+ggsave(here("plots", "s_statistic.pdf"), plot = s_plot, width = 3, height = 1.5)
 
 # The S statistic is significantly larger than experimental S and
 # occures in less then 5% of cases (p is smaller than 0.05), i.e. there is
@@ -321,6 +322,8 @@ g_cooc_negative <- simplify(graph_from_adjacency_matrix(cooc_posneg$neg,
 g_cooc_negative <- delete.vertices(g_cooc_negative, 
                                    degree(g_cooc_negative) == 0)
 
+non_rand_vars <- v_statistic %>% filter(signif) %>% pull(abbrv)
+
 pdf(here("plots", "cooc_networks.pdf"), width = 12)
 par(mfrow = c(1, 2), mar = c(rep(2, 4)))
 plot(g_cooc_positive, 
@@ -329,6 +332,7 @@ plot(g_cooc_positive,
      # vertex.size = eigen_centrality(g_cooc_positive)$vector*20,
      vertex.label.family = "sans", 
      vertex.label.cex = .6,
+     vertex.label.font = if_else(vertex_attr(g_cooc_positive)$name %in% non_rand_vars, 2, 3),
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_positive)$weight^1.2,
      edge.color = "black",
@@ -342,6 +346,7 @@ plot(g_cooc_negative,
      # vertex.size = eigen_centrality(g_cooc_negative)$vector*20,
      vertex.label.family = "sans", 
      vertex.label.cex = .6,
+     vertex.label.font = if_else(vertex_attr(g_cooc_negative)$name %in% non_rand_vars, 2, 3),
      vertex.label.color = "black",
      edge.width = edge_attr(g_cooc_negative)$weight^1.2,
      edge.color = "black",
@@ -351,5 +356,24 @@ plot(g_cooc_negative,
 title(main = "absent", cex.main = 1, family = "sans", font.main = 1)
 dev.off()
 
+# clusters of variables
+cl_absent <- cluster_fast_greedy(g_cooc_negative) %>% 
+  groups()
+cl_present <- cluster_fast_greedy(g_cooc_positive) %>% 
+  groups()
+
+extract_network_groups <- function(lst, type) {
+  len <- length(lst)
+  temp <- vector("list", len)
+  for (i in 1:len) {
+    temp[[i]] <- tibble(cluster = paste0(type, i), abbrv = lst[[i]])
+  }
+  bind_rows(temp)
+}
+
+var_clusters <- bind_rows(extract_network_groups(cl_absent, "absent"), 
+          extract_network_groups(cl_present, "present"))
+
 # output =======================================================================
-# writeLines(non_rand_vars, here("data/temp", "non_random_vars.txt"))
+writeLines(non_rand_vars, here("data/temp", "non_random_vars.txt"))
+readr::write_csv(var_clusters, here("data/temp", "variable_clusters.csv"))
