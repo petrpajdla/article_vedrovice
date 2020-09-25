@@ -359,7 +359,7 @@ all the iterations are reported with expected numbers of occurence and their
 deviations from observed values summarized as mean values.
 
 <!-- The size of the radius is based on the results of nearest neighbors analysis, where
-at the given radius there is strong evidence of a clustering process (Fig. \@ref(fig:spat-funs)).
+at the given radius there is strong evidence of a clustering process (Fig. \@ref(fig:pp-funs)).
 The randomness is again tested using a permutation test similar to the one
 described for the neighborhood derived from the graphs.-->
 
@@ -446,7 +446,7 @@ expected counts (for the details see supplementary information).
 Inconclusive result of the quadrat test is not suprising because as was noted
 earlier, we do not expect *first-order* properties to play major roles in
 placing of the individual burials. -->
-Results of functions based on nearest neighbors are reported in Fig. \@ref(fig:spat-funs).
+Results of functions based on nearest neighbors are reported in Fig. \@ref(fig:pp-funs).
 Both *G* and  *F* functions do slightly deviate from the curve expected
 under independent random process
 but neither traverses the boundaries of the envelope.
@@ -576,38 +576,75 @@ indeterminate category $p \approx 0.02$.
 <!-- ======================================================================= -->
 <!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES -->
 
+<!-- randomization -->
+<!--
 ```{r sstat, fig.cap = "Distribution of simulated and observed *S* statistic"}
-knitr::include_graphics(here("plots/s_statistic.pdf"))
+# knitr::include_graphics(here("plots/s_statistic.pdf"))
 ```
 
 ```{r vstat, fig.cap = "Simulated and observed *V* statistics for different variables"}
-knitr::include_graphics(here("plots", "v_values.pdf"))
+# knitr::include_graphics(here("plots", "v_values.pdf"))
 ```
 
 ```{r coocnets, fig.cap = "Networks of variables frequently present together and exluding each other"}
-knitr::include_graphics(here("plots", "cooc_networks.pdf"))
+# knitr::include_graphics(here("plots", "cooc_networks.pdf"))
+```
+-->
+
+<!-- plans -->
+
+<!-- point pattern analysis -->
+
+```{r label-pp-funs}
+label_pp_funs <- paste("Functions *G*, *F*, *K* and *T*.",
+"*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope")
+```
+```{r pp-funs, fig.cap=label_pp_funs}
+knitr::include_graphics(here("text/figs/pp_funs.pdf"))
 ```
 
-<!-- ```{r plan-graphs, fig.cap = "Neighborhood graphs: Delaunay triangulation and Gabriel graph"} -->
-<!-- knitr::include_graphics(here("plots/plan_gabriel.pdf")) -->
-<!-- ``` -->
+```{r label-pp-crossk}
+label_crossk <- paste("Multitype K function for different categorical variables, for legend see previous Fig.")
+```
+```{r pp-crossk, fig.cap=label_crossk}
+knitr::include_graphics(here("text/figs/pp_crossk.pdf"))
+```
 
-<!-- ```{r label-spat-funs} -->
-<!-- label_spat_funs <- paste("Functions *G*, *F*, *K* and *T*.", -->
-<!-- "*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope.") -->
-<!-- ``` -->
-<!-- ```{r spat-funs, fig.cap=label_spat_funs} -->
-<!-- knitr::include_graphics(here("plots/pointprocess_fun.pdf")) -->
-<!-- ``` -->
+<!-- neighborhood -->
+```{r plan-graphs, fig.cap="Neighborhood graphs: Delaunay triangulation and Gabriel graph"}
+knitr::include_graphics(here("text/figs/plan_graphs.pdf"))
+```
 
-<!-- ```{r label-nb-sex} -->
-<!-- label_nb_sex <- paste("Mean neighbors in a given sex category.", -->
-<!-- "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value.", -->
-<!-- "*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non adult, *ind.* -- indetermined sex.") -->
-<!-- ``` -->
-<!-- ```{r nb-sex, fig.cap=label_nb_sex} -->
-<!-- knitr::include_graphics(here("plots/nb_sex.pdf")) -->
-<!-- ``` -->
+<!-- to SI
+```{r label-nb-sex}
+label_nb_sex <- paste("Mean neighbors in a given sex category.",
+"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
+"*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body")
+```
+```{r nb-sex, fig.cap=label_nb_sex}
+knitr::include_graphics(here("text/figs/nb_sex.pdf"))
+```
+
+```{r label-nb-age}
+label_nb_age <- paste("Mean neighbors in a given age category.",
+"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
+"*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body")
+```
+```{r nb-age, fig.cap=label_nb_age}
+knitr::include_graphics(here("text/figs/nb_age.pdf"))
+```
+-->
+
+<!-- percolation analysis -->
+
+```{r perc-distance, fig.cap="Percolation thresholds"}
+knitr::include_graphics(here("text/figs/perc_distance.pdf"))
+```
+
+```{r perc-plan, fig.cap="Clusters formed at given percolation threshold distances"}
+knitr::include_graphics(here("text/figs/perc_plan_ids.pdf"))
+```
+
 
 
 
