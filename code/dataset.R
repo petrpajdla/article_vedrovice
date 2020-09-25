@@ -75,39 +75,44 @@ ved$bin_vars$over5 <- (colSums(ved$bin_vars$bin_mat) / n_burs) > 0.05
 # continuous variables
 ved$cont_vars <- input %>% 
   filter(undisturbed == TRUE) %>% 
-  select(pit_len, pit_wid, pit_dep,
-         d13c, d15n, sr, sr_ppm, 
-         body_height) %>% 
+  select(
+    # pit_len, pit_wid, pit_dep,
+    # d13c, d15n, 
+    sr, sr_ppm, 
+    # body_height
+  ) %>% 
   as.data.frame()
 
 rownames(ved$cont_vars) <- ved$id_burials
 
 # factor variables
-ved$cat_vars <- input %>% 
-  filter(undisturbed == TRUE) %>% 
-  select(pit_orient_cat, head_orient_cat, body_side) %>%
-  mutate_all(factor) %>% 
-  as.data.frame()
-
-rownames(ved$cat_vars) <- ved$id_burials
+# ved$cat_vars <- input %>% 
+#   filter(undisturbed == TRUE) %>% 
+#   select(pit_orient_cat, head_orient_cat, body_side) %>%
+#   mutate_all(factor) %>% 
+#   as.data.frame()
+# 
+# rownames(ved$cat_vars) <- ved$id_burials
 
 # metadata
-lookup_sex <- c("n. a." = "gold", "F" = "tomato", "M" = "steelblue")
+# lookup_sex <- c("n. a." = "gold", "F" = "tomato", "M" = "steelblue")
 
-ved$metadata <- input %>% select(id_burial, sex, age_cat, dat) %>% 
+ved$metadata <- input %>% 
+  select(id_burial, pres = undisturbed, sex, age_cat, dat) %>% 
   mutate(id_burial = as.character(id_burial),
+         pres = if_else(pres, "pres.", "dist."),
          sex = factor(sex),
-         sex_col = unname(lookup_sex[input$sex]),
+         # sex_col = unname(lookup_sex[input$sex]),
          age_cat = ordered(age_cat, 
                            levels = c("I1", "I", "I2", "J",
                                       "A1", "A", "A2", "AM", 
                                       "M1", "M", "M2", "S")),
-         age_sim = ordered(if_else(age_cat %in% c("I1", "I", "I2", "J"), "you",
-                                   if_else(age_cat %in% c("A1", "A", "A2"), "mid",
+         age_sim = ordered(if_else(age_cat %in% c("I1", "I", "I2", "J"), "juv.",
+                                   if_else(age_cat %in% c("A1", "A", "A2"), "ad.",
                                            if_else(age_cat %in% c("AM", "M1", "M", 
-                                                                  "M2", "S"), "old", 
-                                                   "NA"))), 
-                           levels = c("you", "mid", "old")),
+                                                                  "M2", "S"), "mat.", 
+                                                   "ind."))), 
+                           levels = c("juv.", "ad.", "mat.", "ind.")),
          dat = ordered(dat, levels = c("un", "Ib", "IIa")))
 
 # layout
@@ -152,6 +157,29 @@ names(ved$var_names$short) <- ved$var_names$full$vnames
 
 ved$var_names$long <- ved$var_names$full$long
 names(ved$var_names$long) <- ved$var_names$full$vnames
+
+
+# origin ------------------------------------------------------------------
+
+local_range <- left_join(ved$metadata, 
+                         as_tibble(ved$cont_vars, rownames = "id_burial"),
+                         by = "id_burial") %>% 
+  filter(age_cat %in% c("I", "I1", "I2"), !is.na(sr)) %>% 
+  summarise(n = n(), 
+            mean = mean(sr, na.rm = TRUE), 
+            sd = sd(sr, na.rm = TRUE)) %>% 
+  mutate(min = mean - 2 * sd,
+         max = mean + 2 * sd)
+
+ved$metadata <- left_join(ved$metadata, 
+                          as_tibble(ved$cont_vars, rownames = "id_burial"),
+                          by = "id_burial") %>% 
+  mutate(origin = if_else(sr > local_range$min & sr < local_range$max, 
+                          "local", "non-local"),
+         origin = if_else(is.na(origin), "ind.", origin),
+         origin = factor(origin, levels = c("local", "non-local", "ind."))) %>% 
+  select(-sr, -sr_ppm)
+
 
 # saving processed dataset =====================================================
 if (!dir.exists(here("data", "temp"))) {
