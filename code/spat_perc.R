@@ -17,9 +17,13 @@
 library(igraph)
 library(dplyr)
 library(tidyr)
+library(purrr)
 library(ggplot2)
 library(ggforce)
 library(ggspatial)
+library(concaveman)
+library(sf)
+library(forcats)
 
 # theme for ggplot graphics
 theme_universe <- theme(panel.border = element_rect(colour = "black", 
@@ -36,8 +40,13 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
 # data --------------------------------------------------------------------
 
 ved_sf <- sf::read_sf(here::here("data/temp", "layout.shp")) %>% 
-  mutate(sex = forcats::fct_relevel(sex, c("n. a.", "F", "M", "ind.")))
-ved_coord <- sf::st_coordinates(ved_sf)
+  mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")),
+         age_sim = fct_relevel(age_sim, c("juv.", "ad.", "mat.", "ind.")),
+         origin = fct_relevel(origin, c("local", "non-local", "ind."))) %>% 
+  filter(pres != "dist.")
+ved_coord <- bind_cols(id = as.character(ved_sf$id_burial), 
+                       sf::st_coordinates(ved_sf)) %>% 
+  rename(x = X, y = Y)
 ved_exc <- sf::read_sf(here::here("data/temp", "window.shp"))
 
 # experiments -------------------------------------------------------------
@@ -63,21 +72,23 @@ ved_exc <- sf::read_sf(here::here("data/temp", "window.shp"))
 # percolation -------------------------------------------------------------
 
 percolation <- function(x, lower = NULL, upper = NULL, step = NULL) {
-  stopifnot(is.matrix(x))
+  # stopifnot(is.matrix(x))
+  m <- matrix(c(x$x, x$y), ncol = 2)
+  rownames(m) <- x$id
   
-  dist <- as.matrix(stats::dist(x, method = "euclidean"))
+  dist <- as.matrix(stats::dist(m, method = "euclidean"))
   
   # radius
-  triangle <- dist[lower.tri(dist)]
-  if (is.null(lower)) {
-    lower <- min(triangle)
-  }
-  if (is.null(upper)) {
-    upper <- max(triangle) / 4
-  }
-  if (is.null(step)) {
-    step <- (upper - lower) / 10
-  }
+  # triangle <- dist[lower.tri(dist)]
+  # if (is.null(lower)) {
+  #   lower <- min(triangle)
+  # }
+  # if (is.null(upper)) {
+  #   upper <- max(triangle) / 4
+  # }
+  # if (is.null(step)) {
+  #   step <- (upper - lower) / 10
+  # }
   radii <- seq(lower, upper, by = step)
   
   res_lst <- vector("list", length(radii))
@@ -115,15 +126,15 @@ percolation <- function(x, lower = NULL, upper = NULL, step = NULL) {
   names(res) <- c("stats", "membership_wide", "membership_long")
   
   res[["membership_long"]] <- res_tbl %>% 
-    mutate(id = as.numeric(id)) %>% 
+    mutate(id = as.character(id)) %>% 
     arrange(id)
   
-  res[["membership_wide"]] <- res_tbl %>%
-    pivot_wider(values_from = clust, 
-                names_from = radius, 
-                names_prefix = "radius") %>% 
-    mutate(id = as.numeric(id)) %>% 
-    arrange(id)
+  # res[["membership_wide"]] <- res_tbl %>%
+  #   pivot_wider(values_from = clust, 
+  #               names_from = radius, 
+  #               names_prefix = "radius") %>% 
+  #   mutate(id = as.numeric(id)) %>% 
+  #   arrange(id)
   
   # number of nodes
   nodes_num <- res_tbl %>% 
@@ -156,18 +167,18 @@ p <- percolation(ved_coord, lower = 1, upper = 11, step = 0.1)
 
 # percolation stats -------------------------------------------------------
 
-p_breaks <- c(2.8, 4, 4.6, 5.6, 6.3, 7.1, 8.8, 10.1)
+p_breaks <- c(2.8, 3.9, 4.6, 5.5, 6.5, 7.8, 8.8, 10.4)
 
 # number of clusters
-p$stats %>% 
-  ggplot(aes(x = radius, y = n)) +
-  geom_point() +
-  geom_path() + 
-  theme_minimal() +
-  labs(y = "number of clusters")
+# p$stats %>% 
+#   ggplot(aes(x = radius, y = n)) +
+#   geom_point() +
+#   geom_path() + 
+#   theme_minimal() +
+#   labs(y = "number of clusters")
 
 # maximum number of nodes per cluster
-# p$stats %>% 
+# p$stats %>%
 #   ggplot(aes(x = radius)) +
 #   geom_path(aes(y = max_nodes))
 
@@ -176,8 +187,8 @@ p$stats %>%
   mutate(label_radius = if_else(radius %in% p_breaks, 
                                 radius, NA_real_)) %>% 
   ggplot(aes(x = radius, y = max_nodes_norm)) +
+  geom_point(aes(x = label_radius), color = "gray") +
   geom_path() +
-  geom_point(aes(x = label_radius)) +
   geom_text(aes(x = radius - 0.5, y = max_nodes_norm + 0.06, label = label_radius)) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +
@@ -187,16 +198,16 @@ p$stats %>%
 ggsave(here::here("plots", "perc_distance.pdf"))
 
 # mean and median nr of nodes
-p$stats %>% 
-  ggplot(aes(x = radius)) +
-  geom_path(aes(y = mean_nodes)) +
-  geom_path(aes(y = median_nodes), color = "blue")
+# p$stats %>% 
+#   ggplot(aes(x = radius)) +
+#   geom_path(aes(y = mean_nodes)) +
+#   geom_path(aes(y = median_nodes), color = "blue")
 
 
 # membership in clusters --------------------------------------------------
 
 # membership
-init_coords <- bind_cols(id = 1:nrow(ved_coord), x = ved_coord[, "X"], y = ved_coord[, "Y"])
+# init_coords <- bind_cols(id = 1:nrow(ved_coord), x = ved_coord[, "X"], y = ved_coord[, "Y"])
 
 # wide tab solution
 # g_wide <- left_join(p$membership_wide, init_coords, by = "id") %>% 
@@ -219,31 +230,80 @@ init_coords <- bind_cols(id = 1:nrow(ved_coord), x = ved_coord[, "X"], y = ved_c
 #   filter(radius %in% seq(1, 10, by = 0.4),
 #          radius <= 9.4)
 
-g_long <- left_join(p$membership_long, init_coords, by = "id") %>% 
+g_long <- left_join(p$membership_long, ved_coord, by = "id") %>% 
   filter(radius %in% c(1.6, p_breaks[1:7])) %>% # 1.6, 3.6,
   mutate(label_radius = paste("dist.", radius, "m"),
-         label_radius = forcats::fct_reorder(label_radius, radius))
+         label_radius = forcats::fct_reorder(label_radius, radius),
+         id_burial = as.character(id))
 
-clust_col <- rep("gray", 19)
+# clust_col <- rep("gray", 19)
 
 scale_facet <- tibble::tibble(
   label_radius = factor(c("dist. 8.8 m")),
   location = c("br"),
 )
 
+# using ggforce - wrongly displays some of the groups
+# ggplot() +
+#   geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.1) +
+#   ggforce::geom_mark_hull(data = g_long, aes(x, y, fill = clust), color = NA, expand = 0.025,
+#                           show.legend = FALSE) +
+#   # geom_point(data = g_long, aes(x, y, color = clust), show.legend = FALSE) +
+#   scale_fill_manual(values = clust_col) +
+#   scale_color_manual(values = clust_col) +
+#   geom_sf(data = ved_sf, aes(shape = sex), size = 0.6) + 
+#   scale_shape_manual(values = c(22, 21, 24, 4)) +
+#   facet_wrap(vars(label_radius), ncol = 2) +
+#   coord_sf() +
+#   annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+#                          aes(location = location), 
+#                          data = scale_facet,
+#                          pad_y = unit(0.8, "cm")) +
+#   annotation_scale(aes(location = location),
+#                    data = scale_facet,
+#                    plot_unit = "m") +
+#   theme_void() +
+#   theme(strip.text = element_text(face = "italic"),
+#         panel.spacing = unit(1, "lines"), 
+#         legend.position = "bottom", 
+#         legend.direction = "horizontal")
+# 
+# ggsave(here::here("plots", "perc_plan.pdf"), width = 7, height = 14)
+
+# using concaveman algorithm
+get_concaveman <- function(pts) {
+  map(pts, concaveman)
+}
+
+polygs <- ved_sf %>% 
+  left_join(p$membership_long, by = c("id_burial" = "id")) %>% 
+  select(id_burial, radius, clust) %>% 
+  filter(radius %in% c(1.6, p_breaks[1:7])) %>% 
+  group_by(radius) %>% 
+  nest() %>% 
+  mutate(data = map(data, group_by, clust),
+         data = map(data, nest),
+         data = map(data, rename, pts = data),
+         data = map(data, ~map(.x$pts, concaveman))) %>% 
+  unnest(cols = data) %>% 
+  unnest(cols = data) %>% 
+  st_as_sf() %>% 
+  st_make_valid() %>% 
+  st_buffer(1.6) %>% 
+  mutate(label_radius = paste("dist.", radius, "m"),
+         label_radius = forcats::fct_reorder(label_radius, radius))
+
 ggplot() +
-  geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.1) +
-  ggforce::geom_mark_hull(data = g_long, aes(x, y, fill = clust), color = NA, expand = 0.025,
-                          show.legend = FALSE) +
-  # geom_point(data = g_long, aes(x, y, color = clust), show.legend = FALSE) +
-  scale_fill_manual(values = clust_col) +
-  scale_color_manual(values = clust_col) +
-  geom_sf(data = ved_sf, aes(shape = sex), size = 0.6) + 
+  geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.2) +
+  geom_sf(data = polygs, fill = "gray", color = NA, alpha = 0.4) +
+  geom_sf(data = ved_sf, 
+          aes(shape = sex), 
+          size = 0.6) +
   scale_shape_manual(values = c(22, 21, 24, 4)) +
   facet_wrap(vars(label_radius), ncol = 2) +
   coord_sf() +
   annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
-                         aes(location = location), 
+                         aes(location = location),
                          data = scale_facet,
                          pad_y = unit(0.8, "cm")) +
   annotation_scale(aes(location = location),
@@ -251,8 +311,43 @@ ggplot() +
                    plot_unit = "m") +
   theme_void() +
   theme(strip.text = element_text(face = "italic"),
-        panel.spacing = unit(1, "lines"), 
-        legend.position = "bottom", 
+        panel.spacing = unit(1, "lines"),
+        legend.position = "bottom",
         legend.direction = "horizontal")
 
 ggsave(here::here("plots", "perc_plan.pdf"), width = 7, height = 14)
+
+# numbers of clusters
+polygs_ids <- polygs %>% group_by(radius) %>%
+  mutate(cluster = 1:n())
+
+ggplot() +
+  geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.1) +
+  geom_sf(data = ved_sf, aes(shape = sex), size = 0.4, alpha = 0.2) +
+  geom_sf(data = polygs, fill = "gray", color = NA, alpha = 0.4) +
+  # ggspatial::geom_spatial_label_repel(data = polygs_ids, aes(label = cluster)) +
+  ggrepel::geom_text_repel(data = polygs_ids, 
+                           aes(label = cluster, geometry = polygons),
+                           stat = "sf_coordinates", 
+                           size = 1.6, nudge_x = 1, nudge_y = 1) +
+  scale_shape_manual(values = c(22, 21, 24, 4)) +
+  facet_wrap(vars(label_radius), ncol = 2) +
+  coord_sf() +
+  annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                         aes(location = location),
+                         data = scale_facet,
+                         pad_y = unit(0.8, "cm")) +
+  annotation_scale(aes(location = location),
+                   data = scale_facet,
+                   plot_unit = "m") +
+  theme_void() +
+  theme(strip.text = element_text(face = "italic"),
+        panel.spacing = unit(1, "lines"),
+        legend.position = "bottom",
+        legend.direction = "horizontal")
+
+ggsave(here::here("plots", "perc_plan_ids.pdf"), width = 7, height = 14)
+
+# cluster assignment ------------------------------------------------------
+g_long %>% select(id, radius, cluster = clust) %>% 
+  readr::write_csv(here::here("data/temp", "perc_clusters.csv"))
