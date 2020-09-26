@@ -239,7 +239,7 @@ g_long <- left_join(p$membership_long, ved_coord, by = "id") %>%
 # clust_col <- rep("gray", 19)
 
 scale_facet <- tibble::tibble(
-  label_radius = factor(c("dist. 8.8 m")),
+  label_radius = factor(c("dist. 7.8 m")),
   location = c("br"),
 )
 
@@ -293,9 +293,12 @@ polygs <- ved_sf %>%
   mutate(label_radius = paste("dist.", radius, "m"),
          label_radius = forcats::fct_reorder(label_radius, radius))
 
+disp_radii <- p_breaks[1:6]
+
 ggplot() +
   geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.2) +
-  geom_sf(data = polygs, fill = "gray", color = NA, alpha = 0.4) +
+  geom_sf(data = filter(polygs, radius %in% disp_radii), 
+          fill = "gray", color = NA, alpha = 0.4) +
   geom_sf(data = ved_sf, 
           aes(shape = sex), 
           size = 0.6) +
@@ -315,21 +318,23 @@ ggplot() +
         legend.position = "bottom",
         legend.direction = "horizontal")
 
-ggsave(here::here("plots", "perc_plan.pdf"), width = 7, height = 14)
+ggsave(here::here("plots", "perc_plan.pdf"), width = 7, height = 10)
 
 # numbers of clusters
-polygs_ids <- polygs %>% group_by(radius) %>%
+polygs_ids <- filter(polygs, radius %in% disp_radii) %>% 
+  group_by(radius) %>%
   mutate(cluster = 1:n())
 
 ggplot() +
   geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.1) +
   geom_sf(data = ved_sf, aes(shape = sex), size = 0.4, alpha = 0.2) +
-  geom_sf(data = polygs, fill = "gray", color = NA, alpha = 0.4) +
+  geom_sf(data = filter(polygs, radius %in% disp_radii), 
+          fill = "gray", color = NA, alpha = 0.4) +
   # ggspatial::geom_spatial_label_repel(data = polygs_ids, aes(label = cluster)) +
   ggrepel::geom_text_repel(data = polygs_ids, 
                            aes(label = cluster, geometry = polygons),
                            stat = "sf_coordinates", 
-                           size = 1.6, nudge_x = 1, nudge_y = 1) +
+                           size = 1.8, nudge_x = 1, nudge_y = 1) +
   scale_shape_manual(values = c(22, 21, 24, 4)) +
   facet_wrap(vars(label_radius), ncol = 2) +
   coord_sf() +
@@ -346,7 +351,7 @@ ggplot() +
         legend.position = "bottom",
         legend.direction = "horizontal")
 
-ggsave(here::here("plots", "perc_plan_ids.pdf"), width = 7, height = 14)
+ggsave(here::here("plots", "perc_plan_ids.pdf"), width = 7, height = 10)
 
 # cluster assignment ------------------------------------------------------
 g_long %>% select(id, radius, cluster = clust) %>% 

@@ -99,3 +99,9 @@ tnames <- c("relation", rep(c("mean", "p"), 3))
 kable(tab, booktabs = TRUE, col.names = tnames) %>% 
   add_header_above(c(" ", "Buffer" = 2, "Delaunay" = 2, "Gabriel" = 2))
 ```
+
+```{r session}
+sessionInfo()
+```
+
+

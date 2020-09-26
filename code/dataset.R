@@ -7,6 +7,7 @@
 # packages =====================================================================
 library(dplyr)
 library(here)
+library(stringr)
 
 # functions ====================================================================
 # continuous vector to dichotomous (binarization)
@@ -49,9 +50,10 @@ ved$bin_vars$count_mat <- input %>%
          lit_local, lit_nonlocal, 
          pot_special, pot_bowl, pot_globular, pot_bottle, 
          # pot_head, pot_mid, pot_leg, 
-         bone_tool, 
+         bone_tool, bone_awl,
          pendant_L, pendant_U, pendant_I, buckle_O, 
-         bracelet_spond, beads_spond, beads_marble, antler) %>% 
+         bracelet_spond, beads_spond, beads_marble, 
+         deer_teeth, antler, shell) %>% 
   as.matrix()
 
 rownames(ved$bin_vars$count_mat) <- ved$id_burials
@@ -180,6 +182,44 @@ ved$metadata <- left_join(ved$metadata,
          origin = factor(origin, levels = c("local", "non-local", "ind."))) %>% 
   select(-sr, -sr_ppm)
 
+
+# mixed categories --------------------------------------------------------
+detect_ind <- function(x) {
+  if_else(str_detect(x, "ind."), "ind.", x)
+}
+
+# only categories that are common for at least 5% of burials are kept
+threshold <- 0.05 * nrow(ved$bin_vars$count_mat)
+
+vec_origin <- c("local" = "loc.", "non-local" ="non.", "ind." = "ind.")
+
+comb_cats <- ved$metadata %>% 
+  filter(pres != "dist.") %>% 
+  mutate(
+    origin = vec_origin[origin],
+    sex = str_remove(sex, "\\s"),
+    cat_sa = str_c(sex, age_sim, sep = "/"),
+    cat_os = str_c(origin, sex, sep = "/"),
+    cat_oa = str_c(origin, age_sim, sep = "/"),
+    cat_osa = str_c(origin, sex, age_sim, sep = "/"),
+    across(starts_with("cat_"), detect_ind)
+  ) %>% 
+  select(id_burial, starts_with("cat"))
+
+get_perv_lvls <- function(x) {
+  lvls <- table(x)
+  names(lvls[lvls >= threshold])
+}
+
+comb_cats_over5 <- comb_cats %>% mutate(
+  cat_sa = if_else(cat_sa %in% get_perv_lvls(cat_sa), cat_sa, "ind."),
+  cat_os = if_else(cat_os %in% get_perv_lvls(cat_os), cat_os, "ind."),
+  cat_oa = if_else(cat_oa %in% get_perv_lvls(cat_oa), cat_oa, "ind."),
+  cat_osa = if_else(cat_osa %in% get_perv_lvls(cat_osa), cat_osa, "ind.")
+)
+
+ved$metadata <- left_join(ved$metadata, comb_cats_over5, by = c("id_burial")) %>%
+  mutate(across(starts_with("cat_"), function(x) if_else(is.na(x), "ind.", x)))
 
 # saving processed dataset =====================================================
 if (!dir.exists(here("data", "temp"))) {

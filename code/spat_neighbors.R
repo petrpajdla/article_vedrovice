@@ -116,6 +116,18 @@ names(ved_age) <- ved_sf_pres$id_burial
 ved_origin <- ved_sf_pres$origin
 names(ved_origin) <- ved_sf_pres$id_burial
 
+ved_sa <- ved_sf_pres$cat_sa
+names(ved_sa) <- ved_sf_pres$id_burial
+
+ved_os <- ved_sf_pres$cat_os
+names(ved_os) <- ved_sf_pres$id_burial
+
+ved_oa <- ved_sf_pres$cat_oa
+names(ved_oa) <- ved_sf_pres$id_burial
+
+ved_osa <- ved_sf_pres$cat_osa
+names(ved_osa) <- ved_sf_pres$id_burial
+
 # ved_ei <- ved_sf_pres$ei_clust
 # names(ved_ei) <- ved_sf_pres$id_burial
 
@@ -148,6 +160,18 @@ nb_age_d <- mean_neighbors_networks(ved_d, ved_age)
 
 nb_orig_g <- mean_neighbors_networks(ved_g, ved_origin)
 nb_orig_d <- mean_neighbors_networks(ved_d, ved_origin)
+
+nb_sa_g <- mean_neighbors_networks(ved_g, ved_sa)
+nb_sa_d <- mean_neighbors_networks(ved_d, ved_sa)
+
+nb_os_g <- mean_neighbors_networks(ved_g, ved_os)
+nb_os_d <- mean_neighbors_networks(ved_d, ved_os)
+
+nb_oa_g <- mean_neighbors_networks(ved_g, ved_oa)
+nb_oa_d <- mean_neighbors_networks(ved_d, ved_oa)
+
+nb_osa_g <- mean_neighbors_networks(ved_g, ved_osa)
+nb_osa_d <- mean_neighbors_networks(ved_d, ved_osa)
 
 # nb_ei_g <- mean_neighbors_networks(ved_g, ved_ei)
 # nb_ei_d <- mean_neighbors_networks(ved_d, ved_ei)
@@ -205,6 +229,35 @@ randomize_neighbors_network <- function(g, sf, variable, n_sim = 99) {
 # ved_rand_orig_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "origin", 
 #                                                n_sim = 999)
 # write_csv(ved_rand_orig_d, here("data/temp", "ved_rand_orig_d.csv"))
+
+ved_rand_sa_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "cat_sa",
+                                             n_sim = 999)
+ved_rand_sa_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "cat_sa",
+                                             n_sim = 999)
+write_csv(ved_rand_sa_g, here("data/temp", "ved_rand_sa_g.csv"))
+write_csv(ved_rand_sa_d, here("data/temp", "ved_rand_sa_d.csv"))
+
+ved_rand_os_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "cat_os",
+                                             n_sim = 999)
+ved_rand_os_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "cat_os",
+                                             n_sim = 999)
+write_csv(ved_rand_os_g, here("data/temp", "ved_rand_os_g.csv"))
+write_csv(ved_rand_os_d, here("data/temp", "ved_rand_os_d.csv"))
+
+ved_rand_oa_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "cat_oa",
+                                             n_sim = 999)
+ved_rand_oa_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "cat_oa",
+                                             n_sim = 999)
+write_csv(ved_rand_oa_g, here("data/temp", "ved_rand_oa_g.csv"))
+write_csv(ved_rand_oa_d, here("data/temp", "ved_rand_oa_d.csv"))
+
+ved_rand_osa_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "cat_osa",
+                                              n_sim = 999)
+ved_rand_osa_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "cat_osa",
+                                              n_sim = 999)
+write_csv(ved_rand_osa_g, here("data/temp", "ved_rand_osa_g.csv"))
+write_csv(ved_rand_osa_d, here("data/temp", "ved_rand_osa_d.csv"))
+
 
 # ved_rand_ei_g <- randomize_neighbors_network(ved_g, ved_sf, "ei_clust", n_sim = 999)
 # write_csv(ved_rand_ei_g, here("data/temp", "ved_rand_ei_g.csv"))
@@ -326,6 +379,131 @@ g_orig_d <- ved_rand_orig_d %>%
 
 pdf(here("plots/nb_orig.pdf"), width = 6, height = 8)
 gridExtra::grid.arrange(g_orig_d, g_orig_g)
+dev.off()
+
+# combined categories
+# sa
+g_sa_g <- ved_rand_sa_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_sa_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "free") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
+  theme_universe
+
+g_sa_d <- ved_rand_sa_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_sa_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "free") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
+  theme_universe
+
+pdf(here("plots/nb_sa.pdf"), width = 6, height = 8)
+gridExtra::grid.arrange(g_sa_d, g_sa_g)
+dev.off()
+
+# os
+g_os_g <- ved_rand_os_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_os_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
+  theme_universe
+
+g_os_d <- ved_rand_os_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_os_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
+  theme_universe
+
+pdf(here("plots/nb_os.pdf"), width = 6, height = 8)
+gridExtra::grid.arrange(g_os_d, g_os_g)
+dev.off()
+
+# oa
+g_oa_g <- ved_rand_oa_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_oa_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
+  theme_universe
+
+g_oa_d <- ved_rand_oa_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_oa_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
+  theme_universe
+
+pdf(here("plots/nb_oa.pdf"), width = 6, height = 8)
+gridExtra::grid.arrange(g_oa_d, g_oa_g)
+dev.off()
+
+# osa
+g_osa_g <- ved_rand_osa_g %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_osa_g, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Gabriel graph") +
+  theme_universe
+
+g_osa_d <- ved_rand_osa_d %>% 
+  filter(from != "ind.", to != "ind.") %>% 
+  ggplot(aes(mean)) +
+  geom_density(fill = "gray90", color = NA) +
+  geom_vline(data = filter(nb_osa_d, from != "ind.", to != "ind."), 
+             aes(xintercept = mean), size = 0.8) +
+  geom_rug() +
+  facet_grid(rows = vars(to), cols = vars(from), scales = "fixed") +
+  scale_y_continuous(expand = c(0, 0, 0, 0)) +
+  scale_x_continuous(expand = c(0.01, 0)) +
+  labs(xlab = "mean neighbours", title = "Neighborhood based on Delaunay triangulation") +
+  theme_universe
+
+pdf(here("plots/nb_osa.pdf"), width = 6, height = 8)
+gridExtra::grid.arrange(g_osa_d, g_osa_g)
 dev.off()
 
 # # exceptionality index
@@ -487,6 +665,10 @@ p_vals <- list(sex = NA,
                age = NA,
                orig = NA)
 
+p_vals_multicat <- list(sa = NA,
+                        os = NA,
+                        oa = NA,
+                        osa = NA)
 
 # sex
 p_sex_d <- pval(nb_sex_d, ved_rand_sex_d) %>% select(-sum)
@@ -526,7 +708,68 @@ p_vals$orig <- bind_rows(delaunay = p_orig_d, gabriel = p_orig_g, .id = "method"
          starts_with("gabriel")) %>% 
   filter(from != "ind.", to != "ind.")
 
+# sa
+p_sa_d <- pval(nb_sa_d, ved_rand_sa_d) %>% select(-sum)
+p_sa_g <- pval(nb_sa_g, ved_rand_sa_g) %>% select(-sum)
+
+p_vals_multicat$sa <- bind_rows(delaunay = p_sa_d, gabriel = p_sa_g, .id = "method") %>% 
+  pivot_wider(values_from = c(mean, p, signif), 
+              names_from = method, 
+              names_glue = "{method}_{.value}") %>% 
+  select(from, to, 
+         starts_with("delaunay"), 
+         starts_with("gabriel")) %>% 
+  filter(from != "ind.", to != "ind.")
+
+# os
+p_os_d <- pval(nb_os_d, ved_rand_os_d) %>% select(-sum)
+p_os_g <- pval(nb_os_g, ved_rand_os_g) %>% select(-sum)
+
+p_vals_multicat$os <- bind_rows(delaunay = p_os_d, gabriel = p_os_g, .id = "method") %>% 
+  pivot_wider(values_from = c(mean, p, signif), 
+              names_from = method, 
+              names_glue = "{method}_{.value}") %>% 
+  select(from, to, 
+         starts_with("delaunay"), 
+         starts_with("gabriel")) %>% 
+  filter(from != "ind.", to != "ind.")
+
+# oa
+p_oa_d <- pval(nb_oa_d, ved_rand_oa_d) %>% select(-sum)
+p_oa_g <- pval(nb_oa_g, ved_rand_oa_g) %>% select(-sum)
+
+p_vals_multicat$oa <- bind_rows(delaunay = p_oa_d, gabriel = p_oa_g, .id = "method") %>% 
+  pivot_wider(values_from = c(mean, p, signif), 
+              names_from = method, 
+              names_glue = "{method}_{.value}") %>% 
+  select(from, to, 
+         starts_with("delaunay"), 
+         starts_with("gabriel")) %>% 
+  filter(from != "ind.", to != "ind.")
+
+# osa
+p_osa_d <- pval(nb_osa_d, ved_rand_osa_d) %>% select(-sum)
+p_osa_g <- pval(nb_osa_g, ved_rand_osa_g) %>% select(-sum)
+
+p_vals_multicat$osa <- bind_rows(delaunay = p_osa_d, gabriel = p_osa_g, .id = "method") %>% 
+  pivot_wider(values_from = c(mean, p, signif), 
+              names_from = method, 
+              names_glue = "{method}_{.value}") %>% 
+  select(from, to, 
+         starts_with("delaunay"), 
+         starts_with("gabriel")) %>% 
+  filter(from != "ind.", to != "ind.")
+
+# output
 write_rds(p_vals, here("data/temp/nb_pvals.csv"))
+write_rds(p_vals_multicat, here("data/temp/nb_pvals_multicat.csv"))
+
+# filtering significant values to assess...
+# p_vals_multicat$osa %>% 
+#   filter(str_detect(delaunay_signif, "\\*"))
+# 
+# p_vals_multicat$osa %>% 
+#   filter(str_detect(gabriel_signif, "\\*"))
 
 # # ei
 # p_ei_d <- pval(nb_ei_d, ved_rand_ei_d) %>% select(-sum)

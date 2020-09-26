@@ -94,7 +94,7 @@ n_permutations <-  9999
 # going parallel to speed up randomization...
 # detecting cores for parallel
 no_cores <- parallel::detectCores() - 1
-  
+
 # cooccurences on random matrices ==============================================
 # # ======
 # cl <- parallel::makeCluster(no_cores)
@@ -137,12 +137,16 @@ v_p_values <- map2(v_experimental, v_observed, get_p) %>%
 
 v_statistic <- tibble(variable = names(v_observed),
                       v = t(unname(v_observed))[, 1],
-                      p = unname(v_p_values),
-                      signif = unname(v_p_values < 0.05)) %>% 
+                      p = unname(v_p_values)) %>% 
+  mutate(
+    # across(is.numeric, round, 2),
+    signif = if_else(p <= 0.05, "*", ""),
+    signif = if_else(p <= 0.01, "**", signif),
+    signif = if_else(p <= 0.001, "***", signif)) %>% 
   mutate(abbrv = unname(ved$var_names$short[variable]),
          long = unname(ved$var_names$long[variable]))
 
-readr::write_csv(v_statistic, here("data/temp", "v_statistics.csv"))
+readr::write_csv(v_statistic, here("data/temp", "cooc_v_stats.csv"))
 
 # visualizing of v values by small multiples -----------------------------------
 v_exp_g <- v_experimental %>% tidyr::gather(variable, value) %>% 
@@ -155,7 +159,6 @@ v_obs_g <- v_observed %>% tidyr::gather(variable, value) %>%
 v_annot <- v_statistic %>% select(long, p, signif) %>%
   mutate(p = round(p, 2),
          long = forcats::as_factor(long),
-         signif = if_else(signif == TRUE, "*", ""),
          txt = paste0(p, signif))
 
 v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
@@ -172,7 +175,7 @@ v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
 
 v_plot
 
-ggsave(here("plots", "v_values.pdf"), plot = v_plot, width = 6, height = 6)
+ggsave(here("plots", "cooc_vstats.pdf"), plot = v_plot, width = 6, height = 6)
 
 
 # normalizing to range 0-1 ------------------------------------------------
@@ -196,10 +199,10 @@ v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"),
   scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
   theme_universe
 
-ggsave(here("plots", "v_values_normalized.pdf"), plot = v_normalized_plot, 
+ggsave(here("plots", "cooc_vstats_norm.pdf"), plot = v_normalized_plot, 
        width = 6, height = 6)
 
-readr::write_csv(v_normalized, here("data/temp", "v_normalized.csv"))
+readr::write_csv(v_normalized, here("data/temp", "cooc_v_normal.csv"))
 
 
 # S statistic ==================================================================
@@ -209,13 +212,13 @@ s_experimental <- rowSums(apply(v_experimental, 2,
                                 "/", ncol_input))
 
 s_p_value <- get_p(s_experimental, s_observed)
-s_p_value < 0.05
+s_p_value
 
 s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
   geom_rug(alpha = 0.2) +
   geom_vline(xintercept = s_observed, size = 0.8) +
-  geom_text(data = tibble(p = paste0(round(s_p_value, 4), "*")), 
+  geom_text(data = tibble(p = paste0(round(s_p_value, 3), "**")), 
             aes(x = Inf, y = Inf, label = p), 
             size = 3,
             hjust = +1.1, vjust = +1.4) +
@@ -226,7 +229,7 @@ s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
 
 s_plot
 
-ggsave(here("plots", "s_statistic.pdf"), plot = s_plot, width = 3, height = 1.5)
+ggsave(here("plots", "cooc_sstat.pdf"), plot = s_plot, width = 3, height = 1.5)
 
 # The S statistic is significantly larger than experimental S and
 # occures in less then 5% of cases (p is smaller than 0.05), i.e. there is
@@ -260,7 +263,7 @@ cooccurrence[is.na(cooccurrence)] <- 0
 
 # bw <- colorRampPalette(colors = c("gray90", "gray20"))
 
-pdf(here("plots", "cooccurrence.pdf"), width = 7, height = 7)
+pdf(here("plots", "cooc_corrplot.pdf"), width = 7, height = 7)
 corrplot::corrplot(round(cooccurrence, 2), 
                    is.corr = FALSE, method = "pie", 
                    type = "upper", diag = FALSE, 
@@ -322,9 +325,9 @@ g_cooc_negative <- simplify(graph_from_adjacency_matrix(cooc_posneg$neg,
 g_cooc_negative <- delete.vertices(g_cooc_negative, 
                                    degree(g_cooc_negative) == 0)
 
-non_rand_vars <- v_statistic %>% filter(signif) %>% pull(abbrv)
+non_rand_vars <- v_statistic %>% filter(stringr::str_detect(signif, "\\*")) %>% pull(abbrv)
 
-pdf(here("plots", "cooc_networks.pdf"), width = 12)
+pdf(here("plots", "cooc_nets.pdf"), width = 12)
 par(mfrow = c(1, 2), mar = c(rep(2, 4)))
 plot(g_cooc_positive, 
      vertex.shape = "circle", 
@@ -372,8 +375,8 @@ extract_network_groups <- function(lst, type) {
 }
 
 var_clusters <- bind_rows(extract_network_groups(cl_absent, "absent"), 
-          extract_network_groups(cl_present, "present"))
+                          extract_network_groups(cl_present, "present"))
 
 # output =======================================================================
-writeLines(non_rand_vars, here("data/temp", "non_random_vars.txt"))
-readr::write_csv(var_clusters, here("data/temp", "variable_clusters.csv"))
+writeLines(non_rand_vars, here("data/temp", "cooc_non_rand_vars.txt"))
+readr::write_csv(var_clusters, here("data/temp", "cooc_var_clusters.csv"))

@@ -22,11 +22,15 @@ output:
     bookdown::pdf_document2:
     # bookdown::word_document2:
         latex: pdflatex
+        toc: false
         fig_caption: true
         number_sections: false
         keep_tex: false
 bibliography    : "bib_vedrovice.bib"
 csl             : "european-journal-of-archaeology.csl"
+header-includes:
+  - \usepackage[left]{lineno}
+  - \linenumbers
 ---
 
 <!-- note: length - approx. 10 - 12 pages (no bibliography, tables, figures) -->
@@ -100,17 +104,17 @@ and which are actually present.
 
 <!-- ### Questions
 * Is there evidence that certain artefacts covary,
-    either positively or negatively?
-    Do certain artefacts tend to occur together, or are certain combinations
-    absent or rare?
+either positively or negatively?
+Do certain artefacts tend to occur together, or are certain combinations
+absent or rare?
 * How can the presence and absence data best display which burials
-    contain similar artefacts,
-    and which artefacts have similar distributions over burials?
+contain similar artefacts,
+and which artefacts have similar distributions over burials?
 * *How can the data be analysed so as to show most clearly the relationships*
-    *between the different* **burials** in terms of their **contents**?
+*between the different* **burials** in terms of their **contents**?
 * *How can the data be analysed so as to show most clearly the relationship*
-    *between the different* **artefacts** in terms of their
-    **distributions in graves**?
+*between the different* **artefacts** in terms of their
+**distributions in graves**?
 * How are grave good assemblages related to age and sex?
 (... variations in burial rite coinciding with age or sex of the deceased ...) -->
 
@@ -176,6 +180,15 @@ bodies with age category determined as Infans.
 Bodies faling within this range are labeled as local, outside the range as non-local
 and where data on Sr values are missing origin is not determined (*ind.*).
 
+We consider there three variables, sex, age and origin to be indicative of
+ones identity in the Neolithic.
+To explore the relations between the variables we use them both as individual
+categories and combined into following indicator variables -- (1) sex/age,
+(2) origin/sex, (3) origin/age and finally (4) origin/sex/age.
+Due to frequent missing or indetermined values we decided to limit the studied
+sample only to bodies with all of the categories determined and only categories
+that occure in more than 5% of burials.
+
 <!-- methods -->
 
 ## Randomness of artefact combinations
@@ -210,8 +223,10 @@ are summarized using two statistics suggested by @manly1996.
 The *S* statistic is a measure of overall deviation between expected and observed
 number of artefact occurences while
 the *v* statistic is a measure of difference between co-occurences of
-individual artefact with other artifacts
+individual artefact with other artefacts
 [@manly1996, 475, for details see SI].
+
+
 To assess relations between groups based on sex, age and origin
 statistics introduced by @sosna2008 are used.
 
@@ -298,7 +313,7 @@ Although smaller number of permutations should be sufficient to achieve
 credible results
 [@baddeley2016, 384] we follow the approach taken by @sayer2013 [78].
 Ten most extreme realizations of the simulation are discarded as outliers so
-the significance level *alpha* is 0.01 [@baddeley2016 410].
+the significance level is 0.01 [@baddeley2016 410].
 
 To explore frequency of neighboring burials falling into same categories we
 explore several methods.
@@ -398,30 +413,31 @@ variables is treated as nominal data.
 
 # Results
 
-## Artifact combinations
+## Artefact combinations
 
 By counting co-occurences of analyzed variables on simulated data matrices and comparing
-the distributions of the two studied statistics with the values calculated for
+the distributions of the statistics proposed by @manly1996 with the values calculated for
 the original dataset we can establish whether the overall pattern of artefacts
 distribution in the graves is non-random and further identify artefacts that deviate
 from the random pattern.
 The overall deviation from expected co-occurences, i.e. the *S* statistic
 [@manly1996, 475] is significantly large at the 0.05 alpha level.
 This suggests that there is strong evidence that the overall distribution of
-artefacts in different graves is not random (see Fig. \@ref(fig:sstat)).
+artefacts in different graves is not random. <!--(see Fig. \@ref(fig:sstat))-->
 
-Examining distributions of individual artefacts it is found that at the 0.05
+Examining distributions of individual artefacts we find that at the 0.05
 significance level only adzes, grinding tools, ceramic bowls and spondylus beads
 are distributed randomly.
 Close to the 0.05 alpha level are distributions of bone tools and ceramic bottles
-(Fig. \@ref(fig:vstat)).
+(Fig. \@ref(fig:cooc-vstat)).
 Among the grave goods that are found to be randomly distributed in the graves
 across the burial ground are ochre pigment, lithics, pebbles, globular pots and
-special types of pottery vessel shapes and spondylus pendants and *buckles*.
+special types of pottery vessel shapes and spondylus pendants and buckles.
+
 The relationships between artefact types frequently occuring and missing together
-in graves are visualized in Fig. (\@ref(fig:coocnets)) with
-clusters highlighted using fast-greedy algorithm [@newman2004] and strength of the
-given association is expressed by the thickness of the edge connecting the nodes.
+in graves are visualized in Fig. (\@ref(fig:cooc-nets)) with
+clusters established using fast-greedy algorithm [@newman2004] and strength of the
+given association expressed by the thickness of the edge connecting the nodes.
 Artifacts most frequently present with other artifacts are with 5 links grinding tools and
 ceramic bowls and with 4 links adzes, non-local lithic tools, ochre pigment and
 spondylus beads.
@@ -497,6 +513,12 @@ Here the deviation from random processes is observed at smaller distances than
 in case of other variables at distances around 5 meters.
 This proves tighter bound cluster of juveniles in south-eastern part of the cemetery.
 
+Multitype *K* for combination of age and sex categories suggests clustering process
+between bodies determined as adult females and juveniles and vice versa.
+The relationship between pairs of non-adults/juveniles is also confirmed.
+Several other observed deviations occure at large distances and are same as
+in case of multitype *K* for single categories.
+
 In case of neighborhood structure derived from Delaunay triangulation (maximum
 number of neighbors scenario) and
 Gabriel graph (minimum number of neighbors scenario, Fig. \@ref(fig:plan-graphs))
@@ -511,8 +533,26 @@ between female-sexed and male-sexed bodies.
 In only one case are the observations from both of the graphs significant and
 that is between pairs of bodies of mature age category.
 
-In case of clusters at different percolation distances
-there are some deviations from random number of
+The combinations of categories in Delaunay graph show significant relations for
+pairs of bodies labeled as (1) females from maturus/senilis category with
+juvenile females and (2) unsexed juveniles in general
+and as already noted at several places, between (3) pairs of bodies labeled as
+juveniles/non-adults.
+Gabriel graph in the sex/age category shows relations between (1) adultus female and male bodies,
+(2) maturus female and male bodies and (3) maturus female bodies.
+The origin/sex combination of categories produces significant deviation from
+expected frequencies for (1) non-local female bodies and local non-adults in
+Delaunay triangulation and in Gabriel graph for (1) non-local female and local male
+bodies and vice versa.
+The origin/age combination shows significant departures only in Gabriel graph for
+local adultus bodies with (1) non-local maturus bodies and (2) local juvenile bodies.
+Last but not least, incorporating all of the categories into the networks we observe
+significant results in both of the graphs (1) non-local maturus female bodies and
+local juvenile (non-adult) bodies and  in case of Gabrie graph relation
+between (2) non-local adultus female and local maturus male bodies.
+
+Clusters formed at different percolation distances
+show following deviations from expected numbers of
 occurences of given categories at different scales.
 Regarding the determination of sex of the bodies, at the threshold of 3.9 meters
 we observe that in the largest cluster (nr. 3, Fig. \@ref(fig:perc-plan))
@@ -531,6 +571,21 @@ find that cluster in the south-western part at threshold distances 3.9 and 5.5 m
 (nr. 10 and 5 respectively) consists of less non-local bodies than would be expected.
 Lastly at the distance radius 2.8 meters there are more local bodies in the cenral
 cluster of the cemetery (nr. 8).
+
+In the combined categories most of the already observed patterns are repeated and
+highlighted.
+In the largest cluster across percolation thresholds at 3.9 and 4.6 meters
+(nr. 3) there is abundance of (1) local non-adults/juveniles and (2) non-local
+female sexed bodies of maturus age category and on the other hand
+lesser numbers of (3) juvenile female-sexed bodies.
+The central cluster across distances 2.8, 3.9 and 4.6 (nr. 8, 10 and 7 respectively)
+shows higher numbers of local male- and female-sexed bodies of adultus category and in case of
+female bodies maturus age categories.
+The south-western cluster (nr. 10, 7 and 5) at percolation distances 3.9, 4.6 and 5.5
+is clearly dominated by local male-sexed bodies of maturus age category.
+Last but not least, in case of all the categories combined together a cluster in
+the western part of the cemetery at percolation threshold 4.6 and 5.5 (nr. 8 and 6 respectively)
+reveals higher counts of non-local female-sexed bodies of adultus age category.
 
 <!-- Methods of neighborhood relationship construction examined include
 distance based approaches where all the neighbors that fall into a given buffer are considered,
@@ -567,6 +622,76 @@ indeterminate category $p \approx 0.02$.
 
 <!-- ======================================================================= -->
 
+# Conclusions
+
+Our goal was to identify non-random differences between burials both in terms
+of the artefact contents of the graves and position within the cemetery.
+The burials or more precisely the buried bodies were divided into categories
+based on three variables commonly connected to the identity in the Neolithic period.
+These categories are biological sex, age and origin.
+The exploration was done both for the categories as single variables and for
+all of their combinations.
+
+<!-- Artefact combinations -->
+
+
+
+<!-- Spatial pattern -->
+Spatial organization of the cemetery was explored using point pattern analysis
+techniques.
+The simpler methods based on cumulative frequency distribution of nearest neighbors
+(*G* function) and its generalization for empty space points (*F* function)
+did not show deviations from complete spatial random processes.
+On the other hand the methods including all the distances between events in the
+given area  (*K* and *T* functions) indicated clustering processes are taking place.
+*K* function for multivariate point patterns was also used in order to identify
+clustering processes between events of different categories.
+We consider this not useful in most cases because the distances at which interesting
+clustering processes are suggested imply existence of singular cluster across
+the cemetery and a finer scale is of much higher interest for our endeavour.
+
+Thus to identify whether close burials are more similar in terms of categories
+outlined above two neighborhood graphs, Delaunay triangulation and Gabriel
+graph were used.
+They are examples of high and low neighbors case scenario respectively.
+Most of the observations from the graphs proved not significantly different from
+randomization experiment.
+There are associations between non-local female-sexed
+bodies of maturus age category and (local) juveniles in both of the graphs.
+This observation goes in hand with association of female-sexed bodies
+and non-adults in Delaunay triangulation.
+This is not trivial because in general non-adult bodies are
+concentrated in the south-eastern part within the cemetery whereas female-sexed
+bodies are scattered all around the area of the cemetery.
+Similarly individuals determined as of maturus/senilis age category are in contrast to
+juvenile bodies concentrated in the western half of the cemetery.
+Furthermore in Gabriel graph there is a clear association between non-local adultus
+female-sexed bodies and local maturus male-bodies.
+This agrees with general association of female- and male-sexed bodies of
+adultus and maturus/senilis age categories in the Gabriel graph.
+
+Most detailed view on the clustering within the cemetery and what kinds of
+bodies are prevalent in the given clusters is achieved by the percolation analysis.
+The largest cluster across several percolation distances consists of more
+non-adult/juvenile bodies and non-local female-sexed bodies of maturus category
+on one hand and on the other the male-sexed bodies are underrepresented here.
+This is in full accordance with previous observations.
+The central cluster visible at small percolation distances showes overrepresentation of
+local male- and female-sexed bodies.
+Also the south-western cluster has higher counts of local male-sexed bodies of maturus age category and
+low amount of non-local bodies.
+On the other hand non-local female-sexed bodies of adultus age category are
+overrepresented in the western cluster neighboring with the previously mentioned one.
+
+The spatial analysis clearly proved that there is a clustering process taking place
+in the cemetery and what more, age, sex and origin of the buried bodies play
+structuring roles in the arrangement of the burials.
+The patterns are not too strict but some appear to be quite constant across a
+range of methods used.
+
+
+<!-- ======================================================================= -->
+
 # Discussion
 
 
@@ -577,27 +702,42 @@ indeterminate category $p \approx 0.02$.
 <!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES -->
 
 <!-- randomization -->
-<!--
-```{r sstat, fig.cap = "Distribution of simulated and observed *S* statistic"}
+
+<!--```{r sstat, fig.cap = "Distribution of simulated and observed *S* statistic"}
 # knitr::include_graphics(here("plots/s_statistic.pdf"))
+```-->
+
+```{r cooc-vstat, fig.cap = "Simulated and observed *V* statistics for different variables"}
+knitr::include_graphics(here("plots", "cooc_vstats.pdf"))
 ```
 
-```{r vstat, fig.cap = "Simulated and observed *V* statistics for different variables"}
-# knitr::include_graphics(here("plots", "v_values.pdf"))
+```{r label-cooc-nets}
+label_cooc_nets <- "Networks of variables frequently present together and exluding each other, non-randomly occuring artefacts in bold"
 ```
-
-```{r coocnets, fig.cap = "Networks of variables frequently present together and exluding each other"}
-# knitr::include_graphics(here("plots", "cooc_networks.pdf"))
+```{r cooc-nets, fig.cap=label_cooc_nets }
+knitr::include_graphics(here("text/figs", "cooc_nets.pdf"))
 ```
--->
-
 <!-- plans -->
+
+```{r plan-sex, fig.cap="Plan of the cemetery, kernel density estimation for differently sexed bodies"}
+knitr::include_graphics(here("text/figs/plan_sex.pdf"))
+```
+
+```{r plan-age, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different ages"}
+knitr::include_graphics(here("text/figs/plan_age.pdf"))
+```
+
+```{r plan-orig, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different origins"}
+knitr::include_graphics(here("text/figs/plan_origin.pdf"))
+```
 
 <!-- point pattern analysis -->
 
 ```{r label-pp-funs}
-label_pp_funs <- paste("Functions *G*, *F*, *K* and *T*.",
-"*Dashed line* -- theoretical curve under complete spatial randomness, *solid line* -- empirical curve, *gray area* -- envelope")
+label_pp_funs <- paste(
+  "Functions *G*, *F*, *K* and *T*.",
+  "*Dashed line* -- theoretical curve under complete spatial randomness,
+  *solid line* -- empirical curve, *gray area* -- envelope")
 ```
 ```{r pp-funs, fig.cap=label_pp_funs}
 knitr::include_graphics(here("text/figs/pp_funs.pdf"))
@@ -615,29 +755,44 @@ knitr::include_graphics(here("text/figs/pp_crossk.pdf"))
 knitr::include_graphics(here("text/figs/plan_graphs.pdf"))
 ```
 
-<!-- to SI
 ```{r label-nb-sex}
-label_nb_sex <- paste("Mean neighbors in a given sex category.",
-"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
-"*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body")
+label_nb_sex <- paste(
+  "Mean neighbors in a given category of sex;",
+  "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value"
+  # "*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body"
+)
 ```
 ```{r nb-sex, fig.cap=label_nb_sex}
 knitr::include_graphics(here("text/figs/nb_sex.pdf"))
 ```
 
 ```{r label-nb-age}
-label_nb_age <- paste("Mean neighbors in a given age category.",
-"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
-"*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body")
+label_nb_age <- paste(
+  "Mean neighbors in a given simplified age category"
+  # "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
+)
 ```
 ```{r nb-age, fig.cap=label_nb_age}
 knitr::include_graphics(here("text/figs/nb_age.pdf"))
 ```
--->
+
+```{r label-nb-orig}
+label_nb_orig <- paste(
+  "Mean neighbors in a given category of origin based on Sr isotopes"
+  # "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
+  # "*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body"
+)
+```
+```{r nb-orig, fig.cap=label_nb_orig}
+knitr::include_graphics(here("text/figs/nb_orig.pdf"))
+```
 
 <!-- percolation analysis -->
 
-```{r perc-distance, fig.cap="Percolation thresholds"}
+```{r label-perc-dist}
+label_perc_dist <- "Normalized sizes of largest clusters at given distances, percolation thresholds labeled"
+```
+```{r perc-distance, fig.cap=label_perc_dist}
 knitr::include_graphics(here("text/figs/perc_distance.pdf"))
 ```
 
@@ -665,5 +820,8 @@ knitr::include_graphics(here("text/figs/perc_plan_ids.pdf"))
 
 
 <!-- ======================================================================= -->
+
+\pagebreak
+
 
 # References

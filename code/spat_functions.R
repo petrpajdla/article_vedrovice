@@ -44,11 +44,12 @@ ved_sf <- bind_cols(ved_sf,
 
 # marks ------------------------------------------------------------------------
 ved_marks <- ved_sf %>% 
-  select(sex, age = age_sim, origin) %>% 
+  select(sex, age = age_sim, origin, starts_with("cat")) %>% 
   st_drop_geometry() %>% 
   mutate(sex = factor(sex, levels = c("n. a.", "F", "M", "ind.")),
          age = factor(age, levels = c("juv.", "ad.", "mat.", "ind.")),
-         origin = factor(origin, levels = c("local", "non-local", "ind.")))
+         origin = factor(origin, levels = c("local", "non-local", "ind.")),
+         across(starts_with("cat_"), factor))
 
 # create ppp object ------------------------------------------------------------
 # ved_pp <- ppp(x = ved_layout$layout_x, y = ved_layout$layout_y,
@@ -135,9 +136,9 @@ plot_estimate_facet <- function(x) {
 # overall structure ============================================================
 # density based ----------------------------------------------------------------
 # quadrat test
-quadrat.test(ved_pp)
-quadrat.test(ved_pp, alternative = "clustered")
-quadrat.test(ved_pp, alternative = "regular")
+# quadrat.test(ved_pp)
+# quadrat.test(ved_pp, alternative = "clustered")
+# quadrat.test(ved_pp, alternative = "regular")
 # quadrat test suggests clustering
 
 # distance based ---------------------------------------------------------------
@@ -218,15 +219,15 @@ multiplecrossfunction <- function(pp, var, crossfun, nsim, nrank) {
 
 # sex
 mppk_sex <- multiplecrossfunction(ved_pp, "sex", "Kcross", nsim, nrank)
-mppg_sex <- multiplecrossfunction(ved_pp, "sex", "Gcross", nsim, nrank)
+# mppg_sex <- multiplecrossfunction(ved_pp, "sex", "Gcross", nsim, nrank)
 
 # age
 mppk_age <- multiplecrossfunction(ved_pp, "age", "Kcross", nsim, nrank)
-mppg_age <- multiplecrossfunction(ved_pp, "age", "Gcross", nsim, nrank)
+# mppg_age <- multiplecrossfunction(ved_pp, "age", "Gcross", nsim, nrank)
 
 # origin
 mppk_orig <- multiplecrossfunction(ved_pp, "origin", "Kcross", nsim, nrank)
-mppg_orig <- multiplecrossfunction(ved_pp, "origin", "Gcross", nsim, nrank)
+# mppg_orig <- multiplecrossfunction(ved_pp, "origin", "Gcross", nsim, nrank)
 
 # K funs
 g1 <- mppk_sex %>% 
@@ -301,3 +302,21 @@ dev.off()
 #   facet_grid(from ~ to) +
 #   labs(x = "r (m)", title = "Multitype G(r)")
 
+
+# combined vars -----------------------------------------------------------
+
+mppk_sa <- multiplecrossfunction(ved_pp, "cat_sa", "Kcross", nsim, nrank)
+mppk_os <- multiplecrossfunction(ved_pp, "cat_os", "Kcross", nsim, nrank)
+mppk_oa <- multiplecrossfunction(ved_pp, "cat_oa", "Kcross", nsim, nrank)
+mppk_osa <- multiplecrossfunction(ved_pp, "cat_osa", "Kcross", nsim, nrank)
+
+mppk_osa %>%
+  ggplot(aes(x = r)) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+  geom_line(aes(y = theo), linetype = 2) +
+  geom_line(aes(y = obs), size = 0.8) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme_universe +
+  facet_grid(from ~ to) +
+  labs(x = "r (m)", title = "Multitype K(r)")
