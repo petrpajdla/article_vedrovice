@@ -1,11 +1,11 @@
 # Project "Vedrovice"
 # Script nr. 00
-# KNIT OUTPUT FILE
+# KNIT OUTPUT FILE 
 # author: Petr Pajdla
-# Create the text of the article in pdf
+# Create the SI
 
-# knit main text
-rmarkdown::render(input = here::here("text", "article_vedrovice.Rmd"), 
+# knit si
+rmarkdown::render(input = here::here("text", "si_vedrovice.Rmd"),
                   output_format = bookdown::pdf_document2(
                     toc = FALSE,
                     latex = "pdflatex",
