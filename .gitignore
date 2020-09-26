@@ -43,6 +43,9 @@ vignettes/*.pdf
 /data/raw/
 /data/backup/
 
+# Legacy code
+/code/unused/
+
 # Temporary output files (.Rout) of GNU Make
 *.Rout
 
