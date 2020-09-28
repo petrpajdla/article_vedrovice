@@ -1,5 +1,5 @@
 ---
-title           : "Spatial Analysis and Grave Goods Distribution at the Cemetery of Vedrovice"
+title           : "Spatial Patterns and grave goods differences at the Cemetery of Vedrovice"
 # "A resampling approach to spatial arrangement and contents of burials in the Vedrovice cemetery"
 
 author          : "Petr Pajdla"
@@ -9,14 +9,20 @@ author          : "Petr Pajdla"
     # email         : "petr.pajdla@gmail.com"
 date            : "`r format(Sys.time(), '%d %B, %Y')`"
 abstract        :
-  "Spatial patterns in cemeteries and grave goods associations at the
+  "Spatial pattern and grave goods associations at the
   cemetery of Vedrovice - Široká u Lesa are explored using computationaly
   instensive formal methods.
   Resampling approaches both to intrasite spatial arrangement and
   distribution of grave goods are explored in
-  relation to layers of identity represented by sex, age and origin of the
-  buried bodies.
-  As a result of the investigation we conclude that...  "
+  relation to layers of identity represented by different buried bodies
+  attributes -- sex, age, origin and their combinations.
+  We find that among non-randomly distributed grave goods
+  are polished stone adzes, grinding tools, ceramic bowls and spondylus beads.
+  As a result of the investigation of differences of the non-randomly distributed
+  artefacts and attributes of burials we conclude that the most eminent are
+  dichotomies between genders, although accentuated by both origin and age.
+  Spatial analysis shows clear trends towards clustering between burials and
+  the emerging clusters are further explored for similarities in burial attributes."
 
 output:
     bookdown::pdf_document2:
@@ -212,7 +218,7 @@ permutation test on the presence/absence data matrix.
 The method based on generalized Monte Carlo tests was
 introduced to archaeology by @manly1996 and adapted by @sosna2008.
 Our approach is based on both of these works.
-Original co-occurence matrix is permutated *n = 9999* times with constant
+Original co-occurence matrix is permutated 9999 times with constant
 row and column totals, i.e. both the count of artifacts in individual graves
 and sum of the given type of artifact across the burials are fixed.
 
@@ -226,9 +232,27 @@ the *v* statistic is a measure of difference between co-occurences of
 individual artefact with other artefacts
 [@manly1996, 475, for details see SI].
 
+To assess whether differences between artefacts that are non-randomly distributed
+are reflected in relations between groups based on sex, age, origin and their combinations
+we calculate mean Euclidean distance (ED, for details see SI) between pairs of burials in multidimensional
+space settings defined by the non-randomly distributed artefacts.
+The observed mean ED is compared against mean ED distribution  derived by random
+reshuffling of the category labels between the burials 9999 times with constant
+probabilities of appearance of the given category label.
+<!-- To infer whether the observed and randomly created mean ED
+distributions are samples of the same population we use non-parametric
+Kruskal-Wallis test [@kruskal1952].-->
+For each of the categories the deviation of the mean ED from its randomly generated
+distributions is expressed as the fraction of random values of ED larger than
+the one observed.
+The deviation is deemed significant if less than 5% of
+random values are larger than the observed value.
+The process is a variation of the one described for resampling in case of
+artefact combinations and similar approach is taken by @sosna2008 [346-347].
 
+<!--
 To assess relations between groups based on sex, age and origin
-statistics introduced by @sosna2008 are used.
+statistics introduced by @sosna2008 are used.-->
 
 <!-- ## Exceptionality index -->
 
@@ -257,7 +281,7 @@ e. g. buffer zone or convex/concave hull but simplified excavation polygon is
 deemed the most useful because it preserves the borders and empty areas
 of the original cemetery. -->
 
-Overall structure of the cemeter is examined using
+Overall structure of the cemetery is examined using
 <!-- either density based approaches or -->
 methods based on distances between neighboring burials. <!--[@osullivan2010, 121-154]-->
 <!-- Density based approaches, for instance quadrat tests,
@@ -269,7 +293,7 @@ characterize the point pattern based on *second- and third-order properties*
 [@nakoinz2016, 130-135; @osullivan2010, 107].
 These are in contrast to the assumption underlying *first-order effects* that
 any point location is independent on other point locations and
-defferent parameters influence its location [@osullivan2010, 126].
+different parameters influence its location [@osullivan2010, 126].
 <!-- [@nakoinz2016, 135-144; @osullivan2010, 130-139] -->
 In spatial analysis of settlement patterns individual locations of
 settlements (points) can depend on a number of parameters, for instance
@@ -427,7 +451,7 @@ artefacts in different graves is not random. <!--(see Fig. \@ref(fig:sstat))-->
 
 Examining distributions of individual artefacts we find that at the 0.05
 significance level only adzes, grinding tools, ceramic bowls and spondylus beads
-are distributed randomly.
+are distributed non-randomly.
 Close to the 0.05 alpha level are distributions of bone tools and ceramic bottles
 (Fig. \@ref(fig:cooc-vstat)).
 Among the grave goods that are found to be randomly distributed in the graves
@@ -449,10 +473,23 @@ local lithic tools, globular pots and ceramic bowls and spondylus buckels with
 The strongest antagonist relationships are between globular pots and (a) bowls and
 (b) adzes.
 
-
-
-
-
+Artefacts non-randomly distributed across the cemetery are further used to
+check whether significant differences exist between their occurences in
+different groups defined based on origin, sex, age and their combinations.
+Exploring single attributes the only differences are in the categorization to
+differently sexed bodies, these are significant differences
+between male- and female-sexed bodies.
+In case of age or origin there are no significant differences observed.
+If we combine sex and age categories the distinction between juvenile, adult and mature
+female-sexed bodies and adult male-sexed bodies is evident.
+Another observed dichotomy is present between adult males and juveniles (non-adults).
+Moreless the same relations are present in case of combinations of sex and origin attributes.
+Local male-sexed bodies have significantly different combinations of non-randomly
+distributed artefacts from both local and non-local female-sexed bodies and non-adults.
+If all the categories are combined the divisions are even more evident.
+Local male-sexed bodies of adultus age category deviate in the artefact distributions
+from adult local and non-local females, maturus/senilis non-local female-sexed bodies
+and juveniles.
 
 ## Spatial patterning
 
@@ -548,7 +585,7 @@ The origin/age combination shows significant departures only in Gabriel graph fo
 local adultus bodies with (1) non-local maturus bodies and (2) local juvenile bodies.
 Last but not least, incorporating all of the categories into the networks we observe
 significant results in both of the graphs (1) non-local maturus female bodies and
-local juvenile (non-adult) bodies and  in case of Gabrie graph relation
+local juvenile (non-adult) bodies and  in case of Gabriel graph relation
 between (2) non-local adultus female and local maturus male bodies.
 
 Clusters formed at different percolation distances
@@ -622,7 +659,7 @@ indeterminate category $p \approx 0.02$.
 
 <!-- ======================================================================= -->
 
-# Conclusions
+# Conclusions and discussion
 
 Our goal was to identify non-random differences between burials both in terms
 of the artefact contents of the graves and position within the cemetery.
@@ -633,8 +670,22 @@ The exploration was done both for the categories as single variables and for
 all of their combinations.
 
 <!-- Artefact combinations -->
+In case of grave goods analysis we explored the associations between artefacts and
+different categories of the bodies not to establish or reveal any new relations
+but merely to explore whether the known associations between sexes and specific grave goods
+are influenced by factors such as age and local or non-local origin of the buried person.
+We did not explore the relations between grave goods and burial attributes at the
+individual artefact scale so to say but used an overall measure (Euclidean distance)
+of between burial distance in terms of non-randomly distributed artefacts.
+By establishing whether the mean ED between categories defined by the grouping attributes
+mentioned above falls within or defies the expected distribution derived by
+randomization experiment we identified deviations that are not random.
 
-
+The most often reappearing is the difference between local adult male-sexed bodies and
+both local and non-local female-sexed ones and unsexed juveniles.
+This relation shows that sex classification of the body, although being
+accentuated by local origin and age category, eminently structures the artefact assemblage
+in the grave.
 
 <!-- Spatial pattern -->
 Spatial organization of the cemetery was explored using point pattern analysis
@@ -676,7 +727,7 @@ The largest cluster across several percolation distances consists of more
 non-adult/juvenile bodies and non-local female-sexed bodies of maturus category
 on one hand and on the other the male-sexed bodies are underrepresented here.
 This is in full accordance with previous observations.
-The central cluster visible at small percolation distances showes overrepresentation of
+The central cluster visible at small percolation distances shows overrepresentation of
 local male- and female-sexed bodies.
 Also the south-western cluster has higher counts of local male-sexed bodies of maturus age category and
 low amount of non-local bodies.
@@ -689,23 +740,75 @@ structuring roles in the arrangement of the burials.
 The patterns are not too strict but some appear to be quite constant across a
 range of methods used.
 
-
 <!-- ======================================================================= -->
 
-# Discussion
+<!-- # Discussion -->
 
+We have successfully shown that all of the categories considered
+to be somehow related to identity in the Neolithic and especially their combinations
+play substantive roles in structuring the assemblage of grave goods deposited
+within the burials.
+Some of the relations between the explored categories and
+artefacts are well known across the LBK burial grounds,
+for instance the association between
+male burials and polished stone adzes [e.g. @bickle2020; @bentley2012] and some
+are known specifically from Vedrovice - *Široká u lesa* cemetery, for
+example the dichotomy
+between globular pottery shapes being associated with female-sexed bodies and
+on the other hand bowls with male-sexed bodies [@kvetina2004].
+Our goal was not to establish any new connections between genders or other burial
+attributes and grave good categories, but to use these associations
+to see which groups of burials are well separated based on the grave goods.
 
+First of all, we have shown that overall distribution of artefacts in the graves
+was not random, the grave goods distributed non-randomly were identified and
+subsequently only these were used in the further analysis effectively removing any
+possible *noise* from artefacts distributed randomly.
+Our main premise here is that the identity of the dead is based mostly on the attributes like sex,
+age and origin defined on the basis of Strontium isotope signal.
+We view these *layers* of identity as responsible for differences in
+artefact compositions of different graves as well as to a certain degree a structuring
+factor for the overall spatial organization of the cemetery.
+In case of the grave goods this relationship is largely dominated by a category
+of adult local male-sexed bodies that are distinctly different from both female-sexed bodies
+of all the age categories and juveniles.
+This is caused by already mentioned artefact characteristic of male burials, the stone adze.
+@bickle2020 removes polished and beveled stone tools from her analysis completely
+in order to remove their dominance over other patterns.
+In our case, adzes are one of four non-randomly occuring artefacts and removing
+them from the analysis completely would render it difficult to note any
+of the visible patterns.
 
+In case of spatial analysis we explore several approaches.
+The nearest-neighbor methods are a great tool in analysing the overall cemetery but
+in the small scale they do not prove useful to discover any interesting relationships
+between studied *layers* of identity.
+By far the most useful method in analysing the intra-site spatial arrangement
+is the percolation analysis.
+Another important point is the use of resampling methods that allows for identification
+of random and non random patterns both in grave goods analysis and spatial organization.
 
+<!--Traditional GIS based methods were already applied to study the cemetery
+[@kvetina2004] the techniques applied here reveal some trends that were previously-->
+
+We have shown that not only sex that is traditionally percieved
+as the most important structuring proxy for identity differentiation but also
+age and quite importantly also origin of the deceased played substantial
+roles in equiping the graves with varius types of artefacts by the Vedrovice community.
+In regard to spatial arrangement of the cemetery we demonstrated that there are
+pevalent clustering procesess taking place across the cemetery and also groups
+based on certain identities tend to be buried in clusters.
+These observations are based on extensive use of resampling approaches that
+allowed us to distinguish between patterns occuring solely by chance and
+patterns significantly deviating from randomness.
 
 <!-- ======================================================================= -->
 <!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES -->
 
 <!-- randomization -->
-
-<!--```{r sstat, fig.cap = "Distribution of simulated and observed *S* statistic"}
-# knitr::include_graphics(here("plots/s_statistic.pdf"))
-```-->
+```{r sstat, fig.cap = "Distribution of simulated and observed *S* statistic"}
+knitr::include_graphics(here("plots/cooc_sstat.pdf"))
+```
 
 ```{r cooc-vstat, fig.cap = "Simulated and observed *V* statistics for different variables"}
 knitr::include_graphics(here("plots", "cooc_vstats.pdf"))
@@ -717,8 +820,8 @@ label_cooc_nets <- "Networks of variables frequently present together and exludi
 ```{r cooc-nets, fig.cap=label_cooc_nets }
 knitr::include_graphics(here("text/figs", "cooc_nets.pdf"))
 ```
-<!-- plans -->
 
+<!-- plans -->
 ```{r plan-sex, fig.cap="Plan of the cemetery, kernel density estimation for differently sexed bodies"}
 knitr::include_graphics(here("text/figs/plan_sex.pdf"))
 ```
@@ -755,6 +858,7 @@ knitr::include_graphics(here("text/figs/pp_crossk.pdf"))
 knitr::include_graphics(here("text/figs/plan_graphs.pdf"))
 ```
 
+<!--
 ```{r label-nb-sex}
 label_nb_sex <- paste(
   "Mean neighbors in a given category of sex;",
@@ -763,7 +867,7 @@ label_nb_sex <- paste(
 )
 ```
 ```{r nb-sex, fig.cap=label_nb_sex}
-knitr::include_graphics(here("text/figs/nb_sex.pdf"))
+# knitr::include_graphics(here("text/figs/nb_sex.pdf"))
 ```
 
 ```{r label-nb-age}
@@ -773,7 +877,7 @@ label_nb_age <- paste(
 )
 ```
 ```{r nb-age, fig.cap=label_nb_age}
-knitr::include_graphics(here("text/figs/nb_age.pdf"))
+# knitr::include_graphics(here("text/figs/nb_age.pdf"))
 ```
 
 ```{r label-nb-orig}
@@ -784,8 +888,9 @@ label_nb_orig <- paste(
 )
 ```
 ```{r nb-orig, fig.cap=label_nb_orig}
-knitr::include_graphics(here("text/figs/nb_orig.pdf"))
+# knitr::include_graphics(here("text/figs/nb_orig.pdf"))
 ```
+-->
 
 <!-- percolation analysis -->
 
@@ -799,11 +904,6 @@ knitr::include_graphics(here("text/figs/perc_distance.pdf"))
 ```{r perc-plan, fig.cap="Clusters formed at given percolation threshold distances"}
 knitr::include_graphics(here("text/figs/perc_plan_ids.pdf"))
 ```
-
-
-
-
-
 
 <!-- ======================================================================= -->
 <!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES -->
