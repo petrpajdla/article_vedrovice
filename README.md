@@ -1,51 +1,67 @@
 # Vedrovice
 
-`Makefile`: Creates the figures from the individual scripts and the text.
+Author: Petr Pajdla (<petr.pajdla@protonmail.com>)
 
-Scripts
+This repository contains an article:
+
+> Pajdla, Petr (2021): Spatial patterns and grave goods differences at the Cemetery of Vedrovice (Czech Republic): A resampling approach to the Early Neolithic identity markers.
+
+### Contents
+
+`Makefile`: Creates the text of the article in a given format and the SI.
+
+#### Code 
+
+Code folder contains scripts necessary to reproduce the results.
 
 i. `knit_text.R`: create text of the article  
-ii. `source_scr.R`: source all the scripts creating temporary outputs, figures etc.  
+i. `knit_text_word.R`: create text in word format  
+i. `knit_text_si.R`: create supplementary information
 
 1. Data preparation  
     1.1 `dataset.R`: data preparation  
-        *output:* `vedrovice_dataset.RDS`  
-    3.1 `spat_dataprep.R`: spatial data preparation   
-        *output:* `layout.shp`, `window.shp`  
-    <!-- 1.2 `local.R`: assign local vs non-local Sr range  
-        *output:* `local.RDS`-->  
+    1.2 `spat_dataprep.R`: spatial data preparation   
 
 2. Randomization    
-    2.1 `randomization.R`: randomization (simulation) of artefact co-occurences  
+    2.1 `randomization.R`: randomization (simulation) of artifact co-occurrences  
         (includes parallel computations on randomly generated matrices)  
-        *output:* `cooc_random_mat.RDS`, `v_statistics.csv`, `v_normalized.csv`, 
-        `variable_clusters.csv`, `non_random_vars.txt`     
-    <!-- 2.2 `exceptionality_index.R`  
-        *output:* `exceptionality.csv`   
-    2.3 `exceptionality_explore.R`: explore exceptionality   
-        *output:* `exc_gg_prop.csv`-->  
     
 3. Spatial analysis  
-    
-<!-- 3.2 `spat_kde.R`: KDE for different sexed bodies-->  
-    3.3 `spat_neighbors.R`: similarity of neighboring burials based on Gabriel graph and Delaunay triangulation  
-    3.4 `spat_functions.R`: point pattern analysis  
-    3.5 `spat_perc.R`: percolation analysis  
-    3.6 `spat_perc_clusters.R`: exploring cluster structure at different percolation thresholds   
-<!-- 3.4 `spatial_bufer.R`: Similarity of neighboring burials based on couts in buffer zones -->
+    3.1 `spat_neighbors.R`: similarity of neighboring burials based on Gabriel graph and Delaunay triangulation  
+    3.2 `spat_functions.R`: point pattern analysis  
+    3.3 `spat_perc.R`: percolation analysis  
+    3.4 `spat_perc_clusters.R`: exploring cluster structure at different percolation thresholds   
 
-Employed packages:
+#### Data 
 
-`here`
+Data folder contains primary data necessary to reproduce the results.
+
+#### Text
+
+Text folder contains RMarkdown files producing the text of the article and the Supporting Information.
+
+#### Packages
+
+Employed packages (in alphabetic order):
+
+`bookdown`, `broom`, 
+`concaveman`, `corrplot`, 
+`DescTools`, `devtools`, `dplyr`, 
+`forcats`, 
+`ggforce`, `ggplot2`,  `ggrepel`, `ggsflabel`, `ggspatial`, `gridExtra`, 
+`here`, 
+`igraph`, 
+`knitr`, 
+`parallel`, `percopackage`, `purrr`, 
+`randomizr`, `readr`, `reshape2`, `rmarkdown`, 
+`sf`, `spatstat`, `spdep`, `stats`, `stringr`, 
+`tibble`, `tidyr`, `tidyverse`, 
 `vegan`
-`dplyr`
-`readr`
-`igraph`
-`tidyr`
-`ggplot2`
-`corrplot`
-`ggspatial`
-`spdep`
-`DescTools`
-`MASS`
 
+#### License
+
+Text and figures: [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
+
+Code: [MIT License](https://petr-pajdla.mit-license.org/)
+
+Data: [CC-0](http://creativecommons.org/publicdomain/zero/1.0/) attribution requested in reuse

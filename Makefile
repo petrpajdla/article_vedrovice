@@ -7,7 +7,7 @@ text/article_vedrovice.docx: text/article_vedrovice.Rmd text/bib_vedrovice.bib c
 	cd code; R CMD BATCH knit_text_word.R
 
 text/si_vedrovice.pdf: text/si_vedrovice.Rmd text/bib_vedrovice.bib code/knit_text_si.R
-	cd code; R CMD BATCH knit_text.R
+	cd code; R CMD BATCH knit_text_si.R
 
 .PHONY: clean
 clean:
