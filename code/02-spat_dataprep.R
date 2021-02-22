@@ -1,8 +1,8 @@
 # Project "Vedrovice"
-# Script nr. 3.1
+# Script nr. 1.2
 # SPATIAL ARRANGEMENT
 # author: Petr Pajdla
-# Spatial organization within the cemetery
+# Data prep for spatial analysis and basic plans
 
 library(here)
 # library(spatstat)
@@ -11,11 +11,6 @@ library(tidyverse)
 
 # read data
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
-
-# ei <- read_csv(here("data/temp", "exceptionality.csv")) %>% 
-#   mutate(ei_clust = factor(fct),
-#          id_burial = as.character(burial)) %>% 
-#   select(-burial, -ei_cluster, -fct)
 
 # data prep ====================================================================
 scale_m <- 4.762 # scale by a factor so 1 unit is 1 meter
@@ -133,26 +128,6 @@ g_exc +
   facet_wrap(~sex)
 
 ggsave(here("plots", "plan_sex.pdf"), width = 15.5, height = 5)
-
-# # plan ei
-# ggplot(data = filter(ved_sf, !is.na(ei_clust))) +
-#   geom_sf(data = select(ved_sf, -ei_clust), color = "gray90") +
-#   geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
-#   # stat_density2d(aes(st_coordinates(filter(ved_sf, !is.na(ei_clust)))[, 1], 
-#   #                    st_coordinates(filter(ved_sf, !is.na(ei_clust)))[, 2]),
-#   #                color = "black", alpha = 0.4) +
-#   geom_sf(shape = 21, fill = "white") + 
-#   facet_wrap(~ei_clust) +
-#   theme_void() +
-#   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
-#                                     location = "br",
-#                                     pad_y = unit(2, "cm")) +
-#   ggspatial::annotation_scale(plot_unit = "m",
-#                               location = "br",
-#                               pad_y = unit(1, "cm")) +
-#   theme(legend.position = c(0.9, 0.8))
-# 
-# ggsave(here("plots", "plan_ei.pdf"), width = 15.5, height = 10)
 
 # write layouts -----------------------------------------------------------
 
