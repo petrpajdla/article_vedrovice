@@ -6,9 +6,11 @@ This repository contains an article:
 
 > Pajdla, Petr (2021): Spatial patterns and grave goods differences at the Cemetery of Vedrovice (Czech Republic): A resampling approach to the Early Neolithic identity markers.
 
+The code is organized in individual scripts because some of the procedures, especially the randomization experiments, take a fair amount of time to process.
+
 ### Contents
 
-`Makefile`: Creates the text of the article in a given format and the SI.
+`Makefile`: Creates the text of the article in a given format.
 
 #### Code 
 
@@ -16,21 +18,20 @@ Code folder contains scripts necessary to reproduce the results.
 
 i. `knit_text.R`: create text of the article  
 i. `knit_text_word.R`: create text in word format  
-i. `knit_text_si.R`: create supplementary information
 
 1. Data preparation  
-    1.1 `dataset.R`: data preparation  
-    1.2 `spat_dataprep.R`: spatial data preparation   
+    * `01-dataset.R`: data preparation  
+    * `02-spat_dataprep.R`: spatial data preparation   
 
 2. Randomization    
-    2.1 `randomization.R`: randomization (simulation) of artifact co-occurrences  
+    * `03-randomization.R`: randomization (simulation) of artifact co-occurrences  
         (includes parallel computations on randomly generated matrices)  
     
 3. Spatial analysis  
-    3.1 `spat_neighbors.R`: similarity of neighboring burials based on Gabriel graph and Delaunay triangulation  
-    3.2 `spat_functions.R`: point pattern analysis  
-    3.3 `spat_perc.R`: percolation analysis  
-    3.4 `spat_perc_clusters.R`: exploring cluster structure at different percolation thresholds   
+    * `04-spat_neighbors.R`: similarity of neighboring burials based on Gabriel graph and Delaunay triangulation  
+    * `05-spat_functions.R`: point pattern analysis  
+    * `06-spat_perc.R`: percolation analysis  
+    * `07-spat_perc_clusters.R`: exploring cluster structure at different percolation thresholds   
 
 #### Data 
 
@@ -38,7 +39,7 @@ Data folder contains primary data necessary to reproduce the results.
 
 #### Text
 
-Text folder contains RMarkdown files producing the text of the article and the Supporting Information.
+Text folder contains `RMarkdown` files producing the text of the article.
 
 #### Packages
 

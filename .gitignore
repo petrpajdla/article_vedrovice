@@ -40,6 +40,7 @@ vignettes/*.pdf
 
 # Temporary data files
 /data/temp/
+/data/temp.bckp/
 /data/raw/
 /data/backup/
 
@@ -56,6 +57,9 @@ vignettes/*.pdf
 /text/*.pdf
 /text/*.docx
 /text/*.log
+/text/sage/
+/text/archive/
+/text/figs/archive/
 
 # Preview of Readme file
 /README.html
