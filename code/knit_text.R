@@ -2,7 +2,7 @@
 # Script nr. 00
 # KNIT OUTPUT FILE
 # author: Petr Pajdla
-# Create the text of the article in pdf
+# Create the text of the article in pdf for comments etc.
 
 # knit main text
 rmarkdown::render(input = here::here("text", "article_vedrovice.Rmd"), 

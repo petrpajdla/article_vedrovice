@@ -175,7 +175,7 @@ p$stats %>%
   labs(y = "max. nr of nodes (normalized)", x = "distance (m)") +
   theme_universe
 
-ggsave(here::here("plots", "perc_distance.pdf"))
+ggsave(here::here("plots", "perc_distance.pdf"), width = 10, height = 7, units = "cm")
 
 # mean and median nr of nodes
 # p$stats %>% 
@@ -243,7 +243,10 @@ polygs <- ved_sf %>%
          data = map(data, ~map(.x$pts, concaveman))) %>% 
   unnest(cols = data) %>% 
   unnest(cols = data) %>% 
-  st_as_sf() %>% 
+  st_as_sf()
+
+polygs <- polygs %>% 
+  subset(st_is_valid(polygs)) %>% 
   st_make_valid() %>% 
   st_buffer(1.6) %>% 
   mutate(label_radius = paste("dist.", radius, "m"),
@@ -252,9 +255,9 @@ polygs <- ved_sf %>%
 disp_radii <- p_breaks[1:6]
 
 ggplot() +
-  geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.2) +
+  geom_sf(data = ved_exc, fill = NA, color = "gray80") +
   geom_sf(data = filter(polygs, radius %in% disp_radii), 
-          fill = "gray", color = NA, alpha = 0.4) +
+          fill = "gray", color = NA) +
   geom_sf(data = ved_sf, 
           aes(shape = sex), 
           size = 0.6) +
@@ -274,7 +277,8 @@ ggplot() +
         legend.position = "bottom",
         legend.direction = "horizontal")
 
-ggsave(here::here("plots", "perc_plan.pdf"), width = 7, height = 10)
+ggsave(here::here("plots", "perc_plan.pdf"), 
+       width = 14, height = 21, units = "cm")
 
 # numbers of clusters
 polygs_ids <- filter(polygs, radius %in% disp_radii) %>% 
@@ -282,15 +286,18 @@ polygs_ids <- filter(polygs, radius %in% disp_radii) %>%
   mutate(cluster = 1:n())
 
 ggplot() +
-  geom_sf(data = ved_exc, fill = NA, color = "black", size = 0.1) +
-  geom_sf(data = ved_sf, aes(shape = sex), size = 0.4, alpha = 0.2) +
+  geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   geom_sf(data = filter(polygs, radius %in% disp_radii), 
-          fill = "gray", color = NA, alpha = 0.4) +
-  # ggspatial::geom_spatial_label_repel(data = polygs_ids, aes(label = cluster)) +
-  ggrepel::geom_text_repel(data = polygs_ids, 
-                           aes(label = cluster, geometry = polygons),
-                           stat = "sf_coordinates", 
-                           size = 1.8, nudge_x = 1, nudge_y = 1) +
+          fill = "gray", color = NA) +
+  geom_sf(data = ved_sf, aes(shape = sex), fill = "white") +
+  ggrepel::geom_label_repel(data = polygs_ids,
+                            aes(label = cluster, geometry = polygons),
+                            stat = "sf_coordinates",
+                            size = 2.8, nudge_x = 0, nudge_y = 0,
+                            label.size = NA,
+                            label.padding = .2,
+                            na.rm = TRUE,
+                            fill = alpha(c("white"), 0.8)) +
   scale_shape_manual(values = c(22, 21, 24, 4)) +
   facet_wrap(vars(label_radius), ncol = 2) +
   coord_sf() +
@@ -307,7 +314,8 @@ ggplot() +
         legend.position = "bottom",
         legend.direction = "horizontal")
 
-ggsave(here::here("plots", "perc_plan_ids.pdf"), width = 7, height = 10)
+ggsave(here::here("plots", "perc_plan_ids.pdf"),
+       width = 14, height = 21, units = "cm")
 
 # cluster assignment ------------------------------------------------------
 g_long %>% select(id, radius, cluster = clust) %>% 

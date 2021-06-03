@@ -1,5 +1,5 @@
 # Project "Vedrovice"
-# Script nr. 3.3
+# Script nr. 3.1
 # SPATIAL NEIGHBORS: Gabriel graph
 # author: Petr Pajdla
 # Mean number of neighbours with a given sex based on Gabriel graph
@@ -29,8 +29,6 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
 # data --------------------------------------------------------------------
 
 # ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
-# ei <- read_csv(here("data/temp", "exceptionality.csv"), col_types = "cdff") %>% 
-#   select(id_burial = burial, ei, ei_clust = fct)
 ved_sf <- read_sf(here("data/temp", "layout.shp")) %>% 
   mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")),
          age_sim = fct_relevel(age_sim, c("juv.", "ad.", "mat.", "ind.")),
@@ -58,42 +56,44 @@ ved_delaunay_lines <- ved_delaunay %>%
   st_as_sf()
 
 g_gabriel <- ggplot() +
-  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
-  # geom_sf(data = ved_delaunay_lines, linetype = 1, size = 0.2) +
-  geom_sf(data = ved_gabriel_lines, linetype = 1, size = 0.2, color = "gray40") +
-  geom_sf(data = ved_sf, aes(shape = pres), fill = "white") +
-  scale_shape_manual(values = c(15, 21)) +
+  geom_sf(data = ved_exc, fill = "gray90", color = NA) +
+  geom_sf(data = select(ved_sf, -pres), color = "gray") +
+  geom_sf(data = ved_gabriel_lines, linetype = 1, size = 0.2) +
+  geom_sf(data = filter(ved_sf, pres == "pres."), shape = 21, fill = "white") +
   theme_void() + 
   theme(legend.position = c(0.9, 0.8),
         plot.title = element_text(hjust = 0.5)) +
   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
-                                    location = "br", 
-                                    pad_y = unit(2, "cm")) +
-  ggspatial::annotation_scale(plot_unit = "m", 
-                              location = "br",
-                              pad_y = unit(1, "cm")) +
-  labs(title = "Gabriel graph", shape = "preservation")
+                                    location = "br",
+                                    pad_y = unit(0.8, "cm"),
+                                    pad_x = unit(-0.4, "cm"), 
+                                    height = unit(1, "cm")) +
+  ggspatial::annotation_scale(plot_unit = "m",
+                              location = "br", 
+                              height = unit(0.2, "cm")) +
+  labs(title = "Gabriel graph", shape = "preservation", color = "preservation")
 
 g_delaunay <- ggplot() +
-  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
-  geom_sf(data = ved_delaunay_lines, linetype = 1, size = 0.2, color = "gray40") +
-  # geom_sf(data = ved_gabriel_lines, linetype = 3) +
-  geom_sf(data = ved_sf, aes(shape = pres), fill = "white") +
-  scale_shape_manual(values = c(15, 21)) +
+  geom_sf(data = ved_exc, fill = "gray90", color = NA) +
+  geom_sf(data = select(ved_sf, -pres), color = "gray") +
+  geom_sf(data = ved_delaunay_lines, linetype = 1, size = 0.2) +
+  geom_sf(data = filter(ved_sf, pres == "pres."), shape = 21, fill = "white",
+          show.legend = FALSE) +
   theme_void() + 
   theme(legend.position = c(0.9, 0.8),
         plot.title = element_text(hjust = 0.5)) +
-  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
-                                    location = "br", 
-                                    pad_y = unit(2, "cm")) +
-  ggspatial::annotation_scale(plot_unit = "m", 
-                              location = "br",
-                              pad_y = unit(1, "cm")) +
+  # ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+  #                                   location = "br", 
+  #                                   pad_y = unit(2, "cm")) +
+  # ggspatial::annotation_scale(plot_unit = "m", 
+  #                             location = "br",
+  #                             pad_y = unit(1, "cm")) +
   labs(title = "Delaunay triangulation", shape = "preservation")
 
 g <- gridExtra::grid.arrange(g_delaunay, g_gabriel, nrow = 1)
 
-ggsave(plot = g, filename = here("plots/plan_graphs.pdf"), width = 10.5, height = 5)
+ggsave(plot = g, filename = here("plots/plan_graphs.pdf"), 
+       width = 19, height = 8, units = "cm")
 
 
 # graph objects for delaunay and gabriel ----------------------------------
@@ -200,29 +200,29 @@ randomize_neighbors_network <- function(g, sf, variable, n_sim = 99) {
 
 # simulation (999 iterations) ----------------------------------------------
 
-# ved_rand_sex_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "sex", 
-#                                               n_sim = 999)
-# write_csv(ved_rand_sex_g, here("data/temp", "ved_rand_sex_g.csv"))
-# 
-# ved_rand_sex_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "sex", 
-#                                               n_sim = 999)
-# write_csv(ved_rand_sex_d, here("data/temp", "ved_rand_sex_d.csv"))
-# 
-# ved_rand_age_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "age_sim", 
-#                                               n_sim = 999)
-# write_csv(ved_rand_age_g, here("data/temp", "ved_rand_age_g.csv"))
-# 
-# ved_rand_age_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "age_sim", 
-#                                               n_sim = 999)
-# write_csv(ved_rand_age_d, here("data/temp", "ved_rand_age_d.csv"))
-# 
-# ved_rand_orig_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "origin", 
-#                                                n_sim = 999)
-# write_csv(ved_rand_orig_g, here("data/temp", "ved_rand_orig_g.csv"))
-# 
-# ved_rand_orig_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "origin", 
-#                                                n_sim = 999)
-# write_csv(ved_rand_orig_d, here("data/temp", "ved_rand_orig_d.csv"))
+ved_rand_sex_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "sex",
+                                              n_sim = 999)
+write_csv(ved_rand_sex_g, here("data/temp", "ved_rand_sex_g.csv"))
+
+ved_rand_sex_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "sex",
+                                              n_sim = 999)
+write_csv(ved_rand_sex_d, here("data/temp", "ved_rand_sex_d.csv"))
+
+ved_rand_age_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "age_sim",
+                                              n_sim = 999)
+write_csv(ved_rand_age_g, here("data/temp", "ved_rand_age_g.csv"))
+
+ved_rand_age_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "age_sim",
+                                              n_sim = 999)
+write_csv(ved_rand_age_d, here("data/temp", "ved_rand_age_d.csv"))
+
+ved_rand_orig_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "origin",
+                                               n_sim = 999)
+write_csv(ved_rand_orig_g, here("data/temp", "ved_rand_orig_g.csv"))
+
+ved_rand_orig_d <- randomize_neighbors_network(ved_d, ved_sf_pres, "origin",
+                                               n_sim = 999)
+write_csv(ved_rand_orig_d, here("data/temp", "ved_rand_orig_d.csv"))
 
 ved_rand_sa_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "cat_sa",
                                              n_sim = 999)

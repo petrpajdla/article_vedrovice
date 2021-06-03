@@ -29,11 +29,7 @@ ved_sf <- st_as_sf(bind_cols(ved_layout, ved$metadata),
          # age_sim = if_else(is.na(age_sim), "ind.", as.character(age_sim)),
          age_sim = fct_relevel(age_sim, c("juv.", "ad.", "mat.", "ind.")),
          # origin = if_else(is.na(origin), "ind.", origin),
-         origin = fct_relevel(origin, c("local", "non-local", "ind.")),
-         # ei_clust = if_else(is.na(ei_clust), "ind.", as.character(ei_clust)),
-         # ei_clust = factor(ei_clust,
-         #                   levels = c(letters[1:length(unique(.$ei_clust))-1],
-         #                              "ind."))
+         origin = fct_relevel(origin, c("local", "non-local", "ind."))
   )
 
 # ved_sf_buffer <- st_buffer(ved_sf, dist = 1.6)
@@ -58,19 +54,32 @@ ved_exc <- st_cast(
 window_exc <- spatstat::as.owin(ved_exc)
 
 # plot
+# g_exc <- ggplot() + 
+#   geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+#   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+#                                     location = "br",
+#                                     pad_y = unit(2, "cm")) +
+#   ggspatial::annotation_scale(plot_unit = "m",
+#                               location = "br",
+#                               pad_y = unit(1, "cm")) +
+#   theme_void() +
+#   theme(legend.position = c(0.9, 0.8))
+
 g_exc <- ggplot() + 
-  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+  geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
                                     location = "br",
-                                    pad_y = unit(2, "cm")) +
+                                    pad_y = unit(0.8, "cm"),
+                                    pad_x = unit(-0.4, "cm"), 
+                                    height = unit(1, "cm")) +
   ggspatial::annotation_scale(plot_unit = "m",
-                              location = "br",
-                              pad_y = unit(1, "cm")) +
+                              location = "br", 
+                              height = unit(0.2, "cm")) +
   theme_void() +
   theme(legend.position = c(0.9, 0.8))
 
 gg_baseplan <- g_exc +
-  geom_sf(data = ved_exc, fill = NA, color = "gray90", size = 4) +
+  geom_sf(data = ved_exc, fill = NA, color = "gray80", size = 4) +
   # geom_sf(data = ved_exc, fill = "gray90", color = NA) +
   # geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
   geom_sf(data = ved_sf, aes(shape = pres), fill = "white") + 
@@ -82,8 +91,8 @@ gg_baseplan
 gg_ids <- gg_baseplan + 
   ggsflabel::geom_sf_text_repel(data = ved_sf, aes(label = id_burial))
 
-ggsave(here("plots", "plan_base.pdf"), gg_baseplan, scale = 2)
-ggsave(here("plots", "plan_base_ids.pdf"), gg_ids, scale = 2)
+# ggsave(here("plots", "plan_base.pdf"), gg_baseplan, scale = 2)
+# ggsave(here("plots", "plan_base_ids.pdf"), gg_ids, scale = 2)
 
 # function to get x and y coords for density estimation
 get_coords <- function(sf, var) {
@@ -98,36 +107,36 @@ get_coords <- function(sf, var) {
 
 # plan local vs non-local
 g_exc + 
-  geom_sf(data = select(ved_sf, -origin), color = "gray90") +
+  geom_sf(data = select(ved_sf, -origin), color = "gray") +
   stat_density2d(data = get_coords(ved_sf, "origin"), aes(X, Y),
-                 color = "black", alpha = 0.4) +
+                 color = "black") +
   geom_sf(data = filter(ved_sf, pres != "dist.", origin != "ind."), 
           shape = 21, fill = "white") + 
   facet_wrap(~origin)
 
-ggsave(here("plots", "plan_origin.pdf"), width = 10.5, height = 5)
+ggsave(here("plots", "plan_origin.pdf"), width = 12, height = 6, units = "cm")
 
 # plan age
 g_exc + 
-  geom_sf(data = select(ved_sf, -age_sim), color = "gray90") +
+  geom_sf(data = select(ved_sf, -age_sim), color = "gray") +
   stat_density2d(data = get_coords(ved_sf, "age_sim"), aes(X, Y),
-                 color = "black", alpha = 0.4) +
+                 color = "black") +
   geom_sf(data = filter(ved_sf, pres != "dist.", age_sim != "ind."), 
           shape = 21, fill = "white") + 
   facet_wrap(~age_sim)
 
-ggsave(here("plots", "plan_age.pdf"), width = 15.5, height = 5)
+ggsave(here("plots", "plan_age.pdf"), width = 19, height = 6, units = "cm")
 
 # plan sex
 g_exc +
-  geom_sf(data = select(ved_sf, -sex), color = "gray90") +
+  geom_sf(data = select(ved_sf, -sex), color = "gray") +
   stat_density2d(data = get_coords(ved_sf, "sex"), aes(X, Y),
-                 color = "black", alpha = 0.4) +
+                 color = "black") +
   geom_sf(data = filter(ved_sf, pres != "dist.", sex != "ind."),
           shape = 21, fill = "white") + 
   facet_wrap(~sex)
 
-ggsave(here("plots", "plan_sex.pdf"), width = 15.5, height = 5)
+ggsave(here("plots", "plan_sex.pdf"), width = 19, height = 6, units = "cm")
 
 # write layouts -----------------------------------------------------------
 

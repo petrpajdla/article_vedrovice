@@ -84,26 +84,29 @@ cooc_obs <- cooc_obs %>% filter(var1 != var2)
 
 # randomization of co-occurrence matrix - list of many matrices ----------------
 n_permutations <-  9999
-# # ======
-# rand_mat <- vegan::permatfull(input_matrix,
-#                               fixedmar = "both",
-#                               mtype = "prab",
-#                               times = n_permutations)
-# # ======
+# ======
+rand_mat <- vegan::permatfull(input_matrix,
+                              fixedmar = "both",
+                              mtype = "prab",
+                              times = n_permutations)
+# ======
 
 # going parallel to speed up randomization...
 # detecting cores for parallel
 no_cores <- parallel::detectCores() - 1
 
 # cooccurences on random matrices ==============================================
-# # ======
-# cl <- parallel::makeCluster(no_cores)
-# cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
-# parallel::stopCluster(cl)
-# 
-# # save counts of co-occurences on random matrices
-# readr::write_rds(cooc_rand, here("data/temp", "cooc_random_mat.RDS"))
-# # ======
+# ======
+# note to self: on Debian without everything was smooth even without specifying 
+# setup_strategy, but apparently, this is Rstudio vs R version problem
+# see: https://github.com/rstudio/rstudio/issues/6692
+cl <- parallel::makeCluster(no_cores, setup_strategy = "sequential")
+cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
+parallel::stopCluster(cl)
+
+# save counts of co-occurences on random matrices
+readr::write_rds(cooc_rand, here("data/temp", "cooc_random_mat.RDS"))
+# ======
 
 # load from temporary data
 cooc_rand <- readr::read_rds(here("data/temp", "cooc_random_mat.RDS"))
@@ -147,6 +150,7 @@ v_statistic <- tibble(variable = names(v_observed),
          long = unname(ved$var_names$long[variable]))
 
 readr::write_csv(v_statistic, here("data/temp", "cooc_v_stats.csv"))
+# v_statistic <- readr::read_csv(here("data/temp", "cooc_v_stats.csv"))
 
 # visualizing of v values by small multiples -----------------------------------
 v_exp_g <- v_experimental %>% tidyr::gather(variable, value) %>% 
@@ -175,7 +179,9 @@ v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
 
 v_plot
 
-ggsave(here("plots", "cooc_vstats.pdf"), plot = v_plot, width = 6, height = 6)
+ggsave(here("plots", "cooc_vstats.pdf"), 
+       plot = v_plot, 
+       width = 19, height = 20, units = "cm")
 
 
 # normalizing to range 0-1 ------------------------------------------------
@@ -199,8 +205,8 @@ v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"),
   scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
   theme_universe
 
-ggsave(here("plots", "cooc_vstats_norm.pdf"), plot = v_normalized_plot, 
-       width = 6, height = 6)
+# ggsave(here("plots", "cooc_vstats_norm.pdf"), plot = v_normalized_plot, 
+#        width = 6, height = 6)
 
 readr::write_csv(v_normalized, here("data/temp", "cooc_v_normal.csv"))
 
@@ -229,7 +235,8 @@ s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
 
 s_plot
 
-ggsave(here("plots", "cooc_sstat.pdf"), plot = s_plot, width = 3, height = 1.5)
+ggsave(here("plots", "cooc_sstat.pdf"), plot = s_plot, 
+       width = 6, height = 4, units = "cm")
 
 # The S statistic is significantly larger than experimental S and
 # occures in less then 5% of cases (p is smaller than 0.05), i.e. there is
@@ -263,16 +270,16 @@ cooccurrence[is.na(cooccurrence)] <- 0
 
 # bw <- colorRampPalette(colors = c("gray90", "gray20"))
 
-pdf(here("plots", "cooc_corrplot.pdf"), width = 7, height = 7)
-corrplot::corrplot(round(cooccurrence, 2), 
-                   is.corr = FALSE, method = "pie", 
-                   type = "upper", diag = FALSE, 
-                   order = "FPC", 
-                   tl.col = "gray20", tl.cex = 0.8, 
-                   cl.cex = 0.6, 
-                   # col = bw(12)
-)
-dev.off()
+# pdf(here("plots", "cooc_corrplot.pdf"), width = 7, height = 7)
+# corrplot::corrplot(round(cooccurrence, 2), 
+#                    is.corr = FALSE, method = "pie", 
+#                    type = "upper", diag = FALSE, 
+#                    order = "FPC", 
+#                    tl.col = "gray20", tl.cex = 0.8, 
+#                    cl.cex = 0.6, 
+#                    # col = bw(12)
+# )
+# dev.off()
 
 # pdf(here("plots", "cooccurrence_alphabet.pdf"), width = 7, height = 7)
 # corrplot::corrplot(cooccurrence, 

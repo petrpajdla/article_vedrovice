@@ -187,7 +187,7 @@ grid_fns <- bind_rows("G(r)" = ved_g,
 
 grid_fns
 
-ggsave(here("plots", "pp_funs.pdf"), width = 12, height = 3)
+ggsave(here("plots", "pp_funs.pdf"), width = 19, height = 5, units = "cm")
 
 # for different marks ==========================================================
 multiplecrossfunction <- function(pp, var, crossfun, nsim, nrank) {
@@ -248,7 +248,7 @@ g2 <- mppk_age %>%
   theme_universe +
   facet_grid(from ~ to) +
   labs(x = "r (m)", title = "Age category")
-  
+
 g3 <- mppk_orig %>% 
   ggplot(aes(x = r)) +
   geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
@@ -260,10 +260,20 @@ g3 <- mppk_orig %>%
   facet_grid(from ~ to) +
   labs(x = "r (m)", title = "Origin")
 
-pdf(here::here("plots", "pp_crossk.pdf"), width = 9, height = 14)
-gridExtra::grid.arrange(top = grid::textGrob("Multitype K(r) function"), 
-                        g1, g2, g3, ncol = 1)
-dev.off()
+lay <- rbind(rep(1, 6), rep(1, 6), rep(1, 6),
+             rep(2, 6), rep(2, 6), rep(2, 6),
+             c(NA, rep(3, 4), NA), c(NA, rep(3, 4), NA))
+
+grob <- gridExtra::arrangeGrob(
+  # top = grid::textGrob("Multitype K(r) function"), 
+  g1, g2, g3, layout_matrix = lay)
+
+# pdf(here::here("plots", "pp_crossk.pdf"), width = 19, paper = "a4")
+# grob
+# dev.off()
+
+ggsave(plot = grob, here::here("plots", "pp_crossk.pdf"), 
+       width = 14, height = 21, units = "cm")
 
 # # G funs
 # mppg_sex %>% 
