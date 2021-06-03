@@ -1,38 +1,18 @@
 ---
-title           : "Spatial Patterns and grave goods differences at the Cemetery of Vedrovice (Czech Republic): A Resampling Approach to Identity Markers in the Early Neolihic."
-# "A resampling approach to spatial arrangement and contents of burials in the Vedrovice cemetery"
-
+title           : "Spatial Patterns and Grave Goods Differences at the Cemetery of Vedrovice (Czech Republic): A Resampling Approach to Identity Markers in the Early Neolithic"
 author          : "Petr Pajdla"
-    # name          : "Petr Pajdla"
-    # affiliation   : "Department of Archaeology and Museology, Masaryk University, Brno, Czech Republic"
-    # email         : "petr.pajdla@protonmail.com"
 date            : "`r format(Sys.time(), '%d %B, %Y')`"
 abstract        :
-  "Spatial pattern and grave goods associations at the
-  cemetery of Vedrovice - Široká u Lesa are explored using computationaly
-  instensive formal methods.
-  Resampling approaches both to intrasite spatial arrangement and
-  distribution of grave goods are explored in
-  relation to layers of identity represented by different buried bodies
-  attributes -- sex, age, geographical origin and their combinations.
-  We find that among non-randomly distributed grave goods
-  are polished stone adzes, grinding tools, ceramic bowls and spondylus beads.
-  As a result of the investigation of differences of the non-randomly distributed
-  artefacts and attributes of burials we conclude that the most eminent are
-  dichotomies between genders, although accentuated by both origin and age.
-  Spatial analysis shows clear trends towards clustering between burials and
-  the emerging clusters are further explored for similarities in burial attributes."
-
+  "The spatial pattern and grave good associations at the cemetery of Vedrovice - Široká u Lesa are explored using computationally intensive formal methods. Resampling approaches to both intra-site spatial arrangement and the distribution of grave goods are explored in relation to layers of identity represented by different buried body attributes – sex, age, geographical origin and their combinations. We found that polished stone adzes, grinding tools, ceramic bowls and spondylus beads occur among non-randomly distributed grave goods. As a result of the investigation of differences among the non-randomly distributed artifacts and attributes of burials, we conclude that the most significant are dichotomies between genders, accentuated by both origin and age. Spatial analysis shows clear trends towards clustering between burials, and the emerging clusters are further explored for similarities in burial attributes."
 output:
-    bookdown::pdf_document2:
-    # bookdown::word_document2:
+    bookdown::word_document2:
         latex: pdflatex
         toc: false
         fig_caption: true
         number_sections: false
         keep_tex: false
 bibliography    : "bib_vedrovice.bib"
-csl             : "european-journal-of-archaeology.csl"
+csl             : "apa.csl"
 header-includes:
   - \usepackage[left]{lineno}
   - \linenumbers
@@ -53,41 +33,41 @@ library(here)
 
 The Cemetery of Vedrovice is one of the earliest and most intensively studied
 *Linearbandkeramik* (LBK) cemeteries.
-Recent contributions use the evidence from the cemetery in a broader discussion
-of post-marital residence patterns [@hrncir2020] and
+Recent articles use evidence from the cemetery in a broader discussion
+of post-marital residence patterns [@hrncir2020],
 sexual inequalities and gender in the Neolithic [@masclanslatorre2020; @bickle2020].
-Here we focus on exploration of relationship between three proposed *layers* of
+Here we focus on an exploration of the relationship between three proposed *layers* of
 identity, biological sex and age of the body determined from skeletal remains
-by anthropological methods and origin of the body based on Strontium isotope
+by anthropological methods and the origin of the body based on the strontium isotope
 signal.
 We explore whether the structure observed in these three categories is
-mirrored in the grave goods associations and spatial organization within the
+mirrored in the grave good associations and spatial organization within the
 cemetery.
-The analysis is set into a broader discussion of gender relations and identity
+The analysis is set into a broader discussion of gender relationships and identity
 in Neolithic communities.
 
 <!-- view of gender in the Neolithic, archaeological context -->
-@robb2017 [128] noted lack of gender archaeology debate for the
-European Neolithic in comparison with other periods.
-Authors present gender in the Neolithic as being
-of a very different nature than gender in the later prehistory.
-It is not clearly expressed and
+@robb2017 [p. 128] noted a lack of debate in archaeology on gender for the
+European Neolithic compared to other periods.
+The authors present gender in the Neolithic as being
+of a very different nature than gender in later prehistory.
+It is argued that gender is not clearly expressed and
 biological differences between sexes are not transformed into binary cultural
-categories (ibid. 140-142).
+categories [@robb2017, p. 140--142].
 Considering the Neolithic burial evidence across Europe, authors find that it
-'shows very little gender distinction; when it does, it is rarely a clear-cut
+"shows very little gender distinction; when it does, it is rarely a clear-cut
 binary categorization but a matter of degree and overlap, sometimes polythetically
-combined with factors such as age and localness' (ibid. 138).
-In response, @bickle2020 [14] argues that 'biological sex may not have defined gender
-during the LBK' although the 'sexed bodies did matter'.
+combined with factors such as age and localness" [@robb2017, p. 138].
+In response, @bickle2020 [p. 14] argues that "biological sex may not have defined gender
+during the LBK" although the "sexed bodies did matter".
 
 <!-- We focus on relations between burials and bodies in terms of biological
 sex, age and origin, exceptionality of grave goods and location within the
 cemetery.-->
-We focus predominantly on investigating non-random patterns in artifact
+We focus mainly on investigating non-random patterns in artifact
 co-occurrences and spatial arrangement in the cemetery in relation to the
-proposed *layers* of Neolithic identity, i.e. sex, age and localness of the body.
-Our question is thus how grave goods relate to aforementioned
+proposed *layers* of Neolithic identity, i.e., sex, age and localness of the body.
+Our question is thus how grave goods relate to the aforementioned
 categories and whether there is a consistent relationship between
 these categories forming the *identity* and spatial
 arrangement of the cemetery.
@@ -96,13 +76,13 @@ arrangement of the cemetery.
 <!-- Although gender relations in the LBK might not be -->
 
 <!-- resampling and computer-intensive techniques-->
-The approach taken is a quantitative one embracing resampling techniques and
+The chosen approach is a quantitative one embracing resampling techniques and
 computer-intensive methods in general.
-The resampling techniques were introduced to mortuary studies by
-@manly1996 but the application is still limited [@sosna2008, 343].
-As noted by Sosna (ibid.), the most important benefit of resampling is in its
+The resampling techniques were introduced in mortuary studies by
+@manly1996 but the application is still limited [@sosna2008, p. 343].
+As noted by @sosna2008, the most important benefit of resampling is its
 ability to distinguish random and non-random patterns.
-This is crucial for mortuary analysis because the samples studied, including
+This is crucial for mortuary analysis because the studied samples, including
 the one presented here, are usually small in size and identifying which
 observed patterns are caused by mere chance associated with small numbers
 and which are actually present is problematic.
@@ -128,75 +108,75 @@ and which artifacts have similar distributions over burials?
 # Material and methods
 
 <!-- site -->
-Vedrovice site is situated in the south of Moravia (Czech Republic).
-Earliest known finds and archaeological explorations here are from
-the 19th century but the excavation took place in the second half of 20th century.
-There are two known burial areas, *Za Dvorem* and larger one *Široká u Lesa* and
+The Vedrovice site is situated in south Moravia (Czech Republic).
+The earliest known finds and archaeological explorations here are from
+the 19th century, but excavations were conducted in the second half of 20th century.
+There are two known burial areas, *Za Dvorem* and the larger *Široká u Lesa* and
 a settlement area.
-For more details on the site refer to @masclanslatorre2020 or the
-original publication [@podborsky2002].
-The material analyzed here comes from Vedrovice *Široká u lesa* cemetery.
+For more details on the site, see @masclanslatorre2020 or the
+original publication by @podborsky2002.
+The material analyzed here comes from the *Široká u lesa* cemetery in Vedrovice.
 
 <!-- sample (burials, artifacts) -->
 Originally, this burial ground consisted of at least 108 burials.
 Some of the burials were disturbed by later settlement and burial pits in the
-area of the cemetery, amateur excavations during the 19th century or later
+area of the cemetery, amateur excavations during the 19th century and later
 agricultural activities.
 These burials are excluded from most of the analysis due to missing and/or
 incomplete data and only a sample of 78 well-preserved LBK burials is analyzed here.
 Most of the data was obtained from the original publication [@podborsky2002],
-anthropological determination of sex and age of the bodies were corrected based on
+and the anthropological determination of the sex and age of the bodies was corrected based on an
 analysis by @dockalova2008. Carbon, nitrogen and strontium isotope
 ratios were collected in @whittle2013 and @richards2008.
-Further details on use and function of the artifacts were gathered from
+Further details on the use and function of the artifacts were gathered from
 @masclanslatorre2020.
-Information on localness of different bodies was adapted from @hrncir2020.
+Information on the localness of various bodies was adapted from @hrncir2020.
 
-Each burial was originally characterized by 20 variables recording counts of
+Each burial was originally characterized by 20 variables recording the number of
 artifacts present in the graves.
-Some of  these original variables are omitted in the analysis due to their rare occurrence,
-for instance spondylus arm ring is present in a single burial only,
-thus being of no use in establishing relationships between pairs of burials.
-Only grave goods occurring in more than 5% of the graves are used in the analysis,
-this step reduces the count of the variables to 14.
+Some of  these original variables are omitted in the analysis due to their rare occurrence;
+for instance, a spondylus arm ring is present in only a single burial,
+rendering it useless in establishing relationships between pairs of burials.
+Only grave goods occurring in more than 5% of the graves are used in the analysis;
+this step reduces the number of variables to 14.
 These include variables noting quantities of various types of pottery vessels in
 the graves, counts of chipped stone tools made of either local or non-local raw materials,
-presence of polished and beveled stone adzes, grinding slabs, pebbles,
-bone tools and different kinds of personal ornament.
-The personal ornament includes beads made of spondylus shell,
-spondylus pendants or oval shaped buckles.
-Last but not least presence of ocher pigment in the grave is also noted.
+the presence of polished and beveled stone adzes, grinding slabs, pebbles,
+bone tools and different kinds of personal ornaments.
+The personal ornaments include beads made of spondylus shells,
+spondylus pendants and oval shaped buckles.
+Last but not least, the presence of ocher pigment in the grave is also noted.
 Quantities of various *grave goods* are simplified into a binary matrix indicating
-presence or absence of a given trait.
+the presence or absence of a given trait.
 
 Another category of variables is derived from retrieved human skeletal remains.
-These include biological sex, age simplified into age groups and indicator
-variable whether the Strontium signal in the remains is of local origin.
+These include biological sex, age simplified into age groups and an indicator
+variable as to whether the strontium signal in the remains is of local origin.
 The variable representing the recorded sex is simplified into the following
 categories: female-sexed body (abbreviated *F*), male-sexed body (*M*),
-non adult (*n. a.*) and undetermined sex (*ind.*).
-Age of the body is also simplified into three categories: juveniles (*juv.*)
-comprising of groups Infans and Juvenis, adults (*ad.*, all bodies aged as Adultus)
-and mature bodies (*mat.*, anthropological categories Adultus-Maturus, Maturus and
-Senilis) and bodies of undetermined age (*ind.*).
-Last category is the indicator for the origin of the buried person.
-Local Strontium range is defined as two standard deviations from mean of Sr ranges of
-bodies with age category determined as Infans.
-Bodies falling within this range are labeled as local, outside the range as non-local
-and where data on Sr values are missing origin is not determined (*ind.*).
+non-adult (*n. a.*) and undetermined sex (*ind.*).
+The age of the body is also simplified into three categories: juveniles (*juv.*)
+comprised of the groups *Infans* and *Juvenis*, adults (*ad.*, all bodies aged as *Adultus*)
+and mature bodies (*mat.*, anthropological categories *Adultus-Maturus*, *Maturus* and
+*Senilis*) and bodies of an undetermined age (*ind.*).
+The last category is the indicator for the origin of the buried person.
+The local strontium range is defined as two standard deviations from the mean of Sr ranges of
+bodies with an age category determined as *Infans*.
+Bodies falling within this range are labeled as local, outside the range as non-local;
+where data on Sr values is missing, origin is not determined (*ind.*).
 
-As mentioned previously we consider these three variables, sex, age and origin to be indicative of
-ones identity in the Neolithic.
-To explore the relations between the variables we use them both as individual
-categories and combined into following indicator variables -- (1) sex/age,
-(2) origin/sex, (3) origin/age and finally (4) origin/sex/age.
-Due to frequent missing or undetermined values we decided to limit the studied
-sample only to bodies with all of the categories determined and only categories
-that occur in more than 5% of burials.
+As mentioned above, we consider these three variables -- sex, age and origin -- to be indicative of
+an individual's identity in the Neolithic.
+To explore the relationships between the variables, we use them both as individual
+categories and combined into the following indicator variables -- (1) sex/age;
+(2) origin/sex; (3) origin/age; and (4) origin/sex/age.
+Due to frequent missing or undetermined values, we decided to limit the studied
+sample only to bodies with all of the categories determined (and only categories
+that occur in more than 5% of burials).
 
 <!-- methods -->
 
-## Randomness of artefact combinations
+## Randomness of artifact combinations
 
 <!--
 This study takes advantage of computer-intensive resam-
@@ -212,42 +192,41 @@ be very effective for the analysis of patterns in cemeteries
 (Manly, 1996).
 @sosna2008 -->
 
-To determine non-randomness of various artifact combinations in burials we conduct a
+To determine the non-randomness of various artifact combinations in burials, we conducted a
 permutation test on the presence/absence data matrix.
 The method based on generalized Monte Carlo tests was
-introduced to archaeology by @manly1996 and adapted by @sosna2008.
+introduced into archaeology by @manly1996 and adapted by @sosna2008.
 Our approach is based on both of these works.
-Original co-occurrence matrix is permuted 9999 times with constant
-row and column totals, i.e. both the count of artifacts in individual graves
-and sum of the given type of artifact across the burials are fixed.
+The original co-occurrence matrix was permuted 9,999 times with constant
+row and column totals, i.e., both the count of artifacts in individual graves
+and the sum of the given type of artifact across the burials are fixed.
 
-To examine which associations of variables, i.e. artifacts, are infrequent or even not present
-and which tend to appear together more often than it would be expected by random chance
+To examine which associations of variables, i.e., artifacts, are infrequent or even not present
+and which tend to appear together more often than it would be expected by random chance,
 the co-occurrences of observed and simulated data
 are summarized using two statistics suggested by @manly1996 [475].
-The *S* statistic is a measure of overall deviation between expected and observed
-number of artifact occurrences while
+The *S* statistic is a measure of overall deviation between the expected and observed
+number of artifact occurrences, while
 the *v* statistic is a measure of difference between co-occurrences of
-individual artifact with other artifacts
-(for details see SI).
+individual artifacts with other artifacts.
 
 To assess whether differences between artifacts that are non-randomly distributed
-are reflected in relations between groups based on sex, age, origin and their combinations
-we calculate mean Euclidean distance (ED, for details see SI) between pairs of burials in multidimensional
+are reflected in relationships between groups based on sex, age, origin and their combinations,
+we calculate mean Euclidean distance (ED) between pairs of burials in multidimensional
 space settings defined by the non-randomly distributed artifacts.
-The observed mean ED is compared against mean ED distribution  derived by random
-reshuffling of the category labels between the burials 9999 times with constant
+The observed mean ED is compared to the mean ED distribution  derived by random
+reshuffling of the category labels between the burials 9,999 times with the constant
 probabilities of appearance of the given category label.
 <!-- To infer whether the observed and randomly created mean ED
 distributions are samples of the same population we use non-parametric
 Kruskal-Wallis test [@kruskal1952].-->
-For each of the categories the deviation of the mean ED from its randomly generated
+For each of the categories, the deviation of the mean ED from its randomly generated
 distributions is expressed as the fraction of random values of ED larger than
 the one observed.
-The deviation is deemed significant if less than 5% of
+The deviation is deemed significant if less than 5 % of
 random values are larger than the observed value.
-The process is a variation of the one described for resampling in case of
-artifact combinations and similar approach is taken by @sosna2008 [346-347].
+The process is a variation of the one described for resampling in the case of
+artifact combinations, and a similar approach is taken by @sosna2008 [346-347].
 
 <!--
 To assess relations between groups based on sex, age and origin
@@ -273,38 +252,36 @@ statistics introduced by @sosna2008 are used.-->
 Spatial patterning in prehistoric burial grounds is often examined to find
 any internal structure, arrangement or possible grouping.
 We approach the task as a point pattern analysis problem given that
-a burial (event) is simplified as its centroid location in a two dimensional space.
-A polygon of idealized excavation extent is used as a study area (a window).
+a burial (event) is simplified as its centroid location in two dimensional space.
+A polygon of the idealized excavation extent is used as the study area (a window).
 <!-- Using a window closely approximating locations of the burials was considered,
 e. g. buffer zone or convex/concave hull but simplified excavation polygon is
 deemed the most useful because it preserves the borders and empty areas
 of the original cemetery. -->
 
-Overall structure of the cemetery is examined using
-<!-- either density based approaches or -->
-methods utilizing distances between neighboring burials. <!--[@osullivan2010, 121-154]-->
 <!-- Density based approaches, for instance quadrat tests,
 characterize the point pattern in terms of its *first-order properties* [@osullivan2010, 126].
 The assumption underlying the *first-order effects* is that any point location is
 independent on other point locations and different parameters influence its location.-->
-These methods are based on distances between pairs and triples of neighbors and
+The overall structure of the cemetery is examined using
+methods utilizing distances between neighboring burials.<!--[@osullivan2010, 121-154]-->
+These methods are based on distances between pairs and threesomes of neighbors and
 characterize the point pattern based on *second- and third-order properties*
 [@nakoinz2016, 130-135; @osullivan2010, 107].
 These are in contrast to the assumption underlying *first-order effects* that
-any point location is independent on other point locations and
+any point location is independent of other point locations and
 different parameters influence its location [@osullivan2010, 126].
-<!-- [@nakoinz2016, 135-144; @osullivan2010, 130-139] -->
-In spatial analysis of settlement patterns individual locations of
-settlements (points) can depend on a number of parameters, for instance
-elevation, soil type etc.
-In case of a grave placement in a burial ground we presume that the choice of
-a graves location is either random or influenced predominantly by other (previous)
+In the spatial analysis of settlement patterns, individual locations of
+settlements (points) can depend on a number of parameters, e.g.,
+elevation, soil type, etc.
+In the case of a grave placement in a burial ground, we presume that the choice of
+the grave location is either random or influenced predominantly by other (previous)
 grave locations and
-is largely independent on the outside parameters.
-In other words *first-order properties* are of little to no importance in
+is largely independent of outside parameters.
+In other words, *first-order properties* are of little to no importance in
 our point of view.
 The *second-order properties* and possibly *third-order properties*
-are thus considered major factors in locating of the graves.
+are thus considered major factors in the location of the graves.
 <!-- It is possible that the position of burials was dependent on parameters that were not
 captured by the excavation, for example location of trees but that is impossible to test.-->
 
@@ -314,88 +291,87 @@ It divides the area of interest into several cells of fixed sizes
 expected under the null hypothesis that the underlying point process
 is completely spatially random (approximated by a Poisson distribution). -->
 We utilize *G*, *F*, Ripley's *K* [@ripley1976; @sayer2013] and *T* [@schladitz2000] functions.
-These functions are based on nearest neighbor distances and are commonly used
+These functions are based on the nearest neighbor distances and are commonly used
 to characterize point patterns in archaeology [@nakoinz2016, 135-144].
 The *G* function is a metric of how close events are and summarizes
 cumulative frequency distribution of the nearest neighbor distances.
 Because of its dependence on the intensity of events in the study area, it is
 subject to changes in the size of the study area (window).
 The *F* function, an empty-space function, is based on simulating a point pattern
-and calculating of distances between random locations and the observed locations.
+and calculating the distances between random locations and the observed locations.
 It is a measure of how far observed events are from any arbitrary location [@osullivan2010, 132-135].
-Ripley's *K* function is in comparison with the *G* function resilient to
+Compared to the *G* function, Ripley's *K* function is resilient to
 changes in the window size and works with all the proximal events up to a
 certain threshold, not only the nearest neighbors [@nakoinz2016, 138].
-We find it the most useful in most of archaeology use cases, cf. [@negre2018].
+We find it the most useful in most archaeology cases, cf. @negre2018.
 Last but not least, the *T* function is a third-order parallel to the *K* function [@schladitz2000].
-For formulas and details on individual functions see the SI.
 
-Given statistics for independent random process are estimated using Monte Carlo
+The given statistics for the independent random process are estimated using Monte Carlo
 simulation with 999 iterations.
-Although smaller number of permutations should be sufficient to achieve
+Although a smaller number of permutations should be sufficient to achieve
 credible results
-[@baddeley2016, 384] we follow the approach taken by @sayer2013 [78].
-Ten most extreme realizations of the simulation are discarded as outliers so
+[@baddeley2016, 384], we follow the approach taken by @sayer2013 [78].
+The ten most extreme realizations of the simulation are discarded as outliers, so
 the significance level is 0.01 [cf. @baddeley2016 410].
-The remaining realizations of given point processes are used to construct envelopes 
+The remaining realizations of given point processes are used to construct envelopes
 around function curves derived from observed data.
 
-To explore frequency of neighboring burials falling into same categories we
+To explore the frequency of neighboring burials falling into the same categories, we
 explore several methods.
-A modification of *K* function for multitype point pattern
+A modification of the *K* function for a multitype point pattern
 does not take into account all of the
 neighboring individuals in the point pattern but pairs of observations of the
 same value within the given category are explored.
-Same as *K* function is indicative of the distances at which clustering or
+In the same way that the *K* function is indicative of the distances at which clustering or
 repulsive processes take place, the multitype *K* function shows these distances
-for given pairs of levels within a given categorical variable.
+for the given pairs of levels within a given categorical variable.
 The envelopes are constructed using the same procedure as described for other
 functions.
 
-To further explore the neighborhood structure we construct neighborhood graphs.
+To further explore the neighborhood structure, we construct neighborhood graphs.
 We use Delaunay triangulation and its subgraph, a Gabriel graph [@gabriel1969]
 with burial locations as nodes (Fig. \@ref(fig:plan-graphs)).
-The Delaunay triangulation is considered as a maximum number of neighbors per individual case
-scenario while the Gabriel graph the opposite.
-For each node, mean number of neighbors of a given category is determined and recorded.
+The Delaunay triangulation is regarded as the maximum number of neighbors per individual case
+scenario, while the Gabriel graph is the opposite.
+For each node, the mean number of neighbors of a given category is determined and recorded.
 To check how common the observed value is, a permutation test is performed
 where the categories are randomly assigned while preserving the overall
 proportion of given categories and the neighborhood structure determined by the
 graph.
-The observed values of neighbor categories are compared against distributions
+The observed values of neighbor categories are compared to distributions
 derived from 999 permutations of the simulated data.
 
 <!-- Percolation analysis -->
-Another approach we consider for establishing neighborhood relations is by
+Another approach we consider for establishing neighborhood relationships is
 constructing buffer zones around each of the burials.
 To avoid determinism in designating the radius of the buffer zone around each of
-the individuals we utilize percolation analysis.
-Percolation analysis is a data centric method used to identify clusters of points based
+the individuals, we utilize percolation analysis,
+a data centric method used to identify clusters of points based
 on spatial separation measured by Euclidean distance [@maddison2020, 269].
-The introduction of percolation analysis to archaeology is relatively recent,
-nevertheless we consider its effectiveness and usefulness in studies with varied scales
-well proven [@maddison2020].
-Percolation analysis is based on city clustering algorithm [@rozenfeld2008] and
+Although the introduction of percolation analysis in archaeology is relatively recent,
+we consider its effectiveness and usefulness in studies with varied scales
+well-proven [@maddison2020].
+Percolation analysis is based on a city clustering algorithm [@rozenfeld2008] and
 its generalization employing Euclidean distance [@rozenfeld2011].
-Points being within a given distance threshold (radius) are assigned into a cluster.
+Points falling within a given distance threshold (radius) are added to a cluster.
 This process is repeated for a set of thresholds while recording maximum
 cluster sizes and possibly other statistics.
-This allows to identify distances at which clusters exhibit rapid growth (absorbing
-large number of nodes) and distances at which the clusters remain relatively stable.
-For more details refer to @maddison2020 and associated R package [@schmidt2020].
+This makes it possible to identify distances at which clusters exhibit rapid growth (absorbing
+a large number of nodes) and distances at which the clusters remain relatively stable.
+For more details, refer to @maddison2020 and the associated R package [@schmidt2020].
 
-By means of percolation analysis we identify threshold distances at which maximum cluster
-size is growing and clusters formed at these distances are further explored.
-For each cluster number of individual bodies of a given category is recorded.
+By means of percolation analysis, we identify threshold distances at which maximum cluster
+size is growing, and clusters formed at these distances are further explored.
+For each cluster, the number of individual bodies of a given category is recorded.
 The same procedure is repeated for 999 resamples with the given
 categories assigned at random with constant probabilities.
-Observed numbers of occurrences deviating by more than two standard deviations from the mean of the
+The observed numbers of occurrences deviating by more than two standard deviations from the mean of the
 resampled results are regarded as strong evidence of non-random patterns being
 present in given clusters.
-To achieve stability of results and eliminate observations occurring due to
+To achieve the stability of results and eliminate observations occurring by
 chance in small clusters with low numbers of categories of interest,
 the whole resampling procedure is repeated three times and only observations present in
-all the iterations are reported with expected numbers of occurrence and their
+all the iterations are reported with the expected numbers of occurrence and their
 deviations from observed values summarized as mean values.
 
 <!-- The size of the radius is based on the results of nearest neighbors analysis, where
@@ -405,7 +381,7 @@ described for the neighborhood derived from the graphs.-->
 
 <!-- software packages -->
 Data is analyzed in an R environment for statistical computing and graphics
-[@rcore] using functions of several different packages, for the complete list
+[@rcoreteam2021] using functions of several different packages; for the complete list,
 see the supplementary information.
 
 <!-- readr [@wickham2017a], dplyr [@wickham2016] and
@@ -438,58 +414,58 @@ variables is treated as nominal data.
 
 # Results
 
-## Artefact combinations
+## Artifact combinations
 
-By counting co-occurrences of analyzed variables on simulated data matrices and comparing
+By counting the co-occurrences of analyzed variables on simulated data matrices and comparing
 the distributions of the statistics proposed by @manly1996 with the values calculated for
-the original data set we can establish whether the overall pattern of artifacts
+the original data set, we can establish whether the overall pattern of artifact
 distribution in the graves is non-random and further identify artifacts that deviate
 from the random pattern.
-The overall deviation from expected co-occurrences, i.e. the *S* statistic
+The overall deviation from expected co-occurrences, i.e., the *S* statistic
 [@manly1996, 475] is significantly large at the 0.05 alpha level.
 This suggests that there is strong evidence that the overall distribution of
 artifacts in different graves is not random. <!--(see Fig. \@ref(fig:sstat))-->
 
-Examining distributions of individual artifacts we find that at the 0.05
+Examining distributions of individual artifacts, we find that at the 0.05
 significance level only adzes, grinding tools, ceramic bowls and spondylus beads
 are distributed non-randomly.
 Close to the 0.05 alpha level are distributions of bone tools and ceramic bottles
 (Fig. \@ref(fig:cooc-vstat)).
-Among the grave goods that are found to be randomly distributed in the graves
+Among the grave goods found to be randomly distributed in the graves
 across the burial ground are ocher pigment, lithics, pebbles, globular pots and
 special types of pottery vessel shapes, spondylus pendants and buckles.
 
 The relationships between artifact types frequently occurring and missing together
 in graves are visualized in Fig. \@ref(fig:cooc-nets) with
-clusters established using fast-greedy algorithm [@newman2004] and strength of the
+clusters established using a fast-greedy algorithm [@newman2004] and the strength of the
 given association expressed by the thickness of the edge connecting the nodes.
-Artifacts most frequently present with other artifacts are with 5 links grinding tools and
-ceramic bowls and with 4 links adzes, non-local lithic tools, ocher pigment and
-spondylus beads.
+Artifacts most frequently present with other artifacts are grinding tools and
+ceramic bowls with five links and adzes, non-local lithic tools, ocher pigment and
+spondylus beads with four links.
 The association is strongest between spondylus beads and (a) ceramic bottles and
 (b) pigment; and adzes and (a) non-local lithics and (b) bone tools.
-Artifacts that are frequently absent in the graves together are with 6 links
-local lithic tools, globular pots, ceramic bowls and spondylus buckles with
-5 and 4 links respectively.
+Artifacts frequently absent with other artifacts in the graves are  
+globular pots, local lithic tools, ceramic bowls and spondylus buckles
+with seven to four links respectively.
 The strongest antagonist relationships are between globular pots and (a) bowls and
 (b) adzes.
 
 Artifacts non-randomly distributed across the cemetery are further used to
 check whether significant differences exist between their occurrences in
 different groups defined based on origin, sex, age and their combinations.
-Exploring single attributes the only differences are in the categorization to
-differently sexed bodies, these are significant differences
+Exploring single attributes, the only differences are in the categorization to
+differently sexed bodies; there are significant differences
 between male- and female-sexed bodies.
-In case of age or origin there are no significant differences observed.
-If we combine sex and age categories the distinction between juvenile, adult and mature
+In the case of age or origin, no significant differences are observed.
+If we combine sex and age categories, the distinction between juvenile, adult and mature
 female-sexed bodies and adult male-sexed bodies is evident.
 Another observed dichotomy is present between adult males and juveniles (non-adults).
-More or less the same relations are present in case of combinations of sex and origin attributes.
+The same relationships are essentially present in the case of combinations of sex and origin attributes.
 Local male-sexed bodies have significantly different combinations of non-randomly
 distributed artifacts from both local and non-local female-sexed bodies and non-adults.
 If all the categories are combined the divisions are even more evident.
-Local male-sexed bodies of Adultus age category deviate in the artifact distributions
-from adult local and non-local females, Maturus/Senilis non-local female-sexed bodies
+Local male-sexed bodies in the *Adultus* age category deviate in the artifact distributions
+from adult local and non-local females, *Maturus/Senilis* non-local female-sexed bodies
 and juveniles.
 
 ## Spatial patterning
@@ -500,37 +476,36 @@ expected counts (for the details see supplementary information).
 Inconclusive result of the quadrat test is not surprising because as was noted
 earlier, we do not expect *first-order* properties to play major roles in
 placing of the individual burials. -->
-Results of functions based on nearest neighbors are reported in Fig. \@ref(fig:pp-funs).
-Both *G* and  *F* functions do slightly deviate from the curve expected
-under independent random process
-but neither traverses the boundaries of the envelope.
-Thus the cumulative nearest-neighbor distance (*G*) as well as the
+The results of functions based on nearest neighbors are reported in Fig. \@ref(fig:pp-funs).
+Both *G* and  *F* functions slightly deviate from the curve expected
+under an independent random process,
+but neither crosses the boundaries of the envelope.
+Thus, the cumulative nearest-neighbor distance (*G*) as well as the
 empty-space function (*F*) are well approximated by
-random process and do not show evidence for spatial clustering nor repellent functions
+the random process and do not show evidence for spatial clustering or repellent functions
 taking place.
-On the contrary
+On the contrary,
 the *K* and *T* functions show clear deviations from the expected curve and both exceed
-the boundaries of given envelopes at distances around or smaller than 5 meters.
+the boundaries of the given envelopes at distances around or smaller than 5 meters.
 <!-- in case of *K* and slightly more in case of *T* function.-->
-This means that number of nearest neighbors at this and larger distances is
+This means that the number of nearest neighbors at this and larger distances is
 significantly higher than we would expect under complete spatial randomness.
-The overall point pattern thus shows clear signs of clustering process taking place.
+The overall point pattern thus shows a clear signs of clustering process taking place.
 
-This means that the locations of new burials were not chosen at random
-but were affected by the positions of previous burials.
-The pattern begins to cluster at the distance of around 5 meters, meaning
-that beginning at this distance, the probability of finding a neighboring burial is
+This suggests that the locations for new burials were not chosen at random
+but were influenced by the positions of previous burials.
+The pattern begins to cluster at a distance of around 5 meters, i.e.,
+beginning at this distance, the probability of finding a neighboring burial is
 much higher than it would be if the burials were placed randomly in space.
-The community burying their dead at the cemetery of Vedrovice *Široká u lesa*
+The community burying their dead at the *Široká u lesa* cemetery in Vedrovice
 did so in an organized manner taking into account previous burials at the same place,
-meaning their positions were known, probably marked on the surface somehow.
-This would imply existence of non-perishable marks on the surface of the cemetery and/or their
-maintenance from time to time.
+meaning their positions were known, probably marked somehow on the surface.
+This would imply the existence of non-perishable marks on the surface of the cemetery and/or their maintenance from time to time.
 
-Results of percolation analysis reveal more detailed view of the clustering process
-taking place, see Fig. \@ref(fig:perc-distance).
-The distances where relative stability of clusters emerges are labeled.
-The curve reveals a steady growth up until
+The results of a percolation analysis reveal a more detailed view of the clustering process
+taking place; see Fig. \@ref(fig:perc-distance).
+The distances at which the relative stability of clusters emerges are labeled.
+The curve reveals a steady growth up until a
 radius of 5 meters and then a large skip towards a single cluster
 between 5.5 and 6.5 meters.
 This point of cluster growth is revealed by the point pattern analysis as well.
@@ -538,91 +513,91 @@ The clusters at chosen distances are shown in Fig. \@ref(fig:perc-plan).
 
 ## Neighborhood structure
 
-The results of multitype *K* function show deviations from random processes for
+The results of the multitype *K* function show deviations from random processes for
 most of the observed categories in Fig. \@ref(fig:pp-crossk).
 The distances at which these deviations start occurring are in most cases rather large,
-well over 10 meters and considering the fact that at the 10.4 meters radius
-around individual points the percolation analysis proved existence
-of single large cluster encompassing almost all of the points, these
-observations correspond with the deviations observed for single *K* function.
-The only notable deviation we consider worth mentioning is in case of age
-category in pairs of juveniles and in sex category between pairs of non-adults.
+well over 10 meters and, considering the fact that at the 10.4 meters radius
+around individual points the percolation analysis proved the existence
+of a single large cluster encompassing almost all of the points, these
+observations correspond to the deviations observed for the single *K* function.
+The only notable deviation we consider noteworthy is in the case of age
+category in pairs of juveniles and in the sex category between pairs of non-adults.
 Here the deviation from random processes is observed at smaller distances than
-in case of other variables at distances around 5 meters.
-This proves tighter bound cluster of juveniles in south-eastern part of the cemetery.
+in the case of other variables at distances around 5 meters.
+This proves a tighter bound cluster of juveniles in the southeast part of the cemetery.
 
-Multitype *K* for combination of age and sex categories suggests clustering process
+Multitype *K* for the combination of age and sex categories suggests a clustering process
 between bodies determined as adult females and juveniles and vice versa.
 The relationship between pairs of non-adults/juveniles is also confirmed.
 Several other observed deviations occur at large distances and the explanation for
-these is same as in case of multitype *K* for single categories.
+these is the same as in the case of multitype *K* for single categories.
 
-In case of neighborhood structure derived from Delaunay triangulation (maximum
+In the case of neighborhood structure derived from Delaunay triangulation (maximum
 number of neighbors scenario) and
-Gabriel graph (minimum number of neighbors scenario, Fig. \@ref(fig:plan-graphs))
+Gabriel graph (minimum number of neighbors scenario, Fig. \@ref(fig:plan-graphs)),
 most of the observed relationships are not significantly different from those
 derived by randomization experiment.
-In the Delaunay triangulation the significant relations are observed in two cases
+In the Delaunay triangulation the significant relationships are observed in two cases
 between (1) pairs of non-adults and (2) female-sexed bodies and non-adults.
-The first observation can be again given into relation with higher concentration of
-non-adults in south-eastern space of the burial ground.
-In regard to sex category Gabriel graph shows an association
+The first observation can again be connected with a higher concentration of
+non-adults in the southeast space of the burial ground.
+In regard to the sex category, the Gabriel graph shows an association
 between female-sexed and male-sexed bodies.
-In only one case are the observations from both of the graphs significant and
-that is between pairs of bodies of mature age category.
+In only one case are the observations from both of the graphs significant, and
+that is among pairs of bodies in the mature age category.
 
-The combinations of categories in Delaunay graph show significant relations for
-pairs of bodies labeled as Maturus/Senilis category females with
+The combinations of categories in the Delaunay graph show significant relationships for
+pairs of bodies labeled as *Maturus/Senilis* category females with
 (1) juvenile females and with (2) unsexed juveniles.
 The relationship between pairs of juvenile/non-adult bodies is again confirmed.
-Gabriel graph in the sex/age category shows relations between (1) Adultus female and male bodies,
-(2) Maturus female and male bodies and (3) pairs of Maturus female bodies.
-The origin/sex combination of categories produces significant deviation from
+The Gabriel graph in the sex/age category shows relationships between (1) *Adultus* female and male bodies;
+(2) *Maturus* female and male bodies; and (3) pairs of *Maturus* female bodies.
+The origin/sex combination of categories produces a significant deviation from
 expected frequencies for (1) non-local female bodies and local non-adults in
-Delaunay triangulation and in Gabriel graph for (1) non-local female and local male
+Delaunay triangulation and in a Gabriel graph for (1) non-local female and local male
 bodies and vice versa.
-The origin/age combination shows significant departures only in Gabriel graph for
-local Adultus bodies neighboring with (1) non-local Maturus bodies and (2) local juvenile bodies.
-Last but not least, incorporating all of the categories into the networks we observe
-significant results in both of the graphs (1) non-local Maturus female bodies and
-local juvenile (non-adult) bodies and  in case of Gabriel graph relation
-between (2) non-local Adultus female and local Maturus male bodies.
+The origin/age combination shows significant departures only in the Gabriel graph for
+local *Adultus* bodies neighboring with (1) non-local *Maturus* bodies and (2) local juvenile bodies.
+Last but not least, incorporating all of the categories into the networks, we observe
+significant results in both of the graphs for non-local *Maturus* female bodies and
+local juvenile (non-adult) bodies and in the case of the Gabriel graph a relationship
+between non-local *Adultus* female and local *Maturus* male bodies.
 
 Clusters formed at different percolation distances
-show following deviations from expected numbers of
+show the following deviations from the expected number of
 occurrences of given categories at different scales.
-Regarding the determination of sex of the bodies, at the threshold of 3.9 meters
-we observe that in the largest cluster (nr. 3, Fig. \@ref(fig:perc-plan))
-there are more non adults and less male-sexed bodies and in the second largest
-cluster (nr. 10) there are slightly more male-sexed bodies than would
-be expected under random process.
-The overrepresentation of non-adult bodies is repeated in the following
-threshold distance of 4.6 meters in the largest cluster (nr. 3).
-Last but not least, in the cluster nr. 8 (north of the cemetery) at the distance
-of 5.5 meters female-sexed bodies are more frequent than we would expect.
+Regarding the determination of the sex of the bodies, at the threshold of 3.9 meters
+we observe that in the largest cluster (no. 3, Fig. \@ref(fig:perc-plan))
+there are more non-adults and less male-sexed bodies and in the second largest
+cluster (no. 10) there are slightly more male-sexed bodies than would
+be expected under a random process.
+The over-representation of non-adult bodies is repeated in the following
+threshold distance of 4.6 meters in the largest cluster (no. 3).
+Last but not least, in cluster no. 8 (north of the cemetery) at the distance
+of 5.5 meters, female-sexed bodies are more frequent than we would expect.
 The age categories correspond to the previous observations where
-most evident is the overrepresentaion of juvenile bodies at the 3.9 meters threshold in
-cluster nr. 3.
-Exploring the origin of the bodies based on Strontium isotope signature we
-find that cluster in the south-western part at threshold distances 3.9 and 5.5 meters
-(nr. 10 and 5 respectively) consists of less non-local bodies than would be expected.
-Lastly at the distance radius 2.8 meters there are more local bodies in the central
-cluster of the cemetery (nr. 8).
+the over-representation of juvenile bodies at the 3.9-meter threshold in
+cluster no. 3 is most evident.
+Exploring the origin of the bodies based on the strontium isotope signature, we
+find that the cluster in the southwest part at threshold distances of 3.9 and 5.5 meters
+(no. 10 and 5 respectively) consists of less non-local bodies than would be expected.
+Finally, at a radius of 2.8 meters there are more local bodies in the central
+cluster of the cemetery (no. 8).
 
 In the combined categories most of the already observed patterns are repeated and
 highlighted.
 In the largest cluster across percolation thresholds at 3.9 and 4.6 meters
-(nr. 3) there is abundance of (1) local non-adults/juveniles and (2) non-local
-female sexed bodies of Maturus age category and on the other hand
-lesser numbers of (3) juvenile female-sexed bodies.
-The central cluster across distances 2.8, 3.9 and 4.6 (nr. 8, 10 and 7 respectively)
-shows higher numbers of local male- and female-sexed bodies of Adultus category and in case of
-female bodies Maturus age categories.
-The south-western cluster (nr. 10, 7 and 5) at percolation distances 3.9, 4.6 and 5.5
-is clearly dominated by local male-sexed bodies of Maturus age category.
-Last but not least, in case of all the categories combined together a cluster in
-the western part of the cemetery at percolation threshold 4.6 and 5.5 (nr. 8 and 6 respectively)
-reveals higher counts of non-local female-sexed bodies of Adultus age category.
+(no. 3), there is an abundance of (1) local non-adults/juveniles and (2) non-local
+female-sexed bodies of the *Maturus* age category and, on the other hand,
+lower numbers of (3) juvenile female-sexed bodies.
+The central cluster across the distances of 2.8, 3.9 and 4.6 meters (no. 8, 10 and 7 respectively)
+shows higher numbers of local male- and female-sexed bodies of the *Adultus* category
+and, in the case of female bodies, the *Maturus* age categories.
+The southwest cluster (no. 10, 7 and 5) at percolation distances 3.9, 4.6 and 5.5 meters
+is clearly dominated by local male-sexed bodies of the *Maturus* age category.
+Last but not least, in the case of all the categories combined together, a cluster in
+the western part of the cemetery at the percolation threshold of 4.6 and 5.5 meters (no. 8 and 6 respectively)
+reveals higher counts of non-local female-sexed bodies of the *Adultus* age category.
 
 <!-- Methods of neighborhood relationship construction examined include
 distance based approaches where all the neighbors that fall into a given buffer are considered,
@@ -662,83 +637,83 @@ indeterminate category $p \approx 0.02$.
 # Conclusions and discussion
 
 Our goal was to identify non-random differences between burials both in terms
-of the artifact contents of the graves and position within the cemetery.
-The burials or more precisely the buried bodies were divided into categories
-based on three variables commonly connected to the identity in the Neolithic period.
+of the artifact contents of the graves and their position within the cemetery.
+The burials or, more precisely, the buried bodies were divided into categories
+based on three variables commonly connected to identity in the Neolithic period.
 These categories are biological sex, age and origin.
-The exploration was done both for the categories as single variables and for
+The exploration was conducted both for the categories as single variables and for
 all of their combinations.
 
 <!-- Artifact combinations -->
-In case of grave goods analysis we explored the associations between artifacts and
-different categories of the bodies not to establish or reveal any new relations
+In the case of the grave good analysis, we explored the associations between artifacts and
+different categories of the bodies not to establish or reveal any new relationships
 but merely to explore whether the known associations between sexes and specific grave goods
-are influenced by factors such as age and local or non-local origin of the buried person.
-We did not explore the relations between grave goods and burial attributes at the
-individual artifact scale so to say but used an overall measure (Euclidean distance)
+are influenced by factors such as age and the local or non-local origin of the buried person.
+We did not explore the relationships between grave goods and burial attributes at the
+individual artifact scale, so to say; instead, we used an overall measure (Euclidean distance)
 of between burial distance in terms of non-randomly distributed artifacts.
 By establishing whether the mean ED between categories defined by the grouping attributes
 mentioned above falls within or defies the expected distribution derived by
-randomization experiment we identified deviations that are not random.
+randomization experiment, we identified deviations that are not random.
 
-The most often reappearing is the difference between local adult male-sexed bodies and
+The most frequently reappearing is the difference between local adult male-sexed bodies and
 both local and non-local female-sexed ones and unsexed juveniles.
-This relation shows that sex classification of the body, although being
-accentuated by local origin and age category, eminently structures the artifact assemblage
-in the grave.
+This relationship shows that sex classification of the body, although being
+accentuated by local origin and age category, structures the artifact assemblage
+in the grave very well.
 
 <!-- Spatial pattern -->
-Spatial organization of the cemetery was explored using point pattern analysis
+The spatial organization of the cemetery was explored using point pattern analysis
 techniques.
 The simpler methods based on cumulative frequency distribution of nearest neighbors
 (*G* function) and its generalization for empty space points (*F* function)
 did not show deviations from complete spatial random processes.
-On the other hand the methods including all the distances between events in the
-given area  (*K* and *T* functions) indicated clustering processes are taking place.
-*K* function for multivariate point patterns was also used in order to identify
+On the other hand, the methods, including all the distances between events in the
+given area  (*K* and *T* functions), indicated that clustering processes are taking place.
+The *K* function for multivariate point patterns was also used in order to identify
 clustering processes between events of different categories.
 We consider this not useful in most cases because the distances at which interesting
-clustering processes are suggested imply existence of singular cluster across
-the cemetery and a finer scale is of much higher interest for our endeavor.
+clustering processes are suggested imply the existence of a single cluster across
+the cemetery and a finer scale is of much greater interest for our work.
 
-Thus to identify whether close burials are more similar in terms of categories
-outlined above two neighborhood graphs, Delaunay triangulation and Gabriel
-graph were used.
-They are examples of high and low neighbors case scenario respectively.
+Thus, to identify whether close burials are more similar in terms of the categories
+outlined above, two neighborhood graphs – Delaunay triangulation and a Gabriel
+graph – were used.
+They are examples of high and low neighbor case scenario, respectively.
 Most of the observations from the graphs proved not significantly different from
-randomization experiment.
+the randomization experiment.
 There are associations between non-local female-sexed
-bodies of Maturus age category and (local) juveniles in both of the graphs.
-This observation goes in hand with association of female-sexed bodies
-and non-adults in Delaunay triangulation.
+bodies of the *Maturus* age category and (local) juveniles in both of the graphs.
+This observation goes hand in hand with the association of female-sexed bodies
+and non-adults in the Delaunay triangulation.
 This is not trivial because in general non-adult bodies are
-concentrated in the south-eastern part within the cemetery whereas female-sexed
+concentrated in the southeast part of the cemetery, whereas female-sexed
 bodies are scattered all around the area of the cemetery.
-Similarly individuals determined as of Maturus/Senilis age category are in contrast to
+Similarly, individuals determined as belonging to the *Maturus/Senilis* age category are in contrast to
 juvenile bodies concentrated in the western half of the cemetery.
-Furthermore in Gabriel graph there is a clear association between non-local Adultus
-female-sexed bodies and local Maturus male-bodies.
-This agrees with general association of female- and male-sexed bodies of
-Adultus and Maturus/Senilis age categories in the Gabriel graph.
+Furthermore, the Gabriel graph shows a clear association between non-local *Adultus*
+female-sexed bodies and local *Maturus* male-bodies.
+This corresponds to the general association of female- and male-sexed bodies of
+the *Adultus* and *Maturus/Senilis* age categories in the Gabriel graph.
 
-Most detailed view on the clustering within the cemetery and what kinds of
+The most detailed view of the clustering in the cemetery and what kinds of
 bodies are prevalent in the given clusters is achieved by the percolation analysis.
 The largest cluster across several percolation distances consists of more
-non-adult/juvenile bodies and non-local female-sexed bodies of Maturus category
-on one hand and on the other the male-sexed bodies are underrepresented here.
+non-adult/juvenile bodies and non-local female-sexed bodies of the *Maturus* category
+on the one hand while, on the other, the male-sexed bodies are underrepresented here.
 This is in full accordance with previous observations.
-The central cluster visible at small percolation distances shows overrepresentation of
+The central cluster visible at small percolation distances shows the overrepresentation of
 local male- and female-sexed bodies.
-Also the south-western cluster has higher counts of local male-sexed bodies of Maturus age category and
-low amount of non-local bodies.
-On the other hand non-local female-sexed bodies of Adultus age category are
+Also, the southwest cluster has higher counts of local male-sexed bodies of the *Maturus* age category and
+a low number of non-local bodies.
+On the other hand, non-local female-sexed bodies of the *Adultus* age category are
 overrepresented in the western cluster neighboring with the previously mentioned one.
 
 The spatial analysis clearly proved that there is a clustering process taking place
-in the cemetery and what more, age, sex and origin of the buried bodies play
+in the cemetery and what more, the age, sex and origin of the buried bodies play
 structuring roles in the arrangement of the burials.
-The patterns are not too strict but some appear to be quite constant across a
-range of methods used.
+The patterns are not too strict, but some appear to be quite constant across the a
+range of applied methods.
 
 <!-- ======================================================================= -->
 
@@ -748,93 +723,101 @@ We have successfully shown that all of the categories considered
 to be somehow related to identity in the Neolithic and especially their combinations
 play substantive roles in structuring the assemblage of grave goods deposited
 within the burials.
-Some of the relations between the explored categories and
-artifacts are well known across the LBK burial grounds,
-for instance the association between
-male burials and polished stone adzes [e.g. @bickle2020; @bentley2012] and some
-are known specifically from Vedrovice - *Široká u lesa* cemetery, for
-example the dichotomy
-between globular pottery shapes being associated with female-sexed bodies and
-on the other hand bowls with male-sexed bodies [@kvetina2004].
+Some of the relationships between the explored categories and
+artifacts are well known at the LBK burial grounds,
+for instance, the association between
+male burials and polished stone adzes [e.g., @bickle2020; @bentley2012], and some
+are known specifically from the *Široká u lesa* cemetery in Vedrovice, e.g.,  the dichotomy
+between globular pottery shapes being associated with female-sexed bodies and,
+on the other hand, bowls with male-sexed bodies [@kvetina2004].
 Our goal was not to establish any new connections between genders or other burial
 attributes and grave good categories, but to use these associations
 to see which groups of burials are well separated based on the grave goods.
 
-First of all, we have shown that overall distribution of artifacts in the graves
-was not random, the grave goods distributed non-randomly were identified and
-subsequently only these were used in the further analysis effectively removing any
+First of all, we have shown that the overall distribution of the artifacts in the graves
+was not random; the grave goods distributed non-randomly were identified and
+subsequently only these were used in the further analysis, effectively removing any
 possible *noise* from artifacts distributed randomly.
-Our main premise here is that the identity of the dead is based mostly on the attributes like sex,
-age and origin defined on the basis of Strontium isotope signal.
+Our main premise here is that the identity of the dead is based mostly on attributes like sex,
+age and origin defined on the basis of the strontium isotope signal.
 We view these *layers* of identity as responsible for differences in
-artifact compositions of different graves as well as to a certain degree a structuring
+artifact compositions of different graves as well as, to a certain degree, a structuring
 factor for the overall spatial organization of the cemetery.
-In case of the grave goods this relationship is largely dominated by a category
+In the case of the grave goods, this relationship is largely dominated by a category
 of adult local male-sexed bodies that are distinctly different from both female-sexed bodies
-of all the age categories and juveniles.
-This is caused by already mentioned artifact characteristic of male burials, the stone adze.
-@bickle2020 removes polished and beveled stone tools from her analysis completely
+of all age categories and juveniles.
+This is caused by the aforementioned artifact characteristic of male burials, the stone adze.
+@bickle2020 completely removes polished and beveled stone tools from her analysis
 in order to remove their dominance over other patterns.
 In our case, adzes are one of four non-randomly occurring artifacts and removing
 them from the analysis completely would render it difficult to note any
 of the visible patterns.
 
-In case of spatial analysis we explore several approaches.
-The nearest-neighbor methods are a great tool in analyzing the overall cemetery but
-in the small scale they do not prove useful to discover any interesting relationships
+In the case of spatial analysis, we explore several approaches.
+The nearest-neighbor methods are a great tool in analyzing the overall cemetery, but
+on a small scale they do not prove useful for discovering any interesting relationships
 between studied *layers* of identity.
 By far the most useful method in analyzing the intra-site spatial arrangement
-is the percolation analysis.
-Another important point is the use of resampling methods that allows for identification
-of random and non random patterns both in grave goods analysis and spatial organization.
+is percolation analysis.
+Another important point is the use of resampling methods that allow for the identification
+of random and non-random patterns, both in grave good analysis and spatial organization.
 
 <!--Traditional GIS based methods were already applied to study the cemetery
 [@kvetina2004] the techniques applied here reveal some trends that were previously-->
 
-We have shown that not only sex that is traditionally perceived
-as the most important structuring proxy for identity differentiation but also
-age and quite importantly also origin of the deceased played substantial
+We have shown that not only sex, which is traditionally perceived
+as the most important structuring proxy for identity differentiation, but also
+age and, quite importantly, also the origin of the deceased played substantial
 roles in equipping the graves with various types of artifacts by the Vedrovice community.
-In regard to spatial arrangement of the cemetery we demonstrated that there are
+In regard to the spatial arrangement of the cemetery, we demonstrated that there are
 prevalent clustering processes taking place across the cemetery and also groups
 based on certain identities tend to be buried in clusters.
-These observations are based on extensive use of resampling approaches that
+These observations are based on the extensive use of resampling approaches that
 allowed us to distinguish between patterns occurring solely by chance and
 patterns significantly deviating from randomness.
+
 
 <!-- ======================================================================= -->
 <!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES --><!-- FIGURES -->
 
+```{r fig-widths}
+fig_wid <- c(".3\\textwidth",
+             ".6\\textwidth",
+             ".8\\textwidth",
+             "\\textwidth")
+```
+
+
 <!-- randomization -->
-```{r sstat, fig.cap = "Distribution of simulated and observed *S* statistic"}
+```{r sstat, fig.cap="Distribution of simulated and observed *S* statistic", out.width=fig_wid[1]}
 knitr::include_graphics(here("plots/cooc_sstat.pdf"))
 ```
 
-```{r cooc-vstat, fig.cap = "Simulated and observed *V* statistics for different variables"}
+```{r cooc-vstat, fig.cap="Simulated and observed *V* statistics for different variables", out.width=fig_wid[4]}
 knitr::include_graphics(here("plots", "cooc_vstats.pdf"))
 ```
 
 ```{r label-cooc-nets}
-label_cooc_nets <- paste("Networks of variables frequently present together and exluding each other.",
-                        "1 – bottle, 2 – bowl, 3 – globular pot, 4 – polished stone tool, 5 – local lithics,",
-                        "6 – non-local lithics, 7 – pebble, 8 – grinding slab, 9 – bone tool,",
-                        "10 – U-shaped pendant, 11 – spondylus beads, 12 – O-shaped buckle.",
-                        "Images adapted from Podborský 2002")
+label_cooc_nets <- paste("Networks of variables frequently present together and excluding each other.",
+                         "1 – bottle, 2 – bowl, 3 – globular pot, 4 – polished stone tool, 5 – local lithics,",
+                         "6 – non-local lithics, 7 – pebble, 8 – grinding slab, 9 – bone tool,",
+                         "10 – U-shaped pendant, 11 – spondylus beads, 12 – O-shaped buckle.",
+                         "Images adapted from Podborský 2002")
 ```
-```{r cooc-nets, fig.cap=label_cooc_nets }
-knitr::include_graphics(here("text/figs", "cooc_nets_fin.png"))
+```{r cooc-nets, fig.cap=label_cooc_nets, out.width=fig_wid[4]}
+knitr::include_graphics(here::here("plots", "cooc_nets_fin.jpeg"))
 ```
 
 <!-- plans -->
-```{r plan-sex, fig.cap="Plan of the cemetery, kernel density estimation for differently sexed bodies"}
+```{r plan-sex, fig.cap="Plan of the cemetery, kernel density estimation for differently sexed bodies", out.width=fig_wid[4]}
 knitr::include_graphics(here("text/figs/plan_sex.pdf"))
 ```
 
-```{r plan-age, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different ages"}
+```{r plan-age, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different ages", out.width=fig_wid[4]}
 knitr::include_graphics(here("text/figs/plan_age.pdf"))
 ```
 
-```{r plan-orig, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different origins"}
+```{r plan-orig, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different origins", out.width=fig_wid[2]}
 knitr::include_graphics(here("text/figs/plan_origin.pdf"))
 ```
 
@@ -846,82 +829,34 @@ label_pp_funs <- paste(
   "*Dashed line* -- theoretical curve under complete spatial randomness,
   *solid line* -- empirical curve, *gray area* -- envelope")
 ```
-```{r pp-funs, fig.cap=label_pp_funs}
+```{r pp-funs, fig.cap=label_pp_funs, out.width=fig_wid[4]}
 knitr::include_graphics(here("text/figs/pp_funs.pdf"))
 ```
 
 ```{r label-pp-crossk}
-label_crossk <- paste("Multitype K function for different categorical variables, for legend see previous Fig.")
+label_crossk <- paste("Multitype K function for different categorical variables; for legend, see previous Figure")
 ```
-```{r pp-crossk, fig.cap=label_crossk}
+```{r pp-crossk, fig.cap=label_crossk, out.width=fig_wid[3]}
 knitr::include_graphics(here("text/figs/pp_crossk.pdf"))
 ```
 
 <!-- neighborhood -->
-```{r plan-graphs, fig.cap="Neighborhood graphs: Delaunay triangulation and Gabriel graph"}
+```{r plan-graphs, fig.cap="Neighborhood graphs: Delaunay triangulation and Gabriel graph", out.width=fig_wid[4]}
 knitr::include_graphics(here("text/figs/plan_graphs.pdf"))
 ```
-
-<!--
-```{r label-nb-sex}
-label_nb_sex <- paste(
-"Mean neighbors in a given category of sex;",
-"*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value"
-# "*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body"
-)
-```
-```{r nb-sex, fig.cap=label_nb_sex}
-# knitr::include_graphics(here("text/figs/nb_sex.pdf"))
-```
-
-```{r label-nb-age}
-label_nb_age <- paste(
-"Mean neighbors in a given simplified age category"
-# "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
-)
-```
-```{r nb-age, fig.cap=label_nb_age}
-# knitr::include_graphics(here("text/figs/nb_age.pdf"))
-```
-
-```{r label-nb-orig}
-label_nb_orig <- paste(
-"Mean neighbors in a given category of origin based on Sr isotopes"
-# "*Gray area* -- density estimation for the simulated data, *vertical line* -- observed value;",
-# "*F* -- female-sexed body, *M* -- male-sexed body, *n. a.* -- non-adult body"
-)
-```
-```{r nb-orig, fig.cap=label_nb_orig}
-# knitr::include_graphics(here("text/figs/nb_orig.pdf"))
-```
--->
 
 <!-- percolation analysis -->
 
 ```{r label-perc-dist}
 label_perc_dist <- "Normalized sizes of largest clusters at given distances, percolation thresholds labeled"
 ```
-```{r perc-distance, fig.cap=label_perc_dist}
+```{r perc-distance, fig.cap=label_perc_dist, out.width=fig_wid[2]}
 knitr::include_graphics(here("text/figs/perc_distance.pdf"))
 ```
 
-```{r perc-plan, fig.cap="Clusters formed at given percolation threshold distances"}
+```{r perc-plan, fig.cap="Clusters formed at given percolation threshold distances", out.width=fig_wid[3]}
 knitr::include_graphics(here("text/figs/perc_plan_ids.pdf"))
 ```
-
-<!-- ======================================================================= -->
-<!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES --><!-- TABLES -->
-<!-- ```{r nb-tab-sex} -->
-<!-- tab <- read_csv(here("data/temp/nb_sex_p.csv")) %>% -->
-<!--          mutate(relation = str_c(from, to, sep = " - ")) %>% -->
-<!--   select(relation, everything(), -from, -to) -->
-
-<!-- tnames <- c("relation", rep(c("mean", "p"), 3)) -->
-
-<!-- knitr::kable(tab, booktabs = TRUE, col.names = tnames, linesep = "", caption = "Results...") %>% -->
-<!--   kableExtra::add_header_above(c(" ", "Buffer" = 2, "Delaunay" = 2, "Gabriel" = 2)) -->
-<!-- ``` -->
-
 
 <!-- ======================================================================= -->
 
