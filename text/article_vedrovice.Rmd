@@ -154,16 +154,22 @@ These include biological sex, age simplified into age groups and an indicator
 variable as to whether the strontium signal in the remains is of local origin.
 The variable representing the recorded sex is simplified into the following
 categories: female-sexed body (abbreviated *F*), male-sexed body (*M*),
-non-adult (*n. a.*) and undetermined sex (*ind.*).
+non-adult (*n. a.*) and undetermined sex (*ind.*); see Fig. \@ref(fig:plan-sex).
 The age of the body is also simplified into three categories: juveniles (*juv.*)
 comprised of the groups *Infans* and *Juvenis*, adults (*ad.*, all bodies aged as *Adultus*)
 and mature bodies (*mat.*, anthropological categories *Adultus-Maturus*, *Maturus* and
-*Senilis*) and bodies of an undetermined age (*ind.*).
+*Senilis*) and bodies of an undetermined age (*ind.*); see Fig. \@ref(fig:plan-age).
 The last category is the indicator for the origin of the buried person.
 The local strontium range is defined as two standard deviations from the mean of Sr ranges of
 bodies with an age category determined as *Infans*.
 Bodies falling within this range are labeled as local, outside the range as non-local;
-where data on Sr values is missing, origin is not determined (*ind.*).
+where data on Sr values is missing, origin is not determined (*ind.*); see Fig. \@ref(fig:plan-orig).
+
+[Figure_04]
+
+[Figure_05]
+
+[Figure_06]
 
 As mentioned above, we consider these three variables -- sex, age and origin -- to be indicative of
 an individual's identity in the Neolithic.
@@ -341,6 +347,8 @@ graph.
 The observed values of neighbor categories are compared to distributions
 derived from 999 permutations of the simulated data.
 
+[Figure_09]
+
 <!-- Percolation analysis -->
 Another approach we consider for establishing neighborhood relationships is
 constructing buffer zones around each of the burials.
@@ -428,7 +436,9 @@ from the random pattern.
 The overall deviation from expected co-occurrences, i.e., the *S* statistic
 [@manly1996, 475] is significantly large at the 0.05 alpha level.
 This suggests that there is strong evidence that the overall distribution of
-artifacts in different graves is not random. <!--(see Fig. \@ref(fig:sstat))-->
+artifacts in different graves is not random (see Fig. \@ref(fig:sstat)).
+
+[Figure_01]
 
 Examining distributions of individual artifacts, we find that at the 0.05
 significance level only adzes, grinding tools, ceramic bowls and spondylus beads
@@ -438,6 +448,8 @@ Close to the 0.05 alpha level are distributions of bone tools and ceramic bottle
 Among the grave goods found to be randomly distributed in the graves
 across the burial ground are ocher pigment, lithics, pebbles, globular pots and
 special types of pottery vessel shapes, spondylus pendants and buckles.
+
+[Figure_02]
 
 The relationships between artifact types frequently occurring and missing together
 in graves are visualized in Fig. \@ref(fig:cooc-nets) with
@@ -453,6 +465,8 @@ globular pots, local lithic tools, ceramic bowls and spondylus buckles
 with seven to four links respectively.
 The strongest antagonist relationships are between globular pots and (a) bowls and
 (b) adzes.
+
+[Figure_03]
 
 Artifacts non-randomly distributed across the cemetery are further used to
 check whether significant differences exist between their occurrences in
@@ -496,6 +510,8 @@ This means that the number of nearest neighbors at this and larger distances is
 significantly higher than we would expect under complete spatial randomness.
 The overall point pattern thus shows a clear signs of clustering process taking place.
 
+[Figure_07]
+
 This suggests that the locations for new burials were not chosen at random
 but were influenced by the positions of previous burials.
 The pattern begins to cluster at a distance of around 5 meters, i.e.,
@@ -506,6 +522,8 @@ did so in an organized manner taking into account previous burials at the same p
 meaning their positions were known, probably marked somehow on the surface.
 This would imply the existence of non-perishable marks on the surface of the cemetery and/or their maintenance from time to time.
 
+[Figure_10]
+
 The results of a percolation analysis reveal a more detailed view of the clustering process
 taking place; see Fig. \@ref(fig:perc-distance).
 The distances at which the relative stability of clusters emerges are labeled.
@@ -514,6 +532,8 @@ radius of 5 meters and then a large skip towards a single cluster
 between 5.5 and 6.5 meters.
 This point of cluster growth is revealed by the point pattern analysis as well.
 The clusters at chosen distances are shown in Fig. \@ref(fig:perc-plan).
+
+[Figure_11]
 
 ## Neighborhood structure
 
@@ -529,6 +549,8 @@ category in pairs of juveniles and in the sex category between pairs of non-adul
 Here the deviation from random processes is observed at smaller distances than
 in the case of other variables at distances around 5 meters.
 This proves a tighter bound cluster of juveniles in the southeast part of the cemetery.
+
+[Figure_08]
 
 Multitype *K* for the combination of age and sex categories suggests a clustering process
 between bodies determined as adult females and juveniles and vice versa.
