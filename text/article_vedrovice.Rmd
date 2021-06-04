@@ -310,9 +310,9 @@ The given statistics for the independent random process are estimated using Mont
 simulation with 999 iterations.
 Although a smaller number of permutations should be sufficient to achieve
 credible results
-[@baddeley2016, 384], we follow the approach taken by @sayer2013 [78].
+[@baddeley2015, 384], we follow the approach taken by @sayer2013 [78].
 The ten most extreme realizations of the simulation are discarded as outliers, so
-the significance level is 0.01 [cf. @baddeley2016 410].
+the significance level is 0.01 [cf. @baddeley2015 410].
 The remaining realizations of given point processes are used to construct envelopes
 around function curves derived from observed data.
 
@@ -381,8 +381,12 @@ described for the neighborhood derived from the graphs.-->
 
 <!-- software packages -->
 Data is analyzed in an R environment for statistical computing and graphics
-[@rcoreteam2021] using functions of several different packages; for the complete list,
-see the supplementary information.
+[@rcoreteam2021] using functions of several different packages; 
+the most frequently used are packages from the *tidyverse* family [@wickham2019a].
+Packages *sf* [@pebesma2018], *spatstat* [@baddeley2015], *spdep* [@bivand2018] and 
+*concaveman* [@gombin2020] are used to perform various spatial analysis tasks; 
+*igraph* [@csardi2006a] to construct and analyze networks;
+*vegan* [@oksanen2020] and *randomizr* [@coppock2019] in the randomization experiments.
 
 <!-- readr [@wickham2017a], dplyr [@wickham2016] and
 reshape2 [@wickham2007] packages to manipulate the data.
@@ -784,13 +788,13 @@ patterns significantly deviating from randomness.
 fig_wid <- c(".3\\textwidth",
              ".6\\textwidth",
              ".8\\textwidth",
-             "\\textwidth")
+             ".98\\textwidth")
 ```
 
 
 <!-- randomization -->
 ```{r sstat, fig.cap="Distribution of simulated and observed *S* statistic", out.width=fig_wid[1]}
-knitr::include_graphics(here("plots/cooc_sstat.pdf"))
+knitr::include_graphics(here("plots", "cooc_sstat.pdf"))
 ```
 
 ```{r cooc-vstat, fig.cap="Simulated and observed *V* statistics for different variables", out.width=fig_wid[4]}
@@ -805,20 +809,20 @@ label_cooc_nets <- paste("Networks of variables frequently present together and 
                          "Images adapted from Podborský 2002")
 ```
 ```{r cooc-nets, fig.cap=label_cooc_nets, out.width=fig_wid[4]}
-knitr::include_graphics(here::here("plots", "cooc_nets_fin.jpeg"))
+knitr::include_graphics(here("plots", "cooc_nets_fin.jpeg"))
 ```
 
 <!-- plans -->
 ```{r plan-sex, fig.cap="Plan of the cemetery, kernel density estimation for differently sexed bodies", out.width=fig_wid[4]}
-knitr::include_graphics(here("text/figs/plan_sex.pdf"))
+knitr::include_graphics(here("plots", "plan_sex.pdf"))
 ```
 
 ```{r plan-age, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different ages", out.width=fig_wid[4]}
-knitr::include_graphics(here("text/figs/plan_age.pdf"))
+knitr::include_graphics(here("plots", "plan_age.pdf"))
 ```
 
 ```{r plan-orig, fig.cap="Plan of the cemetery, kernel density estimation for bodies of different origins", out.width=fig_wid[2]}
-knitr::include_graphics(here("text/figs/plan_origin.pdf"))
+knitr::include_graphics(here("plots", "plan_origin.pdf"))
 ```
 
 <!-- point pattern analysis -->
@@ -826,23 +830,23 @@ knitr::include_graphics(here("text/figs/plan_origin.pdf"))
 ```{r label-pp-funs}
 label_pp_funs <- paste(
   "Functions *G*, *F*, *K* and *T*.",
-  "*Dashed line* -- theoretical curve under complete spatial randomness,
-  *solid line* -- empirical curve, *gray area* -- envelope")
+  "*Dashed line* - theoretical curve under complete spatial randomness;
+  *solid line* - empirical curve; *gray area* - envelope")
 ```
 ```{r pp-funs, fig.cap=label_pp_funs, out.width=fig_wid[4]}
-knitr::include_graphics(here("text/figs/pp_funs.pdf"))
+knitr::include_graphics(here("plots", "pp_funs.pdf"))
 ```
 
 ```{r label-pp-crossk}
 label_crossk <- paste("Multitype K function for different categorical variables; for legend, see previous Figure")
 ```
 ```{r pp-crossk, fig.cap=label_crossk, out.width=fig_wid[3]}
-knitr::include_graphics(here("text/figs/pp_crossk.pdf"))
+knitr::include_graphics(here("plots", "pp_crossk.pdf"))
 ```
 
 <!-- neighborhood -->
 ```{r plan-graphs, fig.cap="Neighborhood graphs: Delaunay triangulation and Gabriel graph", out.width=fig_wid[4]}
-knitr::include_graphics(here("text/figs/plan_graphs.pdf"))
+knitr::include_graphics(here("plots", "plan_graphs.pdf"))
 ```
 
 <!-- percolation analysis -->
@@ -851,11 +855,11 @@ knitr::include_graphics(here("text/figs/plan_graphs.pdf"))
 label_perc_dist <- "Normalized sizes of largest clusters at given distances, percolation thresholds labeled"
 ```
 ```{r perc-distance, fig.cap=label_perc_dist, out.width=fig_wid[2]}
-knitr::include_graphics(here("text/figs/perc_distance.pdf"))
+knitr::include_graphics(here("plots", "perc_distance.pdf"))
 ```
 
 ```{r perc-plan, fig.cap="Clusters formed at given percolation threshold distances", out.width=fig_wid[3]}
-knitr::include_graphics(here("text/figs/perc_plan_ids.pdf"))
+knitr::include_graphics(here("plots", "perc_plan_ids.pdf"))
 ```
 
 <!-- ======================================================================= -->
