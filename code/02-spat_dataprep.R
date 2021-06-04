@@ -51,7 +51,7 @@ ved_exc <- st_cast(
 
 # window_rect <- owin(xrange = c(10, 22), yrange = c(10, 22.7))
 # window_poly <- spatstat::as.owin(st_cast(ved_sf_hull, "POLYGON"))
-window_exc <- spatstat::as.owin(ved_exc)
+window_exc <- spatstat.geom::as.owin(ved_exc)
 
 # plot
 # g_exc <- ggplot() + 
@@ -115,6 +115,8 @@ g_exc +
   facet_wrap(~origin)
 
 ggsave(here("plots", "plan_origin.pdf"), width = 12, height = 6, units = "cm")
+ggsave(here("plots", "plan_origin.eps"), width = 12, height = 6, units = "cm")
+
 
 # plan age
 g_exc + 
@@ -126,6 +128,7 @@ g_exc +
   facet_wrap(~age_sim)
 
 ggsave(here("plots", "plan_age.pdf"), width = 19, height = 6, units = "cm")
+ggsave(here("plots", "plan_age.eps"), width = 19, height = 6, units = "cm")
 
 # plan sex
 g_exc +
@@ -137,6 +140,7 @@ g_exc +
   facet_wrap(~sex)
 
 ggsave(here("plots", "plan_sex.pdf"), width = 19, height = 6, units = "cm")
+ggsave(here("plots", "plan_sex.eps"), width = 19, height = 6, units = "cm")
 
 # write layouts -----------------------------------------------------------
 

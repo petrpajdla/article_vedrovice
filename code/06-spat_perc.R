@@ -177,6 +177,9 @@ p$stats %>%
 
 ggsave(here::here("plots", "perc_distance.pdf"), width = 10, height = 7, units = "cm")
 
+# EPS
+ggsave(here::here("plots", "perc_distance.eps"), width = 10, height = 7, units = "cm")
+
 # mean and median nr of nodes
 # p$stats %>% 
 #   ggplot(aes(x = radius)) +
@@ -236,7 +239,7 @@ polygs <- ved_sf %>%
   select(id_burial, radius, clust) %>% 
   filter(radius %in% c(1.6, p_breaks[1:7])) %>% 
   group_by(radius) %>% 
-  nest() %>% 
+  nest() %>%
   mutate(data = map(data, group_by, clust),
          data = map(data, nest),
          data = map(data, rename, pts = data),
@@ -280,6 +283,9 @@ ggplot() +
 ggsave(here::here("plots", "perc_plan.pdf"), 
        width = 14, height = 21, units = "cm")
 
+ggsave(here::here("plots", "perc_plan.eps"), 
+       width = 14, height = 21, units = "cm")
+
 # numbers of clusters
 polygs_ids <- filter(polygs, radius %in% disp_radii) %>% 
   group_by(radius) %>%
@@ -297,7 +303,7 @@ ggplot() +
                             label.size = NA,
                             label.padding = .2,
                             na.rm = TRUE,
-                            fill = alpha(c("white"), 0.8)) +
+                            fill = "white") + # alpha(c("white"), 0.8)
   scale_shape_manual(values = c(22, 21, 24, 4)) +
   facet_wrap(vars(label_radius), ncol = 2) +
   coord_sf() +
@@ -315,6 +321,9 @@ ggplot() +
         legend.direction = "horizontal")
 
 ggsave(here::here("plots", "perc_plan_ids.pdf"),
+       width = 14, height = 21, units = "cm")
+
+ggsave(here::here("plots", "perc_plan_ids.eps"),
        width = 14, height = 21, units = "cm")
 
 # cluster assignment ------------------------------------------------------

@@ -95,6 +95,9 @@ g <- gridExtra::grid.arrange(g_delaunay, g_gabriel, nrow = 1)
 ggsave(plot = g, filename = here("plots/plan_graphs.pdf"), 
        width = 19, height = 8, units = "cm")
 
+# EPS
+ggsave(plot = g, filename = here("plots/plan_graphs.eps"), 
+       width = 19, height = 8, units = "cm")
 
 # graph objects for delaunay and gabriel ----------------------------------
 # gabriel

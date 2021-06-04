@@ -183,6 +183,22 @@ ggsave(here("plots", "cooc_vstats.pdf"),
        plot = v_plot, 
        width = 19, height = 20, units = "cm")
 
+# EPS does not allow transparency...
+v_plot_eps <- ggplot(v_exp_g, mapping = aes(x = value)) +
+  geom_density(fill = "gray80", color = NA) +
+  geom_vline(data = v_obs_g, mapping = aes(xintercept = value), size = 0.8) +
+  facet_wrap(vars(long), scales = "free", ncol = 3) +
+  xlab("v statistic") +
+  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
+            hjust = +1.2, vjust = +1.5) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+  theme_universe
+
+ggsave(here("plots", "cooc_vstats.eps"), 
+       plot = v_plot_eps, 
+       width = 19, height = 20, units = "cm")
+
 
 # normalizing to range 0-1 ------------------------------------------------
 v_normalized <- bind_rows(exp = v_exp_g, obs = v_obs_g, .id = "orig") %>% 
@@ -236,6 +252,22 @@ s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
 s_plot
 
 ggsave(here("plots", "cooc_sstat.pdf"), plot = s_plot, 
+       width = 6, height = 4, units = "cm")
+
+# EPS
+s_plot_eps <- ggplot(as_tibble(s_experimental), aes(value)) +
+  geom_density(fill = "gray80", color = NA) +
+  geom_vline(xintercept = s_observed, size = 0.8) +
+  geom_text(data = tibble(p = paste0(round(s_p_value, 3), "**")), 
+            aes(x = Inf, y = Inf, label = p), 
+            size = 3,
+            hjust = +1.1, vjust = +1.4) +
+  xlab("S statistic") +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+  theme_universe
+
+ggsave(here("plots", "cooc_sstat.eps"), plot = s_plot_eps, 
        width = 6, height = 4, units = "cm")
 
 # The S statistic is significantly larger than experimental S and

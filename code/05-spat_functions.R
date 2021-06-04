@@ -119,7 +119,7 @@ plot_estimate_facet <- function(x) {
   stopifnot(all(names(x) %in% c("fun", "r", "obs", "theo", "lo", "hi")))
   p1 <- x %>% 
     ggplot() +
-    geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+    geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80") +
     geom_line(aes(r, theo), linetype = 2) +
     geom_line(aes(r, obs), size = 0.8) + 
     facet_wrap(vars(fun), nrow = 1, scales = "free") +
@@ -189,6 +189,9 @@ grid_fns
 
 ggsave(here("plots", "pp_funs.pdf"), width = 19, height = 5, units = "cm")
 
+# EPS
+ggsave(here("plots", "pp_funs.eps"), width = 19, height = 5, units = "cm")
+
 # for different marks ==========================================================
 multiplecrossfunction <- function(pp, var, crossfun, nsim, nrank) {
   input <- subset(pp, select = var, drop = TRUE)
@@ -229,7 +232,7 @@ mppk_orig <- multiplecrossfunction(ved_pp, "origin", "Kcross", nsim, nrank)
 # K funs
 g1 <- mppk_sex %>% 
   ggplot(aes(x = r)) +
-  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80") +
   geom_line(aes(y = theo), linetype = 2) +
   geom_line(aes(y = obs), size = 0.8) + 
   scale_x_continuous(expand = c(0, 0)) +
@@ -240,7 +243,7 @@ g1 <- mppk_sex %>%
 
 g2 <- mppk_age %>% 
   ggplot(aes(x = r)) +
-  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80") +
   geom_line(aes(y = theo), linetype = 2) +
   geom_line(aes(y = obs), size = 0.8) + 
   scale_x_continuous(expand = c(0, 0)) +
@@ -251,7 +254,7 @@ g2 <- mppk_age %>%
 
 g3 <- mppk_orig %>% 
   ggplot(aes(x = r)) +
-  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80") +
   geom_line(aes(y = theo), linetype = 2) +
   geom_line(aes(y = obs), size = 0.8) + 
   scale_x_continuous(expand = c(0, 0)) +
@@ -273,6 +276,10 @@ grob <- gridExtra::arrangeGrob(
 # dev.off()
 
 ggsave(plot = grob, here::here("plots", "pp_crossk.pdf"), 
+       width = 14, height = 21, units = "cm")
+
+# EPS
+ggsave(plot = grob, here::here("plots", "pp_crossk.eps"), 
        width = 14, height = 21, units = "cm")
 
 # # G funs
