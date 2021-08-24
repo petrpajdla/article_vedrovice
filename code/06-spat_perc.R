@@ -234,6 +234,8 @@ get_concaveman <- function(pts) {
   map(pts, concaveman)
 }
 
+# correct geometries - polygon of length 3 == line
+# groups of two point are omitted for the analysis
 polygs <- ved_sf %>% 
   left_join(p$membership_long, by = c("id_burial" = "id")) %>% 
   select(id_burial, radius, clust) %>% 
@@ -243,13 +245,18 @@ polygs <- ved_sf %>%
   mutate(data = map(data, group_by, clust),
          data = map(data, nest),
          data = map(data, rename, pts = data),
-         data = map(data, ~map(.x$pts, concaveman))) %>% 
-  unnest(cols = data) %>% 
-  unnest(cols = data) %>% 
+         data = map(data, ~map(.x$pts, concaveman))) %>%
+  unnest(cols = data) %>%
+  mutate(len = map_int(data, \(x) nrow(st_coordinates(x))),
+         data = if_else(len > 0 & len < 4, map(data, st_cast, "LINESTRING"), data)) %>% 
+  unnest(cols = data) %>%
+  ungroup("radius") %>% 
+  filter(len > 3) %>% 
+  select(-len) %>% 
   st_as_sf()
 
 polygs <- polygs %>% 
-  subset(st_is_valid(polygs)) %>% 
+  # subset(st_is_valid(polygs)) %>% 
   st_make_valid() %>% 
   st_buffer(1.6) %>% 
   mutate(label_radius = paste("dist.", radius, "m"),
@@ -280,11 +287,11 @@ ggplot() +
         legend.position = "bottom",
         legend.direction = "horizontal")
 
-ggsave(here::here("plots", "perc_plan.pdf"), 
-       width = 14, height = 21, units = "cm")
-
-ggsave(here::here("plots", "perc_plan.eps"), 
-       width = 14, height = 21, units = "cm")
+# ggsave(here::here("plots", "perc_plan.pdf"), 
+#        width = 14, height = 21, units = "cm")
+# 
+# ggsave(here::here("plots", "perc_plan.eps"), 
+#        width = 16, height = 24, units = "cm")
 
 # numbers of clusters
 polygs_ids <- filter(polygs, radius %in% disp_radii) %>% 
@@ -324,8 +331,8 @@ ggsave(here::here("plots", "perc_plan_ids.pdf"),
        width = 14, height = 21, units = "cm")
 
 ggsave(here::here("plots", "perc_plan_ids.eps"),
-       width = 14, height = 21, units = "cm")
+       width = 18, height = 28, units = "cm")
 
 # cluster assignment ------------------------------------------------------
-g_long %>% select(id, radius, cluster = clust) %>% 
-  readr::write_csv(here::here("data/temp", "perc_clusters.csv"))
+# g_long %>% select(id, radius, cluster = clust) %>% 
+#   readr::write_csv(here::here("data/temp", "perc_clusters.csv"))
