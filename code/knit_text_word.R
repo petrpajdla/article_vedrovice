@@ -9,5 +9,6 @@ rmarkdown::render(input = here::here("text", "article_vedrovice.Rmd"),
                   output_format = bookdown::word_document2(
                     toc = FALSE,
                     fig_caption = TRUE,
-                    number_sections = FALSE
+                    number_sections = FALSE,
+                    global_numbering = FALSE
                   ))
