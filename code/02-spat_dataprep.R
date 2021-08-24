@@ -88,8 +88,8 @@ gg_baseplan <- g_exc +
 
 gg_baseplan
 
-gg_ids <- gg_baseplan + 
-  ggsflabel::geom_sf_text_repel(data = ved_sf, aes(label = id_burial))
+# gg_ids <- gg_baseplan + 
+#   ggsflabel::geom_sf_text_repel(data = ved_sf, aes(label = id_burial))
 
 # ggsave(here("plots", "plan_base.pdf"), gg_baseplan, scale = 2)
 # ggsave(here("plots", "plan_base_ids.pdf"), gg_ids, scale = 2)
@@ -115,7 +115,7 @@ g_exc +
   facet_wrap(~origin)
 
 ggsave(here("plots", "plan_origin.pdf"), width = 12, height = 6, units = "cm")
-ggsave(here("plots", "plan_origin.eps"), width = 12, height = 6, units = "cm")
+ggsave(here("plots", "plan_origin.eps"), width = 15, height = 7, units = "cm")
 
 
 # plan age
@@ -128,7 +128,7 @@ g_exc +
   facet_wrap(~age_sim)
 
 ggsave(here("plots", "plan_age.pdf"), width = 19, height = 6, units = "cm")
-ggsave(here("plots", "plan_age.eps"), width = 19, height = 6, units = "cm")
+ggsave(here("plots", "plan_age.eps"), width = 22, height = 7, units = "cm")
 
 # plan sex
 g_exc +
@@ -140,7 +140,7 @@ g_exc +
   facet_wrap(~sex)
 
 ggsave(here("plots", "plan_sex.pdf"), width = 19, height = 6, units = "cm")
-ggsave(here("plots", "plan_sex.eps"), width = 19, height = 6, units = "cm")
+ggsave(here("plots", "plan_sex.eps"), width = 22, height = 7, units = "cm")
 
 # write layouts -----------------------------------------------------------
 

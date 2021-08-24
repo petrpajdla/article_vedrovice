@@ -280,7 +280,7 @@ ggsave(plot = grob, here::here("plots", "pp_crossk.pdf"),
 
 # EPS
 ggsave(plot = grob, here::here("plots", "pp_crossk.eps"), 
-       width = 14, height = 21, units = "cm")
+       width = 18, height = 26, units = "cm")
 
 # # G funs
 # mppg_sex %>% 
