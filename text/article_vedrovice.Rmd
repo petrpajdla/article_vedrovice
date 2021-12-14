@@ -389,10 +389,10 @@ described for the neighborhood derived from the graphs.-->
 
 <!-- software packages -->
 Data is analyzed in an R environment for statistical computing and graphics
-[@rcoreteam2021] using functions of several different packages; 
+[@rcoreteam2021] using functions of several different packages;
 the most frequently used are packages from the *tidyverse* family [@wickham2019].
-Packages *sf* [@pebesma2018], *spatstat* [@baddeley2015], *spdep* [@bivand2018] and 
-*concaveman* [@gombin2020] are used to perform various spatial analysis tasks; 
+Packages *sf* [@pebesma2018], *spatstat* [@baddeley2015], *spdep* [@bivand2018] and
+*concaveman* [@gombin2020] are used to perform various spatial analysis tasks;
 *igraph* [@csardi2006a] to construct and analyze networks;
 *vegan* [@oksanen2020] and *randomizr* [@coppock2019] in the randomization experiments.
 
