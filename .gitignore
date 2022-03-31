@@ -66,3 +66,6 @@ vignettes/*.pdf
 
 # Bibliography logs
 /text/*bak
+
+# Notes
+README_NOTES
