@@ -4,7 +4,7 @@ Author: Petr Pajdla (<petr.pajdla@protonmail.com>)
 
 This repository contains an article:
 
-> Pajdla, Petr (2021): Spatial patterns and grave goods differences at the Cemetery of Vedrovice (Czech Republic): A resampling approach to the Early Neolithic identity markers.
+> Pajdla, Petr (2022): Spatial patterns and grave goods differences at the Cemetery of Vedrovice (Czech Republic): A resampling approach to the Early Neolithic identity markers.
 
 The code is organized in individual scripts because some of the procedures, especially the randomization experiments, take a fair amount of time to process.
 

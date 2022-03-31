@@ -30,7 +30,7 @@ library(here)
 # Introduction {-}
 
 The Cemetery of Vedrovice is one of the earliest and most intensively studied
-*Linearbandkeramik* (LBK) cemeteries.
+*Linearbandkeramik* (LBK) cemeteries in the Czech Republic.
 Recent articles use evidence from the cemetery in a broader discussion
 of post-marital residence patterns [@hrncir2020],
 sexual inequalities and gender in the Neolithic [@masclanslatorre2020; @bickle2020].
@@ -106,7 +106,7 @@ and which artifacts have similar distributions over burials?
 # Material and Methods
 
 <!-- site -->
-The Vedrovice site is situated in south Moravia (Czech Republic).
+The Vedrovice site is situated in south Moravia, Czech Republic.
 The earliest known finds and archaeological explorations here are from
 the 19th century, but excavations were conducted in the second half of 20th century.
 There are two known burial areas, *Za Dvorem* and the larger *Široká u Lesa* and
@@ -116,13 +116,17 @@ original publication by @podborsky2002.
 The material analyzed here comes from the *Široká u lesa* cemetery in Vedrovice.
 
 <!-- sample (burials, artifacts) -->
-Originally, this burial ground consisted of at least 108 burials.
-Some of the burials were disturbed by later settlement and burial pits in the
-area of the cemetery, amateur excavations during the 19th century and later
-agricultural activities.
-These burials are excluded from most of the analysis due to missing and/or
-incomplete data and only a sample of 78 well-preserved LBK burials is analyzed here.
-Most of the data was obtained from the original publication [@podborsky2002],
+Originally, this burial ground consisted of at least 96 LBK burials and
+one Lengyel culture cremation [@ondrus2002a, 21].
+Some of the LBK burials were disturbed by later settlement pits in the
+area of the cemetery (4 burials), amateur excavations during the 19th century
+(11 burial pits with recent fills) and later agricultural activities
+(at least 6 burials disturbed by deep deep plowing) or combinations of these.
+These burials are excluded from the analysis of artifact combinations due to missing and/or
+incomplete data and only included in the spatial analysis.
+This leaves us with a sample of of 76 well-preserved LBK burials in case of
+the artifact combinations (79 % of the LBK burials) and
+Most of the data was obtained from the original publication [@ondrus2002a],
 and the anthropological determination of the sex and age of the bodies was corrected based on an
 analysis by @dockalova2008. Carbon, nitrogen and strontium isotope
 ratios were collected in @whittle2013 and @richards2008.
