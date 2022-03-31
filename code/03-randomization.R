@@ -9,7 +9,7 @@
 set.seed(42)
 
 # packages =====================================================================
-library(here)
+
 library(dplyr)
 library(purrr)
 library(igraph)
@@ -72,7 +72,7 @@ normalize01 <- function(x) {
 }
 
 # read data ====================================================================
-ved <- readRDS(here("data/temp", "vedrovice_dataset.RDS"))
+ved <- readRDS(here::here("data/temp", "vedrovice_dataset.RDS"))
 
 # counting co-occurrences in observed matrix ===================================
 input_matrix <- ved$bin_vars$bin_mat[, ved$bin_vars$over5]
@@ -97,7 +97,7 @@ no_cores <- parallel::detectCores() - 1
 
 # cooccurences on random matrices ==============================================
 # ======
-# note to self: on Debian without everything was smooth even without specifying 
+# note to self: on Debian everything was smooth even without specifying 
 # setup_strategy, but apparently, this is Rstudio vs R version problem
 # see: https://github.com/rstudio/rstudio/issues/6692
 cl <- parallel::makeCluster(no_cores, setup_strategy = "sequential")
@@ -105,11 +105,11 @@ cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
 parallel::stopCluster(cl)
 
 # save counts of co-occurences on random matrices
-readr::write_rds(cooc_rand, here("data/temp", "cooc_random_mat.RDS"))
+readr::write_rds(cooc_rand, here::here("data/temp", "cooc_random_mat.RDS"))
 # ======
 
 # load from temporary data
-cooc_rand <- readr::read_rds(here("data/temp", "cooc_random_mat.RDS"))
+# cooc_rand <- readr::read_rds(here::here("data/temp", "cooc_random_mat.RDS"))
 
 # summarization of random occurences into expected cooccurences ----------------
 cooc_exp <- cooc_rand %>% bind_rows() %>% 
@@ -149,14 +149,16 @@ v_statistic <- tibble(variable = names(v_observed),
   mutate(abbrv = unname(ved$var_names$short[variable]),
          long = unname(ved$var_names$long[variable]))
 
-readr::write_csv(v_statistic, here("data/temp", "cooc_v_stats.csv"))
+readr::write_csv(v_statistic, here::here("data/temp", "cooc_v_stats.csv"))
 # v_statistic <- readr::read_csv(here("data/temp", "cooc_v_stats.csv"))
 
 # visualizing of v values by small multiples -----------------------------------
-v_exp_g <- v_experimental %>% tidyr::gather(variable, value) %>% 
+v_exp_g <- v_experimental %>% 
+  tidyr::gather(variable, value) %>% 
   mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])),
          long = forcats::as_factor(unname(ved$var_names$long[variable])))
-v_obs_g <- v_observed %>% tidyr::gather(variable, value) %>% 
+v_obs_g <- v_observed %>% 
+  tidyr::gather(variable, value) %>% 
   mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])),
          long = forcats::as_factor(unname(ved$var_names$long[variable])))
 
@@ -179,52 +181,52 @@ v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
 
 v_plot
 
-ggsave(here("plots", "cooc_vstats.pdf"), 
+ggsave(here::here("plots", "cooc_vstats.pdf"), 
        plot = v_plot, 
        width = 19, height = 20, units = "cm")
 
-# EPS does not allow transparency...
-v_plot_eps <- ggplot(v_exp_g, mapping = aes(x = value)) +
-  geom_density(fill = "gray80", color = NA) +
-  geom_vline(data = v_obs_g, mapping = aes(xintercept = value), size = 0.8) +
-  facet_wrap(vars(long), scales = "free", ncol = 3) +
-  xlab("v statistic") +
-  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
-            hjust = +1.2, vjust = +1.5) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
-  theme_universe
-
-ggsave(here("plots", "cooc_vstats.eps"), 
-       plot = v_plot_eps, 
-       width = 19, height = 20, units = "cm")
+# # EPS does not allow transparency...
+# v_plot_eps <- ggplot(v_exp_g, mapping = aes(x = value)) +
+#   geom_density(fill = "gray80", color = NA) +
+#   geom_vline(data = v_obs_g, mapping = aes(xintercept = value), size = 0.8) +
+#   facet_wrap(vars(long), scales = "free", ncol = 3) +
+#   xlab("v statistic") +
+#   geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
+#             hjust = +1.2, vjust = +1.5) +
+#   scale_x_continuous(expand = c(0, 0)) +
+#   scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+#   theme_universe
+# 
+# ggsave(here("plots", "cooc_vstats.eps"), 
+#        plot = v_plot_eps, 
+#        width = 19, height = 20, units = "cm")
 
 
 # normalizing to range 0-1 ------------------------------------------------
-v_normalized <- bind_rows(exp = v_exp_g, obs = v_obs_g, .id = "orig") %>% 
-  group_by(variable) %>% 
-  tidyr::nest() %>% 
-  mutate(data = map(data, mutate, value_norm = normalize01(value))) %>% 
-  tidyr::unnest(cols = data)
-
-v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"), 
-                            mapping = aes(x = value_norm)) +
-  geom_density(fill = "gray80", color = NA, alpha = 0.6) +
-  geom_rug(alpha = 0.2) +
-  geom_vline(data = filter(v_normalized, orig == "obs"), 
-             mapping = aes(xintercept = value_norm), size = 0.8) +
-  facet_wrap(vars(long), scales = "free", ncol = 3) +
-  xlab("v statistic (normalized to 0 - 1 range)") +
-  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
-            hjust = +1.2, vjust = +1.5) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
-  theme_universe
-
-# ggsave(here("plots", "cooc_vstats_norm.pdf"), plot = v_normalized_plot, 
+# v_normalized <- bind_rows(exp = v_exp_g, obs = v_obs_g, .id = "orig") %>% 
+#   group_by(variable) %>% 
+#   tidyr::nest() %>% 
+#   mutate(data = map(data, mutate, value_norm = normalize01(value))) %>% 
+#   tidyr::unnest(cols = data)
+# 
+# v_normalized_plot <- ggplot(filter(v_normalized, orig == "exp"), 
+#                             mapping = aes(x = value_norm)) +
+#   geom_density(fill = "gray80", color = NA, alpha = 0.6) +
+#   geom_rug(alpha = 0.2) +
+#   geom_vline(data = filter(v_normalized, orig == "obs"), 
+#              mapping = aes(xintercept = value_norm), size = 0.8) +
+#   facet_wrap(vars(long), scales = "free", ncol = 3) +
+#   xlab("v statistic (normalized to 0 - 1 range)") +
+#   geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
+#             hjust = +1.2, vjust = +1.5) +
+#   scale_x_continuous(expand = c(0, 0)) +
+#   scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+#   theme_universe
+# 
+# ggsave(here("plots", "cooc_vstats_norm.pdf"), plot = v_normalized_plot,
 #        width = 6, height = 6)
-
-readr::write_csv(v_normalized, here("data/temp", "cooc_v_normal.csv"))
+# 
+# readr::write_csv(v_normalized, here("data/temp", "cooc_v_normal.csv"))
 
 
 # S statistic ==================================================================
@@ -251,24 +253,24 @@ s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
 
 s_plot
 
-ggsave(here("plots", "cooc_sstat.pdf"), plot = s_plot, 
+ggsave(here::here("plots", "cooc_sstat.pdf"), plot = s_plot, 
        width = 6, height = 4, units = "cm")
 
-# EPS
-s_plot_eps <- ggplot(as_tibble(s_experimental), aes(value)) +
-  geom_density(fill = "gray80", color = NA) +
-  geom_vline(xintercept = s_observed, size = 0.8) +
-  geom_text(data = tibble(p = paste0(round(s_p_value, 3), "**")), 
-            aes(x = Inf, y = Inf, label = p), 
-            size = 3,
-            hjust = +1.1, vjust = +1.4) +
-  xlab("S statistic") +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
-  theme_universe
-
-ggsave(here("plots", "cooc_sstat.eps"), plot = s_plot_eps, 
-       width = 6, height = 4, units = "cm")
+# # EPS
+# s_plot_eps <- ggplot(as_tibble(s_experimental), aes(value)) +
+#   geom_density(fill = "gray80", color = NA) +
+#   geom_vline(xintercept = s_observed, size = 0.8) +
+#   geom_text(data = tibble(p = paste0(round(s_p_value, 3), "**")), 
+#             aes(x = Inf, y = Inf, label = p), 
+#             size = 3,
+#             hjust = +1.1, vjust = +1.4) +
+#   xlab("S statistic") +
+#   scale_x_continuous(expand = c(0, 0)) +
+#   scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+#   theme_universe
+# 
+# ggsave(here("plots", "cooc_sstat.eps"), plot = s_plot_eps, 
+#        width = 6, height = 4, units = "cm")
 
 # The S statistic is significantly larger than experimental S and
 # occures in less then 5% of cases (p is smaller than 0.05), i.e. there is
@@ -366,7 +368,7 @@ g_cooc_negative <- delete.vertices(g_cooc_negative,
 
 non_rand_vars <- v_statistic %>% filter(stringr::str_detect(signif, "\\*")) %>% pull(abbrv)
 
-pdf(here("plots", "cooc_nets.pdf"), width = 12)
+pdf(here::here("plots", "cooc_nets.pdf"), width = 12)
 par(mfrow = c(1, 2), mar = c(rep(2, 4)))
 plot(g_cooc_positive, 
      vertex.shape = "circle", 
@@ -417,5 +419,5 @@ var_clusters <- bind_rows(extract_network_groups(cl_absent, "absent"),
                           extract_network_groups(cl_present, "present"))
 
 # output =======================================================================
-writeLines(non_rand_vars, here("data/temp", "cooc_non_rand_vars.txt"))
-readr::write_csv(var_clusters, here("data/temp", "cooc_var_clusters.csv"))
+writeLines(non_rand_vars, here::here("data/temp", "cooc_non_rand_vars.txt"))
+readr::write_csv(var_clusters, here::here("data/temp", "cooc_var_clusters.csv"))

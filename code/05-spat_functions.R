@@ -5,6 +5,7 @@
 # Spatial organization within the cemetery - point patters analysis
 
 library(here)
+library(patchwork)
 library(spatstat)
 library(sf)
 library(tidyverse)
@@ -23,19 +24,21 @@ theme_universe <- theme(panel.border = element_rect(colour = "black",
                                                     fill = NA, 
                                                     size = 0.8),
                         panel.background = element_blank(),
-                        line = element_blank(),
+                        # line = element_blank(),
                         strip.background = element_blank(), 
-                        strip.text = element_text(face = "italic"),
-                        axis.text.y = element_blank(), 
-                        axis.title.y = element_blank(), 
-                        panel.spacing = unit(1, "lines"))
+                        # strip.text = element_text(face = "italic"),
+                        # axis.text.y = element_blank(), 
+                        # axis.title.y = element_blank(), 
+                        # panel.spacing = unit(0.6, "lines")
+)
 
 # read data and layouts --------------------------------------------------------
 ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
 
-ved_sf <- read_sf(here("data/temp", "layout.shp")) %>% 
-  filter(pres != "dist.")
-ved_exc <- read_sf(here("data/temp", "window.shp")) %>% 
+ved_sf <- read_sf(here("data/temp", "layout.geojson")) %>% 
+  st_set_crs(NA)
+ved_exc <- read_sf(here("data/temp", "window.geojson")) %>% 
+  st_set_crs(NA) %>% 
   as.owin(ved_exc)
 
 ved_sf <- bind_cols(ved_sf, 
@@ -97,38 +100,41 @@ plot_estimate <- function(x, fun) {
   stopifnot(verifyclass(x, "tbl_df"))
   stopifnot(all(names(x) %in% c("r", "obs", "theo", "lo", "hi")))
   ylabel = paste0(fun, "(r)")
-  p1 <- x %>% 
+  p1 <- x %>%
     ggplot() +
-    geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+    geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80") +
     geom_line(aes(r, theo), linetype = 2) +
-    geom_line(aes(r, obs), size = 0.8) + 
-    annotate("text", -Inf, +Inf, label = ylabel, 
-             hjust = -0.2, vjust = 1.4, 
-             size = 6, fontface = "italic") +
-    # labs(y = ylabel) + 
+    geom_line(aes(r, obs), size = 0.8) +
+    # annotate("text", -Inf, +Inf, label = ylabel,
+    #          hjust = -0.2, vjust = 1.4,
+    #          size = 6, fontface = "italic") +
+    labs(x = "r (m)", y = ylabel) +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-    theme_universe +
-    theme(axis.title.x = element_blank())
+    theme_classic()
+  # theme_universe # +
+  # theme(axis.title.x = element_blank())
   # ggsave(here("plots", paste0("pointprocess_", fun, ".pdf")))
   p1
 }
 
-plot_estimate_facet <- function(x) {
-  stopifnot(verifyclass(x, "tbl_df"))
-  stopifnot(all(names(x) %in% c("fun", "r", "obs", "theo", "lo", "hi")))
-  p1 <- x %>% 
-    ggplot() +
-    geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80") +
-    geom_line(aes(r, theo), linetype = 2) +
-    geom_line(aes(r, obs), size = 0.8) + 
-    facet_wrap(vars(fun), nrow = 1, scales = "free") +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0)) +
-    labs(x = "r (m)") +
-    theme_universe
-  p1
-}
+# plot_estimate_facet <- function(x) {
+#   stopifnot(verifyclass(x, "tbl_df"))
+#   stopifnot(all(names(x) %in% c("fun", "r", "obs", "theo", "lo", "hi")))
+#   p1 <- x %>%
+#     ggplot() +
+#     geom_ribbon(aes(r, ymin = lo, ymax = hi), fill = "gray80") +
+#     geom_line(aes(r, theo), linetype = 2) +
+#     geom_line(aes(r, obs), size = 0.8) +
+#     facet_wrap(vars(fun), nrow = 2,
+#                scales = "free", strip.position = "left") +
+#     scale_x_continuous(expand = c(0, 0), breaks = c(0, 5, 10, 15, 20)) +
+#     scale_y_continuous(expand = c(0, 0)) +
+#     labs(x = "distance r (m)", y = element_blank()) +
+#     theme_universe +
+#     theme(strip.placement = "outside")
+#   p1
+# }
 
 # overall structure ============================================================
 # density based ----------------------------------------------------------------
@@ -171,26 +177,77 @@ plot_estimate(ved_t, "T")
 
 # export combined figure -------------------------------------------------------
 # using grid and individual plots
-grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
-                                    plot_estimate(ved_f, "F"),
-                                    plot_estimate(ved_k, "K"),
-                                    plot_estimate(ved_t, "T"),
-                                    nrow = 1)
+# grid_fns <- gridExtra::grid.arrange(plot_estimate(ved_g, "G"),
+#                                     plot_estimate(ved_f, "F"),
+#                                     plot_estimate(ved_k, "K"),
+#                                     plot_estimate(ved_t, "T"),
+#                                     nrow = 1)
 
 # using facets
-grid_fns <- bind_rows("G(r)" = ved_g,
-                      "F(r)" = ved_f,
-                      "K(r)" = ved_k,
-                      "T(r)" = ved_t, .id = "fun") %>%
-  mutate(fun = as_factor(fun)) %>%
-  plot_estimate_facet()
+# grid_fns <- bind_rows("G(r)" = ved_g,
+#                       "F(r)" = ved_f,
+#                       "K(r)" = ved_k,
+#                       "T(r)" = ved_t, .id = "fun") %>%
+#   mutate(fun = as_factor(fun)) %>%
+#   plot_estimate_facet()
+# 
+# grid_fns
 
-grid_fns
+# patchwork
+T_annot <- plot_estimate(ved_t, "T") + 
+  labs(title = ("(D) Function T")) +
+  annotate(
+    geom = "curve", 
+    x = 10, y = 15e5, 
+    xend = 18, yend = 10e5, 
+    curvature = .3, arrow = arrow(length = unit(2, "mm"))
+  ) +
+  annotate(
+    geom = "text", 
+    x = 10, y = 16e5, 
+    label = expression(hat("T")["obs"])
+  ) +
+  # theoretical estimate
+  annotate(
+    geom = "curve", 
+    x = 5, y = 6e5, 
+    xend = 13, yend = 1e5, 
+    curvature = .3, arrow = arrow(length = unit(2, "mm"))
+  ) +
+  annotate(
+    geom = "text", 
+    x = 5, y = 7e5, 
+    label = expression("T"["theo"])) +
+  # envelope
+  annotate(
+    geom = "curve", 
+    x = 7.5, y = 10e5, 
+    xend = 17.5, yend = 4e5, 
+    curvature = .3, arrow = arrow(length = unit(2, "mm"))
+  ) +
+  annotate(
+    geom = "text", 
+    x = 7.5, y = 11e5, 
+    label = expression("Envelope of T"["theo"])
+  )
 
-ggsave(here("plots", "pp_funs.pdf"), width = 19, height = 5, units = "cm")
+patch <- (plot_estimate(ved_g, "G") + labs(title = ("(A) Function G")) |
+            plot_estimate(ved_f, "F") + labs(title = ("(B) Function F"))) /
+  (plot_estimate(ved_k, "K") + labs(title = ("(C) Function K")) |
+     T_annot)
 
-# EPS
-ggsave(here("plots", "pp_funs.eps"), width = 19, height = 5, units = "cm")
+# patch <- plot_estimate(ved_g, "G") |
+#   plot_estimate(ved_f, "F") |
+#   plot_estimate(ved_k, "K") |
+#   plot_estimate(ved_t, "T")
+#
+patch
+# + plot_annotation(tag_levels = 'A')
+
+ggsave(here("plots", "pp_funs.pdf"), width = 16, height = 16, units = "cm")
+
+# # EPS
+# ggsave(here("plots", "pp_funs.eps"), width = 19, height = 5, units = "cm")
 
 # for different marks ==========================================================
 multiplecrossfunction <- function(pp, var, crossfun, nsim, nrank) {
@@ -229,6 +286,20 @@ mppk_age <- multiplecrossfunction(ved_pp, "age", "Kcross", nsim, nrank)
 mppk_orig <- multiplecrossfunction(ved_pp, "origin", "Kcross", nsim, nrank)
 # mppg_orig <- multiplecrossfunction(ved_pp, "origin", "Gcross", nsim, nrank)
 
+theme_universe <- theme(
+  axis.line = element_line(),
+  # panel.border = element_(colour = "black", 
+  #                         fill = NA, 
+  #                         size = 0.8),
+  panel.background = element_blank(),
+  # line = element_blank(),
+  strip.background = element_blank(), 
+  # strip.text = element_text(face = "italic"),
+  # axis.text.y = element_blank(), 
+  # axis.title.y = element_blank(), 
+  # panel.spacing = unit(0.6, "lines")
+)
+
 # K funs
 g1 <- mppk_sex %>% 
   ggplot(aes(x = r)) +
@@ -237,9 +308,10 @@ g1 <- mppk_sex %>%
   geom_line(aes(y = obs), size = 0.8) + 
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
+  lemon::facet_rep_grid(from ~ to) +
   theme_universe +
-  facet_grid(from ~ to) +
-  labs(x = "r (m)", title = "Sex")
+  lemon::coord_capped_cart(bottom = "both", left = "both") +
+  labs(x = "r (m)", y = "K(r)", title = "(A) Sex")
 
 g2 <- mppk_age %>% 
   ggplot(aes(x = r)) +
@@ -249,8 +321,9 @@ g2 <- mppk_age %>%
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme_universe +
-  facet_grid(from ~ to) +
-  labs(x = "r (m)", title = "Age category")
+  lemon::facet_rep_grid(from ~ to) +
+  lemon::coord_capped_cart(bottom = "both", left = "both") +
+  labs(x = "r (m)", y = "K(r)", title = "(B) Age category")
 
 g3 <- mppk_orig %>% 
   ggplot(aes(x = r)) +
@@ -260,8 +333,9 @@ g3 <- mppk_orig %>%
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme_universe +
-  facet_grid(from ~ to) +
-  labs(x = "r (m)", title = "Origin")
+  lemon::facet_rep_grid(from ~ to) +
+  lemon::coord_capped_cart(bottom = "both", left = "both") +
+  labs(x = "r (m)", y = "K(r)", title = "(C) Origin")
 
 lay <- rbind(rep(1, 6), rep(1, 6), rep(1, 6),
              rep(2, 6), rep(2, 6), rep(2, 6),
@@ -276,11 +350,11 @@ grob <- gridExtra::arrangeGrob(
 # dev.off()
 
 ggsave(plot = grob, here::here("plots", "pp_crossk.pdf"), 
-       width = 14, height = 21, units = "cm")
+       width = 16, height = 24, units = "cm")
 
-# EPS
-ggsave(plot = grob, here::here("plots", "pp_crossk.eps"), 
-       width = 18, height = 26, units = "cm")
+# # EPS
+# ggsave(plot = grob, here::here("plots", "pp_crossk.eps"), 
+#        width = 18, height = 26, units = "cm")
 
 # # G funs
 # mppg_sex %>% 
@@ -319,18 +393,18 @@ ggsave(plot = grob, here::here("plots", "pp_crossk.eps"),
 
 # combined vars -----------------------------------------------------------
 
-mppk_sa <- multiplecrossfunction(ved_pp, "cat_sa", "Kcross", nsim, nrank)
-mppk_os <- multiplecrossfunction(ved_pp, "cat_os", "Kcross", nsim, nrank)
-mppk_oa <- multiplecrossfunction(ved_pp, "cat_oa", "Kcross", nsim, nrank)
-mppk_osa <- multiplecrossfunction(ved_pp, "cat_osa", "Kcross", nsim, nrank)
-
-mppk_osa %>%
-  ggplot(aes(x = r)) +
-  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
-  geom_line(aes(y = theo), linetype = 2) +
-  geom_line(aes(y = obs), size = 0.8) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  theme_universe +
-  facet_grid(from ~ to) +
-  labs(x = "r (m)", title = "Multitype K(r)")
+# mppk_sa <- multiplecrossfunction(ved_pp, "cat_sa", "Kcross", nsim, nrank)
+# mppk_os <- multiplecrossfunction(ved_pp, "cat_os", "Kcross", nsim, nrank)
+# mppk_oa <- multiplecrossfunction(ved_pp, "cat_oa", "Kcross", nsim, nrank)
+# mppk_osa <- multiplecrossfunction(ved_pp, "cat_osa", "Kcross", nsim, nrank)
+# 
+# mppk_osa %>%
+#   ggplot(aes(x = r)) +
+#   geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80", alpha = 0.6) +
+#   geom_line(aes(y = theo), linetype = 2) +
+#   geom_line(aes(y = obs), size = 0.8) +
+#   scale_x_continuous(expand = c(0, 0)) +
+#   scale_y_continuous(expand = c(0, 0)) +
+#   theme_universe +
+#   facet_grid(from ~ to) +
+#   labs(x = "r (m)", title = "Multitype K(r)")

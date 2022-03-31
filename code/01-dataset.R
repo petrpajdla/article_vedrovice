@@ -18,8 +18,8 @@ binarize <- function(x, threshold = 0) {
 }
 
 # data input and manipulation ==================================================
-input <- readr::read_csv(here("data", "data_vedrovice_v01.csv"), skip = 3) %>% 
-  filter(lbk == TRUE)
+input <- readr::read_csv(here("data", "data_vedrovice_v02.csv"), skip = 3) %>% 
+  filter(space)
 
 # list to store the data
 ved <- list(bin_vars = list(count_mat = NA,
@@ -40,18 +40,19 @@ ved <- list(bin_vars = list(count_mat = NA,
 
 # # burial id
 ved$id_burials <- input %>%
-  filter(undisturbed == TRUE) %>%
+  filter(analysis == TRUE) %>%
   pull(id_burial)
 
 # binary variables - artefact coocurences
 ved$bin_vars$count_mat <- input %>% 
-  filter(undisturbed == TRUE) %>% 
+  filter(analysis == TRUE) %>% 
   select(pigment, pol_adze, pol_axe, grinding, pebble, 
          lit_local, lit_nonlocal, 
          pot_special, pot_bowl, pot_globular, pot_bottle, 
          # pot_head, pot_mid, pot_leg, 
-         bone_tool, bone_awl,
-         pendant_L, pendant_U, pendant_I, buckle_O, 
+         bone_tool, # bone_awl,
+         pendant, # pendant_L, pendant_U, pendant_I, 
+         buckle_O, 
          bracelet_spond, beads_spond, beads_marble, 
          deer_teeth, antler, shell) %>% 
   as.matrix()
@@ -71,12 +72,13 @@ ved$bin_vars$complete_mat <- ved$bin_vars$bin_mat %>%
 rownames(ved$bin_vars$complete_mat) <- ved$id_burials
 
 # grave goods present in more than 5% of graves
-n_burs <- nrow(ved$bin_vars$bin_mat)
+n_burs <- nrow(filter(input, analysis))
 ved$bin_vars$over5 <- (colSums(ved$bin_vars$bin_mat) / n_burs) > 0.05
+table(ved$bin_vars$over5)
 
 # continuous variables
 ved$cont_vars <- input %>% 
-  filter(undisturbed == TRUE) %>% 
+  filter(analysis == TRUE) %>% 
   select(
     # pit_len, pit_wid, pit_dep,
     # d13c, d15n, 
@@ -100,9 +102,9 @@ rownames(ved$cont_vars) <- ved$id_burials
 # lookup_sex <- c("n. a." = "gold", "F" = "tomato", "M" = "steelblue")
 
 ved$metadata <- input %>% 
-  select(id_burial, pres = undisturbed, sex, age_cat, dat) %>% 
+  select(id_burial, analysis, sex, age_cat, dat) %>% 
   mutate(id_burial = as.character(id_burial),
-         pres = if_else(pres, "pres.", "dist."),
+         pres = if_else(analysis, "pres.", "dist."),
          sex = factor(sex),
          # sex_col = unname(lookup_sex[input$sex]),
          age_cat = ordered(age_cat, 
@@ -118,7 +120,8 @@ ved$metadata <- input %>%
          dat = ordered(dat, levels = c("un", "Ib", "IIa")))
 
 # layout
-ved$layout <- input %>% select(layout_x, layout_y) %>% 
+ved$layout <- input %>% 
+  select(layout_x, layout_y) %>% 
   as.matrix()
 
 rownames(ved$layout) <- input$id_burial
@@ -126,7 +129,7 @@ rownames(ved$layout) <- input$id_burial
 # variable names ----------------------------------------------------------
 
 ved$var_names$full <- tibble(vnames = names(input),
-                             abbrv = c("id", "row", "id.unified", "id.full", "undist", "lbk",
+                             abbrv = c("id", "row", "id.unified", "id.full", "analysis", "space", "note",
                                        "x", "y", "sex", "sex.d", "sex.p",
                                        "age.cat", "age.int", "pit.l", "pit.w", "pit.d",
                                        "pit.o", "pit.o.cat", "head.o", "head.o.cat",
@@ -139,7 +142,7 @@ ved$var_names$full <- tibble(vnames = names(input),
                                        "buck", "brac", "neck", "b.sp", "b.mar", "b.div",
                                        "b.cyl", "b.circ", "b.olive", "d.tooth", "ant", "shell",
                                        "dat", "d13C", "d15N", "Sr", "Sr.ppm", "body.h"),
-                             long = c("Burial ID", "row", "id.unified", "id.full", "undist", "lbk",
+                             long = c("Burial ID", "row", "id.unified", "id.full", "analysis", "space", "note",
                                       "x", "y", "sex", "sex.d", "sex.p",
                                       "Age", "age.int", "Pit length", "Pit width", "Pit depth",
                                       "Pit orientation", "Pit orientation", "Head orientation", "Head orientation",
@@ -183,43 +186,43 @@ ved$metadata <- left_join(ved$metadata,
   select(-sr, -sr_ppm)
 
 
-# mixed categories --------------------------------------------------------
-detect_ind <- function(x) {
-  if_else(str_detect(x, "ind."), "ind.", x)
-}
-
-# only categories that are common for at least 5% of burials are kept
-threshold <- 0.05 * nrow(ved$bin_vars$count_mat)
-
-vec_origin <- c("local" = "loc.", "non-local" ="non.", "ind." = "ind.")
-
-comb_cats <- ved$metadata %>% 
-  filter(pres != "dist.") %>% 
-  mutate(
-    origin = vec_origin[origin],
-    sex = str_remove(sex, "\\s"),
-    cat_sa = str_c(sex, age_sim, sep = "/"),
-    cat_os = str_c(origin, sex, sep = "/"),
-    cat_oa = str_c(origin, age_sim, sep = "/"),
-    cat_osa = str_c(origin, sex, age_sim, sep = "/"),
-    across(starts_with("cat_"), detect_ind)
-  ) %>% 
-  select(id_burial, starts_with("cat"))
-
-get_perv_lvls <- function(x) {
-  lvls <- table(x)
-  names(lvls[lvls >= threshold])
-}
-
-comb_cats_over5 <- comb_cats %>% mutate(
-  cat_sa = if_else(cat_sa %in% get_perv_lvls(cat_sa), cat_sa, "ind."),
-  cat_os = if_else(cat_os %in% get_perv_lvls(cat_os), cat_os, "ind."),
-  cat_oa = if_else(cat_oa %in% get_perv_lvls(cat_oa), cat_oa, "ind."),
-  cat_osa = if_else(cat_osa %in% get_perv_lvls(cat_osa), cat_osa, "ind.")
-)
-
-ved$metadata <- left_join(ved$metadata, comb_cats_over5, by = c("id_burial")) %>%
-  mutate(across(starts_with("cat_"), function(x) if_else(is.na(x), "ind.", x)))
+# # mixed categories --------------------------------------------------------
+# detect_ind <- function(x) {
+#   if_else(str_detect(x, "ind."), "ind.", x)
+# }
+# 
+# # only categories that are common for at least 5% of burials are kept
+# threshold <- 0.05 * nrow(ved$bin_vars$count_mat)
+# 
+# vec_origin <- c("local" = "loc.", "non-local" ="non.", "ind." = "ind.")
+# 
+# comb_cats <- ved$metadata %>% 
+#   filter(pres != "dist.") %>% 
+#   mutate(
+#     origin = vec_origin[origin],
+#     sex = str_remove(sex, "\\s"),
+#     cat_sa = str_c(sex, age_sim, sep = "/"),
+#     cat_os = str_c(origin, sex, sep = "/"),
+#     cat_oa = str_c(origin, age_sim, sep = "/"),
+#     cat_osa = str_c(origin, sex, age_sim, sep = "/"),
+#     across(starts_with("cat_"), detect_ind)
+#   ) %>% 
+#   select(id_burial, starts_with("cat"))
+# 
+# get_perv_lvls <- function(x) {
+#   lvls <- table(x)
+#   names(lvls[lvls >= threshold])
+# }
+# 
+# comb_cats_over5 <- comb_cats %>% mutate(
+#   cat_sa = if_else(cat_sa %in% get_perv_lvls(cat_sa), cat_sa, "ind."),
+#   cat_os = if_else(cat_os %in% get_perv_lvls(cat_os), cat_os, "ind."),
+#   cat_oa = if_else(cat_oa %in% get_perv_lvls(cat_oa), cat_oa, "ind."),
+#   cat_osa = if_else(cat_osa %in% get_perv_lvls(cat_osa), cat_osa, "ind.")
+# )
+# 
+# ved$metadata <- left_join(ved$metadata, comb_cats_over5, by = c("id_burial")) %>%
+#   mutate(across(starts_with("cat_"), function(x) if_else(is.na(x), "ind.", x)))
 
 # saving processed dataset =====================================================
 if (!dir.exists(here("data", "temp"))) {

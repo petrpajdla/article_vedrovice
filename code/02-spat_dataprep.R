@@ -4,17 +4,17 @@
 # author: Petr Pajdla
 # Data prep for spatial analysis and basic plans
 
-library(here)
 # library(spatstat)
 library(sf)
 library(tidyverse)
+library(patchwork)
 
 # read data
-ved <- read_rds(here("data/temp", "vedrovice_dataset.RDS"))
+ved <- read_rds(here::here("data/temp", "vedrovice_dataset.RDS"))
 
 # data prep ====================================================================
 scale_m <- 4.762 # scale by a factor so 1 unit is 1 meter
-angle <- 40 / 360 * 100 * 1/2 # rotate by an angle of 40° so north faces upwards
+angle <- 40 / 360 * 100 * 1/2 # rotate by an angle of 51° so north faces upwards
 
 ved_layout <- DescTools::Rotate(ved$layout * scale_m, 
                                 theta = angle, mx = 0, my = 0)
@@ -38,9 +38,9 @@ ved_sf <- st_as_sf(bind_cols(ved_layout, ved$metadata),
 
 # excavation polygon
 ved_exc <- matrix(c(c(0.5, 0.5, 0, 0, -1, -1, 1.6, 1.6, 7.6, 7.6, 9.1, 9.1, 
-                      12.3, 12.3, 13.5, 13.5, 12.3, 12.3, 8.6, 8.6),
+                      12.3, 12.3, 13.5, 13.5, 14, 14, 13.5, 13.5, 12.3, 12.3, 8.6, 8.6),
                     c(-1, 2.5, 2.5, 10.3, 10.3, 14.3, 14.3, 13.6, 13.6, 
-                      12.8, 12.8, 13.4, 13.4, 12.4, 12.4, 4.5, 4.5, 1.5, 1.5, -1)), 
+                      12.8, 12.8, 13.4, 13.4, 12.4, 12.4, 7.5, 7.5, 6.5, 6.5, 4.5, 4.5, 1.5, 1.5, -1)), 
                   ncol = 2, byrow = FALSE)
 ved_exc <- DescTools::Rotate(ved_exc * scale_m, theta = angle, mx = 0, my = 0)
 ved_exc <- st_cast(
@@ -66,27 +66,33 @@ window_exc <- spatstat.geom::as.owin(ved_exc)
 #   theme(legend.position = c(0.9, 0.8))
 
 g_exc <- ggplot() + 
-  geom_sf(data = ved_exc, fill = "gray90", color = NA) +
-  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
-                                    location = "br",
-                                    pad_y = unit(0.8, "cm"),
-                                    pad_x = unit(-0.4, "cm"), 
-                                    height = unit(1, "cm")) +
-  ggspatial::annotation_scale(plot_unit = "m",
-                              location = "br", 
-                              height = unit(0.2, "cm")) +
+  geom_sf(data = ved_exc, fill = "gray80", color = NA) +
   theme_void() +
-  theme(legend.position = c(0.9, 0.8))
+  theme(legend.position = c(0.2, 0.8))
 
-gg_baseplan <- g_exc +
-  geom_sf(data = ved_exc, fill = NA, color = "gray80", size = 4) +
-  # geom_sf(data = ved_exc, fill = "gray90", color = NA) +
-  # geom_sf(data = ved_sf_hull, fill = NA, color = "gray40", linetype = 3) +
-  geom_sf(data = ved_sf, aes(shape = pres), fill = "white") + 
-  scale_shape_manual(values = c(15, 1)) +
-  labs(shape = "preservation")
+g_north <- ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(),
+                                         location = "bl",
+                                         pad_y = unit(0.8, "cm"),
+                                         pad_x = unit(0.2, "cm"), 
+                                         height = unit(1, "cm"))
+
+g_scale <- ggspatial::annotation_scale(plot_unit = "m",
+                              location = "bl", 
+                              height = unit(0.2, "cm"),
+                              pad_x = unit(0.2, "cm"))
+
+gg_baseplan <- g_exc + 
+  # geom_sf(data = ved_exc, fill = NA, color = "gray80", size = 4) +
+  geom_sf(data = ved_sf, aes(fill = pres, color = pres), shape = 21, size = 4) + 
+  scale_fill_manual(values = c("gray60", "white")) +
+  scale_color_manual(values = c("gray60", "black")) +
+  geom_sf_text(data = ved_sf, aes(label = id_burial), size = 1.8) +
+  labs(title = "(A) Preservation", fill = "preservation", color = "preservation") +
+  g_scale + g_north
 
 gg_baseplan
+
+ggsave(here::here("plots", "plan_main.pdf"), width = 13, height = 13, units = "cm")
 
 # gg_ids <- gg_baseplan + 
 #   ggsflabel::geom_sf_text_repel(data = ved_sf, aes(label = id_burial))
@@ -106,44 +112,64 @@ get_coords <- function(sf, var) {
 }
 
 # plan local vs non-local
-g_exc + 
-  geom_sf(data = select(ved_sf, -origin), color = "gray") +
+gg_local <- g_exc + 
+  geom_sf(data = select(ved_sf, -origin), color = "gray60") +
   stat_density2d(data = get_coords(ved_sf, "origin"), aes(X, Y),
-                 color = "black") +
+                 color = "white") +
   geom_sf(data = filter(ved_sf, pres != "dist.", origin != "ind."), 
           shape = 21, fill = "white") + 
-  facet_wrap(~origin)
+  facet_wrap(~origin, ncol = 1) +
+  labs(title = "(B) Localness")
 
-ggsave(here("plots", "plan_origin.pdf"), width = 12, height = 6, units = "cm")
-ggsave(here("plots", "plan_origin.eps"), width = 15, height = 7, units = "cm")
+gg_local
+
+ggsave(here::here("plots", "plan_origin.pdf"), width = 6, height = 12, units = "cm")
+# ggsave(here("plots", "plan_origin.eps"), width = 15, height = 7, units = "cm")
 
 
 # plan age
-g_exc + 
-  geom_sf(data = select(ved_sf, -age_sim), color = "gray") +
+gg_age <- g_exc + 
+  geom_sf(data = select(ved_sf, -age_sim), color = "gray60") +
   stat_density2d(data = get_coords(ved_sf, "age_sim"), aes(X, Y),
-                 color = "black") +
+                 color = "white") +
   geom_sf(data = filter(ved_sf, pres != "dist.", age_sim != "ind."), 
           shape = 21, fill = "white") + 
-  facet_wrap(~age_sim)
+  facet_wrap(~age_sim) +
+  labs(title = "(C) Age")
 
-ggsave(here("plots", "plan_age.pdf"), width = 19, height = 6, units = "cm")
-ggsave(here("plots", "plan_age.eps"), width = 22, height = 7, units = "cm")
+gg_age
+
+ggsave(here::here("plots", "plan_age.pdf"), width = 19, height = 6, units = "cm")
+# ggsave(here("plots", "plan_age.eps"), width = 22, height = 7, units = "cm")
 
 # plan sex
-g_exc +
-  geom_sf(data = select(ved_sf, -sex), color = "gray") +
+gg_sex <- g_exc +
+  geom_sf(data = select(ved_sf, -sex), color = "gray60") +
   stat_density2d(data = get_coords(ved_sf, "sex"), aes(X, Y),
-                 color = "black") +
+                 color = "white") +
   geom_sf(data = filter(ved_sf, pres != "dist.", sex != "ind."),
           shape = 21, fill = "white") + 
-  facet_wrap(~sex)
+  facet_wrap(~sex) +
+  labs(title = "(D) Sex")
 
-ggsave(here("plots", "plan_sex.pdf"), width = 19, height = 6, units = "cm")
-ggsave(here("plots", "plan_sex.eps"), width = 22, height = 7, units = "cm")
+gg_sex
+
+ggsave(here::here("plots", "plan_sex.pdf"), width = 19, height = 6, units = "cm")
+# ggsave(here("plots", "plan_sex.eps"), width = 22, height = 7, units = "cm")
+
+
+# patchwork ---------------------------------------
+
+((gg_baseplan + gg_local + 
+    plot_layout(widths = c(2, 1))) / 
+   gg_age / 
+   gg_sex +
+   plot_layout(heights = c(2, 1, 1)))
+
+ggsave(here::here("plots/plans.pdf"), width = 16, height = 24, units = "cm")
 
 # write layouts -----------------------------------------------------------
 
-write_sf(ved_sf, here("data/temp", "layout.shp"))
-write_sf(ved_exc, here("data/temp", "window.shp"))
+st_write(ved_sf, here::here("data/temp", "layout.geojson"), delete_dsn = TRUE)
+st_write(ved_exc, here::here("data/temp", "window.geojson"), delete_dsn = TRUE)
 

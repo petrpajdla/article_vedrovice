@@ -17,22 +17,24 @@ library(sf)
 
 # data --------------------------------------------------------------------
 
-explored_rad <- paste0(c(2.8, 3.9, 4.6, 5.5, 6.5, 7.8))
+explored_rad <- paste0(c(2.1, 2.8, 3.4, 4.1, 4.6, 5.6, 6.3, 8.8, 9.2))
 
 perc_cl <- read_csv(here::here("data/temp", "perc_clusters.csv")) %>% 
   mutate(id_burial = as.character(id)) %>% 
   select(-id) %>% 
   filter(radius %in% explored_rad)
 
-ved_sf <- sf::st_read(here::here("data/temp", "layout.shp")) %>% 
+ved_sf <- sf::st_read(here::here("data/temp", "layout.geojson")) %>% 
+  st_set_crs(NA) %>% 
   mutate(sex = fct_relevel(sex, c("n. a.", "F", "M", "ind.")),
          age_sim = fct_relevel(age_sim, c("juv.", "ad.", "mat.", "ind.")),
          origin = fct_relevel(origin, c("local", "non-local", "ind."))) %>% 
-  filter(pres != "dist.")
+  filter(analysis)
 
 # prep ---------------------------------------------------------------------
 
-input <- ved_sf %>% select(id_burial, sex, age_sim, origin, starts_with("cat_")) %>% 
+input <- ved_sf %>% 
+  select(id_burial, sex, age_sim, origin, starts_with("cat_")) %>% 
   st_drop_geometry() %>% 
   left_join(perc_cl, by = c("id_burial"))
 
@@ -164,62 +166,62 @@ devs_loc <- inner_join(deviates_from_random(input, "origin", nsim),
             expected = (expected.x + expected.y)/2,
             deviation = (deviation.x + deviation.y)/2)
 
-# multicategorical variables
-devs_sa <- inner_join(deviates_from_random(input, "cat_sa", nsim),
-                      deviates_from_random(input, "cat_sa", nsim), 
-                      by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2) %>% 
-  inner_join(deviates_from_random(input, "cat_sa", nsim),
-             by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2)
-
-devs_os <- inner_join(deviates_from_random(input, "cat_os", nsim),
-                      deviates_from_random(input, "cat_os", nsim), 
-                      by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2) %>% 
-  inner_join(deviates_from_random(input, "cat_os", nsim),
-             by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2)
-
-devs_oa <- inner_join(deviates_from_random(input, "cat_oa", nsim),
-                      deviates_from_random(input, "cat_oa", nsim), 
-                      by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2) %>% 
-  inner_join(deviates_from_random(input, "cat_oa", nsim),
-             by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2)
-
-devs_osa <- inner_join(deviates_from_random(input, "cat_osa", nsim),
-                       deviates_from_random(input, "cat_osa", nsim), 
-                       by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2) %>% 
-  inner_join(deviates_from_random(input, "cat_osa", nsim),
-             by = c("radius", "cluster", "variable")) %>% 
-  transmute(radius, cluster, variable,
-            observed = observed.x,
-            expected = (expected.x + expected.y)/2,
-            deviation = (deviation.x + deviation.y)/2)
+# # multicategorical variables
+# devs_sa <- inner_join(deviates_from_random(input, "cat_sa", nsim),
+#                       deviates_from_random(input, "cat_sa", nsim), 
+#                       by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2) %>% 
+#   inner_join(deviates_from_random(input, "cat_sa", nsim),
+#              by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2)
+# 
+# devs_os <- inner_join(deviates_from_random(input, "cat_os", nsim),
+#                       deviates_from_random(input, "cat_os", nsim), 
+#                       by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2) %>% 
+#   inner_join(deviates_from_random(input, "cat_os", nsim),
+#              by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2)
+# 
+# devs_oa <- inner_join(deviates_from_random(input, "cat_oa", nsim),
+#                       deviates_from_random(input, "cat_oa", nsim), 
+#                       by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2) %>% 
+#   inner_join(deviates_from_random(input, "cat_oa", nsim),
+#              by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2)
+# 
+# devs_osa <- inner_join(deviates_from_random(input, "cat_osa", nsim),
+#                        deviates_from_random(input, "cat_osa", nsim), 
+#                        by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2) %>% 
+#   inner_join(deviates_from_random(input, "cat_osa", nsim),
+#              by = c("radius", "cluster", "variable")) %>% 
+#   transmute(radius, cluster, variable,
+#             observed = observed.x,
+#             expected = (expected.x + expected.y)/2,
+#             deviation = (deviation.x + deviation.y)/2)
 
 
 # output ------------------------------------------------------------------
@@ -228,10 +230,10 @@ out <- list(sex = devs_sex,
             age = devs_age,
             orig = devs_loc)
 
-out_multicat <- list(sa = devs_sa,
-                     os = devs_os,
-                     oa = devs_oa,
-                     osa = devs_osa)
+# out_multicat <- list(sa = devs_sa,
+#                      os = devs_os,
+#                      oa = devs_oa,
+#                      osa = devs_osa)
 
 write_rds(out, here::here("data/temp", "perc_deviations.RDS"))
 write_rds(out_multicat, here::here("data/temp", "perc_deviations_multicat.RDS"))
