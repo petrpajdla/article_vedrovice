@@ -16,16 +16,18 @@ library(igraph)
 library(ggplot2)
 
 # theme for ggplot graphics ====================================================
-theme_universe <- theme(panel.border = element_rect(colour = "black", 
-                                                    fill = NA, 
-                                                    size = 0.8),
-                        panel.background = element_blank(),
-                        line = element_blank(),
-                        strip.background = element_blank(), 
-                        # strip.text = element_text(face = "italic"),
-                        axis.text.y = element_blank(), 
-                        axis.title.y = element_blank(), 
-                        panel.spacing = unit(1, "lines"))
+theme_universe <- theme(
+  panel.border = element_rect(colour = "black", 
+                              fill = NA, 
+                              size = 0.8),
+  panel.background = element_blank(),
+  line = element_blank(),
+  strip.background = element_blank(), 
+  # strip.text = element_text(face = "italic"),
+  # axis.text.y = element_blank(), 
+  # axis.title.y = element_blank(), 
+  panel.spacing = unit(1, "lines")
+)
 
 # functions ====================================================================
 # count coocurences in an occurence (binary) matrix
@@ -84,32 +86,32 @@ cooc_obs <- cooc_obs %>% filter(var1 != var2)
 
 # randomization of co-occurrence matrix - list of many matrices ----------------
 n_permutations <-  9999
-# ======
-rand_mat <- vegan::permatfull(input_matrix,
-                              fixedmar = "both",
-                              mtype = "prab",
-                              times = n_permutations)
-# ======
+# # ======
+# rand_mat <- vegan::permatfull(input_matrix,
+#                               fixedmar = "both",
+#                               mtype = "prab",
+#                               times = n_permutations)
+# # ======
 
 # going parallel to speed up randomization...
 # detecting cores for parallel
 no_cores <- parallel::detectCores() - 1
 
 # cooccurences on random matrices ==============================================
-# ======
-# note to self: on Debian everything was smooth even without specifying 
-# setup_strategy, but apparently, this is Rstudio vs R version problem
-# see: https://github.com/rstudio/rstudio/issues/6692
-cl <- parallel::makeCluster(no_cores, setup_strategy = "sequential")
-cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
-parallel::stopCluster(cl)
-
-# save counts of co-occurences on random matrices
-readr::write_rds(cooc_rand, here::here("data/temp", "cooc_random_mat.RDS"))
-# ======
+# # ======
+# # note to self: on Debian everything was smooth even without specifying 
+# # setup_strategy, but apparently, this is Rstudio vs R version problem
+# # see: https://github.com/rstudio/rstudio/issues/6692
+# cl <- parallel::makeCluster(no_cores, setup_strategy = "sequential")
+# cooc_rand <- parallel::parLapply(cl, rand_mat$perm, count_cooccurrence)
+# parallel::stopCluster(cl)
+# 
+# # save counts of co-occurences on random matrices
+# readr::write_rds(cooc_rand, here::here("data/temp", "cooc_random_mat.RDS"))
+# # ======
 
 # load from temporary data
-# cooc_rand <- readr::read_rds(here::here("data/temp", "cooc_random_mat.RDS"))
+cooc_rand <- readr::read_rds(here::here("data/temp", "cooc_random_mat.RDS"))
 
 # summarization of random occurences into expected cooccurences ----------------
 cooc_exp <- cooc_rand %>% bind_rows() %>% 
@@ -162,21 +164,25 @@ v_obs_g <- v_observed %>%
   mutate(abbrv = forcats::as_factor(unname(ved$var_names$short[variable])),
          long = forcats::as_factor(unname(ved$var_names$long[variable])))
 
-v_annot <- v_statistic %>% select(long, p, signif) %>%
-  mutate(p = round(p, 2),
+v_annot <- v_statistic %>% select(long, v, p, signif) %>%
+  mutate(p = round(p, 2), v = round(v, 2),
          long = forcats::as_factor(long),
-         txt = paste0(p, signif))
+         p_txt = paste0(p, signif))
 
 v_plot <- ggplot(v_exp_g, mapping = aes(x = value)) +
-  geom_density(fill = "gray80", color = NA, alpha = 0.6) +
+  geom_density(fill = "gray80", color = NA) +
   geom_rug(alpha = 0.2) +
   geom_vline(data = v_obs_g, mapping = aes(xintercept = value), size = 0.8) +
   facet_wrap(vars(long), scales = "free", ncol = 3) +
   xlab("v statistic") +
-  geom_text(data = v_annot, aes(x = Inf, y = Inf, label = txt), size = 3,
-            hjust = +1.2, vjust = +1.5) +
+  geom_text(data = v_annot, 
+            aes(x = Inf, y = Inf, 
+                label = paste0("v = ", v, "\np = ", p)), 
+            size = 3,
+            hjust = +1.2, vjust = +1.4) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
+  labs(x = "V statistic", y = "Probability density p(v)") +
   theme_universe
 
 v_plot
@@ -239,14 +245,22 @@ s_p_value <- get_p(s_experimental, s_observed)
 s_p_value
 
 s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
-  geom_density(fill = "gray80", color = NA, alpha = 0.6) +
+  geom_density(fill = "gray80", color = NA) +
   geom_rug(alpha = 0.2) +
   geom_vline(xintercept = s_observed, size = 0.8) +
-  geom_text(data = tibble(p = paste0(round(s_p_value, 3), "**")), 
-            aes(x = Inf, y = Inf, label = p), 
+  geom_text(data = tibble(S = paste0("S = ", round(s_observed, 2), "\np = ", round(s_p_value, 2))), 
+            aes(x = Inf, y = Inf, label = S), 
             size = 3,
-            hjust = +1.1, vjust = +1.4) +
-  xlab("S statistic") +
+            hjust = +1.2, 
+            vjust = +1.4
+  ) +
+  # geom_text(data = tibble(p = paste0("p = ", round(s_p_value, 2), "*")), 
+  #           aes(x = 0.75, y = 1.6, label = p), 
+  #           size = 3,
+  #           hjust = 0, 
+  #           # vjust = +1.4
+  # ) +
+  labs(x = "S", y = "p(S)") +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0, 0, 0.2)) +
   theme_universe
@@ -254,7 +268,7 @@ s_plot <- ggplot(as_tibble(s_experimental), aes(value)) +
 s_plot
 
 ggsave(here::here("plots", "cooc_sstat.pdf"), plot = s_plot, 
-       width = 6, height = 4, units = "cm")
+       width = 8, height = 4, units = "cm")
 
 # # EPS
 # s_plot_eps <- ggplot(as_tibble(s_experimental), aes(value)) +

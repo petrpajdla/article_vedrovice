@@ -201,29 +201,29 @@ randomize_neighbors_network <- function(g, sf, variable, n_sim = 99) {
 
 # simulation (999 iterations) ----------------------------------------------
 
-ved_rand_sex_g <- randomize_neighbors_network(ved_g, ved_sf, "sex",
-                                              n_sim = 999)
-write_csv(ved_rand_sex_g, here::here("data/temp", "ved_rand_sex_g.csv"))
-
-ved_rand_sex_d <- randomize_neighbors_network(ved_d, ved_sf, "sex",
-                                              n_sim = 999)
-write_csv(ved_rand_sex_d, here::here("data/temp", "ved_rand_sex_d.csv"))
-
-ved_rand_age_g <- randomize_neighbors_network(ved_g, ved_sf, "age_sim",
-                                              n_sim = 999)
-write_csv(ved_rand_age_g, here::here("data/temp", "ved_rand_age_g.csv"))
-
-ved_rand_age_d <- randomize_neighbors_network(ved_d, ved_sf, "age_sim",
-                                              n_sim = 999)
-write_csv(ved_rand_age_d, here::here("data/temp", "ved_rand_age_d.csv"))
-
-ved_rand_orig_g <- randomize_neighbors_network(ved_g, ved_sf, "origin",
-                                               n_sim = 999)
-write_csv(ved_rand_orig_g, here::here("data/temp", "ved_rand_orig_g.csv"))
-
-ved_rand_orig_d <- randomize_neighbors_network(ved_d, ved_sf, "origin",
-                                               n_sim = 999)
-write_csv(ved_rand_orig_d, here::here("data/temp", "ved_rand_orig_d.csv"))
+# ved_rand_sex_g <- randomize_neighbors_network(ved_g, ved_sf, "sex",
+#                                               n_sim = 999)
+# write_csv(ved_rand_sex_g, here::here("data/temp", "ved_rand_sex_g.csv"))
+# 
+# ved_rand_sex_d <- randomize_neighbors_network(ved_d, ved_sf, "sex",
+#                                               n_sim = 999)
+# write_csv(ved_rand_sex_d, here::here("data/temp", "ved_rand_sex_d.csv"))
+# 
+# ved_rand_age_g <- randomize_neighbors_network(ved_g, ved_sf, "age_sim",
+#                                               n_sim = 999)
+# write_csv(ved_rand_age_g, here::here("data/temp", "ved_rand_age_g.csv"))
+# 
+# ved_rand_age_d <- randomize_neighbors_network(ved_d, ved_sf, "age_sim",
+#                                               n_sim = 999)
+# write_csv(ved_rand_age_d, here::here("data/temp", "ved_rand_age_d.csv"))
+# 
+# ved_rand_orig_g <- randomize_neighbors_network(ved_g, ved_sf, "origin",
+#                                                n_sim = 999)
+# write_csv(ved_rand_orig_g, here::here("data/temp", "ved_rand_orig_g.csv"))
+# 
+# ved_rand_orig_d <- randomize_neighbors_network(ved_d, ved_sf, "origin",
+#                                                n_sim = 999)
+# write_csv(ved_rand_orig_d, here::here("data/temp", "ved_rand_orig_d.csv"))
 
 # ved_rand_sa_g <- randomize_neighbors_network(ved_g, ved_sf_pres, "cat_sa",
 #                                              n_sim = 999)
@@ -253,12 +253,12 @@ write_csv(ved_rand_orig_d, here::here("data/temp", "ved_rand_orig_d.csv"))
 # write_csv(ved_rand_osa_g, here("data/temp", "ved_rand_osa_g.csv"))
 # write_csv(ved_rand_osa_d, here("data/temp", "ved_rand_osa_d.csv"))
 
-# ved_rand_sex_g <- read_csv(here("data/temp", "ved_rand_sex_g.csv"))
-# ved_rand_sex_d <- read_csv(here("data/temp", "ved_rand_sex_d.csv"))
-# ved_rand_age_g <- read_csv(here("data/temp", "ved_rand_age_g.csv"))
-# ved_rand_age_d <- read_csv(here("data/temp", "ved_rand_age_d.csv"))
-# ved_rand_orig_g <- read_csv(here("data/temp", "ved_rand_orig_g.csv"))
-# ved_rand_orig_d <- read_csv(here("data/temp", "ved_rand_orig_d.csv"))
+ved_rand_sex_g <- read_csv(here::here("data/temp", "ved_rand_sex_g.csv"))
+ved_rand_sex_d <- read_csv(here::here("data/temp", "ved_rand_sex_d.csv"))
+ved_rand_age_g <- read_csv(here::here("data/temp", "ved_rand_age_g.csv"))
+ved_rand_age_d <- read_csv(here::here("data/temp", "ved_rand_age_d.csv"))
+ved_rand_orig_g <- read_csv(here::here("data/temp", "ved_rand_orig_g.csv"))
+ved_rand_orig_d <- read_csv(here::here("data/temp", "ved_rand_orig_d.csv"))
 
 
 # plots -------------------------------------------------------------------
@@ -618,6 +618,7 @@ p_vals$orig <- bind_rows(delaunay = p_orig_d, gabriel = p_orig_g, .id = "method"
 
 # output
 write_rds(p_vals, here::here("data/temp/nb_pvals.csv"))
+
 # write_rds(p_vals_multicat, here("data/temp/nb_pvals_multicat.csv"))
 
 # filtering significant values to assess...

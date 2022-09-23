@@ -208,7 +208,7 @@ ggsave(here::here("plots", "perc_distance.pdf"), width = 10, height = 7, units =
 # membership in clusters --------------------------------------------------
 
 g_long <- left_join(p$membership_long, ved_coord, by = "id") %>% 
-  filter(radius %in% c(1.6, p_breaks[1:7])) %>% # 1.6, 3.6,
+  filter(radius %in% c(1.6, p_breaks)) %>% # 1.6, 3.6,
   mutate(label_radius = paste(p_breaks2[as.character(radius)], "dist.", radius, "m"),
          label_radius = forcats::fct_reorder(label_radius, radius),
          id_burial = as.character(id))
@@ -322,13 +322,13 @@ ggsave(here::here("plots", "perc_plan.pdf"),
 
 # numbers of clusters
 polygs_ids <- polygs %>% 
-  filter(radius %in% disp_radii) %>% 
+  # filter(radius %in% disp_radii) %>% 
   group_by(radius) %>%
   arrange(desc(len)) %>% 
   mutate(
     # cluster = LETTERS[1:n()],
     cluster = 1:n()
-    )
+  )
 
 polygs_ids <- polygs_ids %>% 
   ungroup(radius) %>% 
@@ -336,17 +336,19 @@ polygs_ids <- polygs_ids %>%
 
 gg + 
   ggrepel::geom_text_repel(
-    data = filter(polygs_ids, nr_point >= 4),
+    data = filter(polygs_ids, radius %in% disp_radii, nr_point >= 4),
     # data = filter(polygs_ids, radius %in% disp_radii[3:6]),
     aes(label = cluster, geometry = polygons),
     stat = "sf_coordinates",
     size = 2.8, 
-    nudge_x = 0, nudge_y = 0,
+    # nudge_x = 0, nudge_y = 0,
     # label.size = NA,
     # box.padding = 0.4,
-    na.rm = TRUE, 
-    fontface = "bold",
-    bg.color = "white",
+    na.rm = TRUE, min.segment.length = 0.1,
+    fontface = "bold", 
+    color = "white", 
+    segment.color = "black",
+    bg.color = "black",
     bg.r = 0.15,
     # fill = "white"
   )
@@ -358,6 +360,47 @@ ggsave(here::here("plots", "perc_plan_ids.pdf"),
 #        width = 18, height = 28, units = "cm")
 
 # cluster assignment ------------------------------------------------------
-g_long %>% 
-  select(id, radius, cluster = clust) %>%
+# n_in_clust <- g_long %>% 
+#   select(radius, cluster = clust, id) %>%
+#   group_by(radius, cluster) %>% 
+#   count() %>% 
+#   arrange(desc(n)) %>% 
+#   ungroup(cluster) %>% 
+#   rename(cluster_old = cluster) %>% 
+#   mutate(cluster_new = row_number()) %>% 
+#   ungroup()
+# 
+# # rename clusters by size (largest lowest id)
+# clust_names <- n_in_clust$cluster_new %>% 
+#   setNames(paste0(n_in_clust$radius, "-", n_in_clust$cluster_old))
+
+ved_pts <- select(ved_sf, id_burial)
+
+pts_clusts <- polygs_ids %>% 
+  select(-len, -label_radius) %>% 
+  group_by(radius, cluster, nr_point) %>% 
+  nest() %>% 
+  mutate(pts = map(data, \(x) st_filter(ved_pts, x)),
+         check = map_lgl(pts, \(x) nrow(x) == nr_point))
+
+# check whether all clusters contain proper nr of points
+pts_clusts %>% pull(check) %>% all()
+
+pts_clusts %>% 
+  ungroup(nr_point) %>% 
+  select(-nr_point, -data, -check) %>% 
+  unnest(pts) %>% 
+  select(id = id_burial, radius, cluster, -geometry) %>% 
+  arrange(as.numeric(id), radius, cluster) %>% 
   readr::write_csv(here::here("data/temp", "perc_clusters.csv"))
+
+
+
+# g_long %>% 
+#   select(id, radius, clust) %>% 
+#   mutate(clust = paste0(radius, "-", clust),
+#          cluster = clust_names[clust]) %>% 
+#   select(-clust) %>% 
+#   arrange(as.numeric(id), radius, cluster) %>% 
+#   readr::write_csv(here::here("data/temp", "perc_clusters.csv"))
+
