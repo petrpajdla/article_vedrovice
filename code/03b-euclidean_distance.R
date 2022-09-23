@@ -57,14 +57,14 @@ ved_input <- ved$metadata %>%
 #' @examples
 edistance <- function(df, grouping_var, distance_vars) {
   var <- sym(grouping_var)
-
+  
   mat <- df %>%
     select(id_burial, !!var, all_of(distance_vars)) %>%
     group_by(!!var) %>%
     nest() %>%
     mutate(data = map(data, column_to_rownames, "id_burial"),
            data = map(data, as.matrix))
-
+  
   lvls <- as.character(pull(mat, !!var))
   comb <- gtools::combinations(n = length(lvls),
                                r = 2,
@@ -72,10 +72,10 @@ edistance <- function(df, grouping_var, distance_vars) {
                                repeats.allowed = TRUE) %>%
     as_tibble() %>%
     mutate(name = str_c(V1, V2, sep = " - "))
-
+  
   dist <- vector("list", nrow(comb)) %>% 
     setNames(comb$name)
-
+  
   for (i in 1:nrow(comb)) {
     x <- comb$V1[i]
     y <- comb$V2[i]
@@ -87,7 +87,7 @@ edistance <- function(df, grouping_var, distance_vars) {
         Y = filter(mat, !!var == y)$data[[1]]))
     }
   }
-
+  
   map(dist, mean) %>%
     as_tibble() %>%
     pivot_longer(everything())
@@ -132,8 +132,8 @@ randomize_edistance <- function(df, grouping_var, distance_vars, n_sim) {
       bind_cols(temp = rand_vect)
     
     res[[i]] <- edistance(input, "temp", distance_vars)
-      # group_by(comb) %>% 
-      # summarise(mean = mean(value))
+    # group_by(comb) %>% 
+    # summarise(mean = mean(value))
   }
   res %>% 
     # map(group_by, comb) %>% 
@@ -155,7 +155,7 @@ test_randomness <- function(experimental, observed) {
     select(name, value) %>% 
     group_by(name) %>% 
     nest()
-
+  
   exp %>% 
     left_join(observed, by = "name") %>% 
     mutate(larger = map2(data, value, \(x, y) filter(x, value >= y)),
@@ -184,7 +184,7 @@ get_edistance <- function(df, grouping_var, distance_vars, n_sim) {
   res$obs <- edistance(df, grouping_var, distance_vars)
   res$exp <- randomize_edistance(df, grouping_var, distance_vars, n_sim)
   res$test <- test_randomness(res$exp, res$obs)
-
+  
   # res$mean <- res$obs %>% group_by(comb) %>% 
   #   summarise(mean = mean(value))
   print(Sys.time() - begin)
@@ -214,6 +214,19 @@ ed <- list(sex = ed_sex,
 # ed <- read_rds(here("data/temp", "cooc_ed.RDS"))
 
 
+# output table ------------------------------------
+
+# table 00
+
+# bind_rows(
+#   sex = select(ed$sex$test, name, value, ends_with("pct")),
+#   age = select(ed$age$test, name, value, ends_with("pct")),
+#   orig = select(ed$orig$test, name, value, ends_with("pct")), 
+#   .id = "var"
+#   ) %>% 
+#   write_csv(here::here("tables/Table_00.csv"))
+  
+
 # plots -------------------------------------------------------------------
 
 # ggplot() +
@@ -239,7 +252,7 @@ plot_densities <- function(ed_obj) {
     geom_point(data = ed_obj$obs,
                shape = 21,
                size = 2.4, fill = "black")
-    # facet_wrap(vars(name), scales = "free")
+  # facet_wrap(vars(name), scales = "free")
 }
 
 plot_densities(ed_sex)
