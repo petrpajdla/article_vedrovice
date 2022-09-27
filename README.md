@@ -14,24 +14,26 @@ The code is organized in individual scripts because some of the procedures, espe
 
 #### Code 
 
-Code folder contains scripts necessary to reproduce the results.
+Code folder contains scripts necessary to reproduce the results
 
-i. `knit_text.R`: create text of the article  
-i. `knit_text_word.R`: create text in word format  
+i. `knit_text.R`: create text of the article;  
+i. `knit_text_word.R`: create text in word format.  
 
 1. Data preparation  
-    * `01-dataset.R`: data preparation  
-    * `02-spat_dataprep.R`: spatial data preparation   
+    * `01-dataset.R`: data preparation;  
+    * `02-spat_dataprep.R`: spatial data preparation.   
 
 2. Randomization    
-    * `03-randomization.R`: randomization (simulation) of artifact co-occurrences  
-        (includes parallel computations on randomly generated matrices)  
+    * `03a-randomization.R`: randomization (simulation) of artifact co-occurrences  
+        (includes parallel computations on randomly generated matrices);  
+    * `03b-euclidean_distance.R`: Euclidean distance between groups of burials
+        and associated randomization experiments.
     
 3. Spatial analysis  
-    * `04-spat_neighbors.R`: similarity of neighboring burials based on Gabriel graph and Delaunay triangulation  
-    * `05-spat_functions.R`: point pattern analysis  
-    * `06-spat_perc.R`: percolation analysis  
-    * `07-spat_perc_clusters.R`: exploring cluster structure at different percolation thresholds   
+    * `04-spat_neighbors.R`: similarity of neighboring burials based on Gabriel graph and Delaunay triangulation;  
+    * `05-spat_functions.R`: point pattern analysis;  
+    * `06-spat_perc.R`: percolation analysis;  
+    * `07-spat_perc_clusters.R`: exploring cluster structure at different percolation thresholds.   
 
 #### Data 
 
@@ -40,6 +42,10 @@ Data folder contains primary data necessary to reproduce the results.
 #### Text
 
 Text folder contains `RMarkdown` files producing the text of the article.
+
+#### Tables
+
+Tables folder contains tables both present in the text of the article and additional ones.
 
 #### Packages
 
